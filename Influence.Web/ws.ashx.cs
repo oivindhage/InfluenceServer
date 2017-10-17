@@ -18,7 +18,7 @@ namespace Influence.Web
             SetupDummyStuff();
 
             context.Response.ContentType = "text/plain";
-            context.Response.Write(JsonConvert.SerializeObject(GameMaster.GetSessions()));
+            context.Response.Write(JsonConvert.SerializeObject(new {Sessions = GameMaster.GetSessions()}));
         }
 
         private void SetupDummyStuff()

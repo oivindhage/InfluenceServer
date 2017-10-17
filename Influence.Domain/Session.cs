@@ -9,9 +9,9 @@ namespace Influence.Domain
 
         public List<Player> Players { get; set; }
         public int RoundNumber { get; set; }
-        public Board Board { get; set; }
         public GameState GameState { get; set; }
         public RuleSet RuleSet { get; set; }
+        public Board Board { get; set; }
 
         public Session(RuleSet ruleSet)
         {
