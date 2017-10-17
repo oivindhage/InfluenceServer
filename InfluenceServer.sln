@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Domain", "Influen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Services", "Influence.Services\Influence.Services.csproj", "{3291F932-D71F-4A6D-8025-2FB823E95B14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.WinClient", "Influence.WinClient\Influence.WinClient.csproj", "{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
