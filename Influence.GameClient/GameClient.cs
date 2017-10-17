@@ -72,8 +72,8 @@ namespace Influence.GameClient
 
         private void PresentSession(Session session)
         {
-            SetupTileMeasurements(session.Board);
-            DrawBoard(session.Board);
+            SetupTileMeasurements(session.CurrentBoard);
+            DrawBoard(session.CurrentBoard);
             WritePlayerStatistics(session);
         }
 

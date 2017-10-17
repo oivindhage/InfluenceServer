@@ -11,8 +11,8 @@ namespace Influence.GameClient.Mock
 
         public static Session GetDummySession()
         {
-            Session session = new Session(new RuleSet(6, 2, 5, 4), Guid.NewGuid());
-            session.Board = new Board(session.RuleSet.BoardSize);
+            Session session = new Session(new RuleSet(6, 2, 5, 4), "Dummy session", Guid.NewGuid());
+            session.CurrentBoard = new Board(session.RuleSet);
             AddPlayersToSession(session);
             AddStartTilesForPlayers(session);
             AddGameState(session);
@@ -43,7 +43,7 @@ namespace Influence.GameClient.Mock
             foreach (var player in session.Players)
             {
                 var participant = new Participant(player);
-                var ownedTiles = session.Board.TileRows
+                var ownedTiles = session.CurrentBoard.TileRows
                     .SelectMany(x => x.Tiles)
                     .Where(x => player.Name.Equals(x.OwnerName));
                 participant.OwnedTiles.AddRange(ownedTiles);
@@ -57,7 +57,7 @@ namespace Influence.GameClient.Mock
         {
             for (int i = 0; i < session.Players.Count;)
             {
-                var tileRow = session.Board.TileRows.OrderBy(x => random.NextDouble()).First();
+                var tileRow = session.CurrentBoard.TileRows.OrderBy(x => random.NextDouble()).First();
                 var tile = tileRow.Tiles.OrderBy(x => random.NextDouble()).First();
                 if (tile.NumTroops == 0)
                 {
