@@ -1,0 +1,11 @@
+Influence.Domain/bin/
+Influence.Domain/obj/
+Influence.Services/bin/
+Influence.Services/obj/
+Influence.Web/bin/
+Influence.Web/obj/
+Influence.WinClient/bin/
+Influence.WinClient/obj/
+packages/
+.vs/
+*.csproj.user
