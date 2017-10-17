@@ -4,6 +4,6 @@ namespace Influence.Domain
 {
     public class TileRow
     {
-        public List<Tile> Tiles { get; set; }
+        public List<Tile> Tiles { get; set; } = new List<Tile>();
     }
 }

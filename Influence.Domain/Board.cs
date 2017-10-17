@@ -4,11 +4,22 @@ namespace Influence.Domain
 {
     public class Board
     {
-        public List<TileRow> TileRows { get; set; }
+        public List<TileRow> TileRows { get; } = new List<TileRow>();
 
         public Board(int size)
         {
-            TileRows = new List<TileRow>();
+            for (int rowNum = 0; rowNum < size; rowNum++)
+            {
+                var row = new TileRow();
+
+                for (int colNum = 0; colNum < size; colNum++)
+                {
+                    var tile = new Tile(colNum, rowNum, size);
+                    row.Tiles.Add(tile);
+                }
+
+                TileRows.Add(row);
+            }
         }
     }
 }

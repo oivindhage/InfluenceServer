@@ -19,7 +19,7 @@ namespace Influence.Domain
             Players = new List<Player>();
             GameState = new GameState();
             RoundNumber = 0;
-
+            RuleSet = ruleSet;
             Board = new Board(ruleSet.BoardSize);
         }
     }
