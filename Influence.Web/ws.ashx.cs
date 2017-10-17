@@ -28,7 +28,7 @@ namespace Influence.Web
                 GetSession(context, match);
 
             else if ((match = Regex.Match(context.Request.Url.Query, 
-                "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&nick=(?<nick>[a-zA-Z]{3,15})$")).Success)
+                "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z]{3,15})$")).Success)
                 JoinSession(context, match);
 
             else GetSessions(context);
@@ -38,22 +38,22 @@ namespace Influence.Web
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            string nick;
+            string name;
             Guid sessionId, playerId;
             if (Guid.TryParse(match.Groups["sessionid"].Value, out sessionId) 
                 && Guid.TryParse(match.Groups["playerid"].Value, out playerId) 
-                && !string.IsNullOrEmpty((nick = match.Groups["nick"].Value))
-                && nick.Length > 3)
+                && !string.IsNullOrEmpty((name = match.Groups["name"].Value))
+                && name.Length > 3)
             {
                 var session = GameMaster.GetSession(sessionId);
                 if (session != null)
                 {
-                    if (session.AddPlayer(playerId, nick))
+                    if (session.AddPlayer(playerId, name))
                     {
                         var player = session.Players.Single(p => p.Id == playerId);
 
                         context.Response.StatusCode = (int) HttpStatusCode.OK;
-                        context.Response.Write($"Velkommen til session {sessionId}, {nick}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
+                        context.Response.Write($"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
                     }
 
                     else if (session.Players.Any(p => p.Id == playerId))
@@ -65,8 +65,8 @@ namespace Influence.Web
                     {
                         context.Response.Write(
                             "Dårlig forespørsel.\r\n" +
-                            "Format: sessionid=guid&playerid=guid&nick=something\r\n" +
-                            "Nick: 3-15 bokstaver a-zA-Z\r\n" +
+                            "Format: sessionid=guid&playerid=guid&name=something\r\n" +
+                            "Name: 3-15 bokstaver a-zA-Z\r\n" +
                             "Se was.ashx/ for liste over sessions. Finn en som kan joines, og et spillernavn som ikke er tatt");
                     }
                 }

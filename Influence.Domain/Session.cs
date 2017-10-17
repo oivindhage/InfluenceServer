@@ -28,7 +28,9 @@ namespace Influence.Domain
 
         public bool AddPlayer(Guid playerId, string playerName)
         {
-            if (playerId != Guid.Empty && Players.All(p => p.Id != playerId) && Players.Count < RuleSet.MaxNumPlayersInGame)
+            if (playerId != Guid.Empty && Players.All(p => p.Id != playerId) 
+                && Players.All(p => p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) 
+                && Players.Count < RuleSet.MaxNumPlayersInGame)
             {
                 Players.Add(new Player(playerId, playerName, PlayerColors[Players.Count]));
                 return true;

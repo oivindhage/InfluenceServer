@@ -4,15 +4,15 @@ namespace Influence.Domain
 {
     public class Player
     {
-        public Player(Guid id, string nick, string colorRgbCsv)
+        public Player(Guid id, string name, string colorRgbCsv)
         {
             Id = id;
-            Nick = nick;
+            Name = name;
             ColorRgbCsv = colorRgbCsv;
         }
 
         public Guid Id { get; }
-        public string Nick { get; }
+        public string Name { get; }
         public string ColorRgbCsv { get; set; }
 
         public int Score { get; set; }
