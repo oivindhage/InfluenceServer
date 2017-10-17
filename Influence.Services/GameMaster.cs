@@ -5,11 +5,19 @@ namespace Influence.Services
 {
     public class GameMaster
     {
-        private static List<Session> Sessions { get; set; }
+        private static List<Session> Sessions { get; } = new List<Session>();
 
-        public List<Session> GetSessions()
+        public static List<Session> GetSessions() => Sessions;
+
+        public static void CreateSession()
         {
-            return Sessions;
+            Sessions.Add(new Session
+            {
+                Board = new Board(6),
+                GameState = new GameState { CurrentPlayer = null, GamePhase = GamePhaseEnum.NotStarted, PlayerPlayerPhase = PlayerPhaseEnum.Undefined},
+                Players = new List<Player>(),
+                RoundNumber = 0
+            });
         }
     }
 }
