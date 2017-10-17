@@ -20,5 +20,7 @@ namespace Influence.Domain
         public int NumPos2 { get; set; }
         public int NumPos3 { get; set; }
         public int NumPos4 { get; set; }
+
+        public int NumAvailableReinforcements { get; set; }
     }
 }
