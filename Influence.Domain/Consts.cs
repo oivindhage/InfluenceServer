@@ -5,7 +5,6 @@
         public static class GamePhase
         {
             public const string NotStarted = "Not started";
-            public const string Waiting = "Waiting";
             public const string Ongoing = "Ongoing";
             public const string Finished = "Finished";
         }
