@@ -43,9 +43,14 @@
             this.picBoard = new System.Windows.Forms.PictureBox();
             this.rtxPlayerStatus = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtSessionGuid = new System.Windows.Forms.TextBox();
             this.btnListAllSessions = new System.Windows.Forms.Button();
             this.cmbCurrentGames = new System.Windows.Forms.ComboBox();
+            this.radioAttackFrom = new System.Windows.Forms.RadioButton();
+            this.radioAttackDestination = new System.Windows.Forms.RadioButton();
+            this.radioReinforce = new System.Windows.Forms.RadioButton();
+            this.lblAttackFrom = new System.Windows.Forms.Label();
+            this.lblAttackTo = new System.Windows.Forms.Label();
+            this.lblReinforce = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
@@ -142,12 +147,13 @@
             this.picBoard.Size = new System.Drawing.Size(600, 600);
             this.picBoard.TabIndex = 10;
             this.picBoard.TabStop = false;
+            this.picBoard.Click += new System.EventHandler(this.picBoard_Click);
             // 
             // rtxPlayerStatus
             // 
             this.rtxPlayerStatus.Location = new System.Drawing.Point(625, 452);
             this.rtxPlayerStatus.Name = "rtxPlayerStatus";
-            this.rtxPlayerStatus.Size = new System.Drawing.Size(430, 600);
+            this.rtxPlayerStatus.Size = new System.Drawing.Size(430, 379);
             this.rtxPlayerStatus.TabIndex = 11;
             this.rtxPlayerStatus.Text = "";
             // 
@@ -159,13 +165,6 @@
             this.label2.Size = new System.Drawing.Size(136, 25);
             this.label2.TabIndex = 12;
             this.label2.Text = "Session GUID";
-            // 
-            // txtSessionGuid
-            // 
-            this.txtSessionGuid.Location = new System.Drawing.Point(157, 169);
-            this.txtSessionGuid.Name = "txtSessionGuid";
-            this.txtSessionGuid.Size = new System.Drawing.Size(896, 29);
-            this.txtSessionGuid.TabIndex = 13;
             // 
             // btnListAllSessions
             // 
@@ -181,20 +180,84 @@
             // 
             this.cmbCurrentGames.Enabled = false;
             this.cmbCurrentGames.FormattingEnabled = true;
-            this.cmbCurrentGames.Location = new System.Drawing.Point(157, 213);
+            this.cmbCurrentGames.Location = new System.Drawing.Point(159, 170);
             this.cmbCurrentGames.Name = "cmbCurrentGames";
             this.cmbCurrentGames.Size = new System.Drawing.Size(896, 32);
             this.cmbCurrentGames.TabIndex = 15;
-            this.cmbCurrentGames.SelectedIndexChanged += new System.EventHandler(this.cmbCurrentGames_SelectedIndexChanged);
+            // 
+            // radioAttackFrom
+            // 
+            this.radioAttackFrom.AutoSize = true;
+            this.radioAttackFrom.Location = new System.Drawing.Point(625, 851);
+            this.radioAttackFrom.Name = "radioAttackFrom";
+            this.radioAttackFrom.Size = new System.Drawing.Size(135, 29);
+            this.radioAttackFrom.TabIndex = 16;
+            this.radioAttackFrom.TabStop = true;
+            this.radioAttackFrom.Text = "Attack from";
+            this.radioAttackFrom.UseVisualStyleBackColor = true;
+            this.radioAttackFrom.CheckedChanged += new System.EventHandler(this.radioAttackFrom_CheckedChanged);
+            // 
+            // radioAttackDestination
+            // 
+            this.radioAttackDestination.AutoSize = true;
+            this.radioAttackDestination.Location = new System.Drawing.Point(625, 886);
+            this.radioAttackDestination.Name = "radioAttackDestination";
+            this.radioAttackDestination.Size = new System.Drawing.Size(191, 29);
+            this.radioAttackDestination.TabIndex = 17;
+            this.radioAttackDestination.TabStop = true;
+            this.radioAttackDestination.Text = "Attack destination";
+            this.radioAttackDestination.UseVisualStyleBackColor = true;
+            this.radioAttackDestination.CheckedChanged += new System.EventHandler(this.radioAttackDestination_CheckedChanged);
+            // 
+            // radioReinforce
+            // 
+            this.radioReinforce.AutoSize = true;
+            this.radioReinforce.Location = new System.Drawing.Point(625, 921);
+            this.radioReinforce.Name = "radioReinforce";
+            this.radioReinforce.Size = new System.Drawing.Size(119, 29);
+            this.radioReinforce.TabIndex = 18;
+            this.radioReinforce.TabStop = true;
+            this.radioReinforce.Text = "Reinforce";
+            this.radioReinforce.UseVisualStyleBackColor = true;
+            this.radioReinforce.CheckedChanged += new System.EventHandler(this.radioReinforce_CheckedChanged);
+            // 
+            // lblAttackFrom
+            // 
+            this.lblAttackFrom.AutoSize = true;
+            this.lblAttackFrom.Location = new System.Drawing.Point(827, 851);
+            this.lblAttackFrom.Name = "lblAttackFrom";
+            this.lblAttackFrom.Size = new System.Drawing.Size(0, 25);
+            this.lblAttackFrom.TabIndex = 19;
+            // 
+            // lblAttackTo
+            // 
+            this.lblAttackTo.AutoSize = true;
+            this.lblAttackTo.Location = new System.Drawing.Point(827, 886);
+            this.lblAttackTo.Name = "lblAttackTo";
+            this.lblAttackTo.Size = new System.Drawing.Size(0, 25);
+            this.lblAttackTo.TabIndex = 20;
+            // 
+            // lblReinforce
+            // 
+            this.lblReinforce.AutoSize = true;
+            this.lblReinforce.Location = new System.Drawing.Point(827, 921);
+            this.lblReinforce.Name = "lblReinforce";
+            this.lblReinforce.Size = new System.Drawing.Size(0, 25);
+            this.lblReinforce.TabIndex = 21;
             // 
             // GameClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1869, 1442);
+            this.Controls.Add(this.lblReinforce);
+            this.Controls.Add(this.lblAttackTo);
+            this.Controls.Add(this.lblAttackFrom);
+            this.Controls.Add(this.radioReinforce);
+            this.Controls.Add(this.radioAttackDestination);
+            this.Controls.Add(this.radioAttackFrom);
             this.Controls.Add(this.cmbCurrentGames);
             this.Controls.Add(this.btnListAllSessions);
-            this.Controls.Add(this.txtSessionGuid);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.rtxPlayerStatus);
             this.Controls.Add(this.picBoard);
@@ -233,8 +296,13 @@
         private System.Windows.Forms.PictureBox picBoard;
         private System.Windows.Forms.RichTextBox rtxPlayerStatus;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtSessionGuid;
         private System.Windows.Forms.Button btnListAllSessions;
         private System.Windows.Forms.ComboBox cmbCurrentGames;
+        private System.Windows.Forms.RadioButton radioAttackFrom;
+        private System.Windows.Forms.RadioButton radioAttackDestination;
+        private System.Windows.Forms.RadioButton radioReinforce;
+        private System.Windows.Forms.Label lblAttackFrom;
+        private System.Windows.Forms.Label lblAttackTo;
+        private System.Windows.Forms.Label lblReinforce;
     }
 }

@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Influence.Domain;
 using System.Linq;
 using System.Net;
-using System.IO;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -22,6 +21,7 @@ namespace Influence.GameClient
         private int maxY;
         private int tileWidth;
         private int tileHeight;
+        private Label targetForClick;
 
         public GameClient()
         {
@@ -38,8 +38,7 @@ namespace Influence.GameClient
         {
             txtPlayerId.Text = Guid.NewGuid().ToString();
             txtPlayerName.Text = "Playername";
-            txtSessionBaseUrl.Text = "http://osl-ejay.co.int:84/ws.ashx";
-            txtSessionGuid.Text = Guid.NewGuid().ToString();
+            txtSessionBaseUrl.Text = "http://osl-ejay.co.int:85/ws.ashx";
         }
 
         private void DrawTile(Tile tile)
@@ -73,9 +72,8 @@ namespace Influence.GameClient
 
         private void PresentSession(Session session)
         {
-            var board = session.Board;
-            SetupTileMeasurements(board);
-            DrawBoard(board);
+            SetupTileMeasurements(session.Board);
+            DrawBoard(session.Board);
             WritePlayerStatistics(session);
         }
 
@@ -102,6 +100,8 @@ namespace Influence.GameClient
 
         private void DrawBoard(Board board)
         {
+            if (board == null)
+                return;
             foreach (var tileRow in board.TileRows)
                 foreach (var tile in tileRow.Tiles)
                     DrawTile(tile);
@@ -109,6 +109,8 @@ namespace Influence.GameClient
 
         private void SetupTileMeasurements(Board board)
         {
+            if (board == null)
+                return;
             maxY = board.TileRows.Count;
             maxX = board.TileRows.First().Tiles.Count;
             tileWidth = picBoard.Width / maxX;
@@ -117,7 +119,12 @@ namespace Influence.GameClient
 
         private void btnConnectToSession_Click(object sender, EventArgs e)
         {
-            var url = $"?join&session={txtSessionGuid.Text}&playerid={txtPlayerId.Text}&name={txtPlayerName.Text}";
+            if (!cmbCurrentGames.Enabled)
+            {
+                txtStatus.Text = "List sessions first";
+                return;
+            }
+            var url = $"?join&session={cmbCurrentGames.Text}&playerid={txtPlayerId.Text}&name={txtPlayerName.Text}";
             var response = GetResponse(url);
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -138,14 +145,23 @@ namespace Influence.GameClient
             foreach (var session in sessions)
             {
                 txtStatus.Text += $"Session: {session.Id}, Players: {session.Players.Count}{Environment.NewLine}";
-                cmbCurrentGames.Enabled = true;
                 cmbCurrentGames.Items.Insert(0, session.Id.ToString());
+            }
+            if (cmbCurrentGames.Items.Count > 0)
+            {
+                cmbCurrentGames.SelectedIndex = 0;
+                cmbCurrentGames.Enabled = true;
             }
         }
 
         private void btnShowSessionDetails_Click(object sender, EventArgs e)
         {
-            var response = GetResponse($"?session={txtSessionGuid.Text}");
+            if (!cmbCurrentGames.Enabled)
+            {
+                txtStatus.Text = "List sessions first";
+                return;
+            }
+            var response = GetResponse($"?session={cmbCurrentGames.Text}");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 txtStatus.Text += response.StatusDescription;
@@ -161,7 +177,26 @@ namespace Influence.GameClient
         private IRestResponse GetResponse(string url)
             => new RestClient(txtSessionBaseUrl.Text).Get(new RestRequest(url));
 
-        private void cmbCurrentGames_SelectedIndexChanged(object sender, EventArgs e)
-            => txtSessionGuid.Text = cmbCurrentGames.Text;
+        private void picBoard_Click(object sender, EventArgs e)
+        {
+            if (maxX == 0 || maxY == 0)
+                return;
+            MouseEventArgs me = (MouseEventArgs)e;
+            Point coordinates = me.Location;
+            int x = coordinates.X / (picBoard.Width / maxX);
+            int y = coordinates.Y / (picBoard.Height / maxY);
+            txtStatus.Text = $"Clicked on tile {x+1},{y+1}";
+            if (targetForClick != null)
+                targetForClick.Text = $"{x},{y}";
+        }
+
+        private void radioAttackFrom_CheckedChanged(object sender, EventArgs e)
+            => targetForClick = lblAttackFrom;
+
+        private void radioAttackDestination_CheckedChanged(object sender, EventArgs e)
+            => targetForClick = lblAttackTo;
+
+        private void radioReinforce_CheckedChanged(object sender, EventArgs e)
+            => targetForClick = lblReinforce;
     }
 }
