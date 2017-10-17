@@ -14,7 +14,8 @@ namespace Influence.Web
     {
         public bool IsReusable => false;
 
-        private const string RxViewSpecificSesssion = "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$";
+        private const string RxViewAllSessions = "^\\?sessions$";
+        private const string RxViewSpecificSession = "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z]{3,15})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
 
@@ -23,13 +24,17 @@ namespace Influence.Web
 
         public void ProcessRequest(HttpContext context)
         {
+            context.Response.ContentType = "text/plain";
+
             lock (Lock)
                 SetupDummyStuff();
 
-            context.Response.ContentType = "text/plain";
-            
             Match match;
-            if ((match = Regex.Match(context.Request.Url.Query, RxViewSpecificSesssion)).Success)
+
+            if (Regex.IsMatch(context.Request.Url.Query, RxViewAllSessions))
+                GetSessions(context);
+
+            else if ((match = Regex.Match(context.Request.Url.Query, RxViewSpecificSession)).Success)
                 GetSession(context, match);
 
             else if ((match = Regex.Match(context.Request.Url.Query, RxJoinSession)).Success)
@@ -38,7 +43,9 @@ namespace Influence.Web
             else if ((match = Regex.Match(context.Request.Url.Query, RxStartSession)).Success)
                 StartSession(context, match);
 
-            else GetSessions(context);
+            // Default behavior: List all sessions
+            else
+                GetSessions(context);
         }
 
         private void StartSession(HttpContext context, Match match)
