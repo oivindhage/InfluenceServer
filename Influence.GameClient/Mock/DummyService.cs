@@ -11,56 +11,65 @@ namespace Influence.GameClient.Mock
 
         public static Session GetDummySession()
         {
-            Session session = new Session();
-            session.Board = GetDummyBoard();
-            session.GameState = new GameState
-            {
-                CurrentPlayer = null,
-                PlayerPlayerPhase = PlayerPhaseEnum.Undefined,
-                GamePhase = GamePhaseEnum.Waiting
-            };
+            Session session = new Session(new RuleSet(6, 2, 5, 4), Guid.NewGuid());
+            session.Board = new Board(session.RuleSet.BoardSize);
+            AddPlayersToSession(session);
+            AddStartTilesForPlayers(session);
+            AddGameState(session);
+            AddParticipants(session);
             return session;
         }
 
-        public static Board GetDummyBoard()
+        private static void AddGameState(Session session)
         {
-            Board board = new Board();
-            board.TileRows = new List<TileRow>();
-            for (int r = 0;r < 6; ++r)
+            session.GameState = new GameState
             {
-                TileRow tileRow = CreateRandomTileRow(r);
-                board.TileRows.Add(tileRow);
-            }
-            AddPlayers(board);
-            return board;
+                CurrentPlayer = session.Players.OrderBy(x => random.NextDouble()).First(),
+                PlayerPhase = Consts.PlayerPhase.Undefined,
+                GamePhase = Consts.GamePhase.NotStarted
+            };
         }
 
-        private static void AddPlayers(Board board)
+        private static void AddPlayersToSession(Session session)
         {
-            for (int i = 0; i < 4;)
+            session.Players = new List<Player>() {
+                new Player(Guid.NewGuid(), "Archer", "255,120,120"),
+                new Player(Guid.NewGuid(), "Krieger", "120,255,120"),
+                new Player(Guid.NewGuid(), "Lana", "120,120,255"),
+                new Player(Guid.NewGuid(), "Cheryl", "255,120,255")
+            };
+        }
+
+        private static void AddParticipants(Session session)
+        {
+            var participants = new List<Participant>();
+            foreach (var player in session.Players)
             {
-                var tileRow = board.TileRows.OrderBy(x => random.NextDouble()).First();
+                var participant = new Participant(player, 0);
+                var ownedTiles = session.Board.TileRows
+                    .SelectMany(x => x.Tiles)
+                    .Where(x => player.Nick.Equals(x.OwnerNick));
+                participant.OwnedTiles.AddRange(ownedTiles);
+                participant.IsAlive = true;
+                participants.Add(participant);
+            }
+            session.GameState.Participants = participants;
+        }
+
+        private static void AddStartTilesForPlayers(Session session)
+        {
+            for (int i = 0; i < session.Players.Count;)
+            {
+                var tileRow = session.Board.TileRows.OrderBy(x => random.NextDouble()).First();
                 var tile = tileRow.Tiles.OrderBy(x => random.NextDouble()).First();
                 if (tile.NumTroops == 0)
                 {
-                    tile.OwnerNick = $"Player {i}";
-                    tile.OwnerId = Guid.NewGuid();
-                    tile.NumTroops = 2;
+                    tile.OwnerNick = session.Players[i].Nick;
+                    tile.OwnerId = session.Players[i].Id;
+                    tile.NumTroops = session.RuleSet.NumTroopsInStartTile;
                     ++i;
                 }
             }
-        }
-
-        private static TileRow CreateRandomTileRow(int rowId)
-        {
-            var tileRow = new TileRow();
-            tileRow.Tiles = new List<Tile>();
-            for (int t = 0;t < 6; ++t)
-            {
-                Tile tile = new Tile(t, rowId, 6);
-                tileRow.Tiles.Add(tile);
-            }
-            return tileRow;
         }
     }
 }

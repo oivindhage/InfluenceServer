@@ -39,19 +39,23 @@
             this.tmrPoll = new System.Windows.Forms.Timer(this.components);
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.btnUpdate = new System.Windows.Forms.Button();
-            this.btnDrawTiles = new System.Windows.Forms.Button();
+            this.btnDrawStatus = new System.Windows.Forms.Button();
             this.picBoard = new System.Windows.Forms.PictureBox();
+            this.rtxPlayerStatus = new System.Windows.Forms.RichTextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtSessionGuid = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
             // btnConnectToSession
             // 
-            this.btnConnectToSession.Location = new System.Drawing.Point(17, 163);
+            this.btnConnectToSession.Location = new System.Drawing.Point(19, 248);
             this.btnConnectToSession.Name = "btnConnectToSession";
             this.btnConnectToSession.Size = new System.Drawing.Size(278, 46);
             this.btnConnectToSession.TabIndex = 0;
             this.btnConnectToSession.Text = "Connect to session";
             this.btnConnectToSession.UseVisualStyleBackColor = true;
+            this.btnConnectToSession.Click += new System.EventHandler(this.btnConnectToSession_Click);
             // 
             // lblSessionUrl
             // 
@@ -64,9 +68,9 @@
             // 
             // txtSessionUrl
             // 
-            this.txtSessionUrl.Location = new System.Drawing.Point(127, 21);
+            this.txtSessionUrl.Location = new System.Drawing.Point(157, 21);
             this.txtSessionUrl.Name = "txtSessionUrl";
-            this.txtSessionUrl.Size = new System.Drawing.Size(926, 29);
+            this.txtSessionUrl.Size = new System.Drawing.Size(896, 29);
             this.txtSessionUrl.TabIndex = 2;
             // 
             // lblClientId
@@ -80,9 +84,9 @@
             // 
             // txtClientId
             // 
-            this.txtClientId.Location = new System.Drawing.Point(127, 69);
+            this.txtClientId.Location = new System.Drawing.Point(157, 69);
             this.txtClientId.Name = "txtClientId";
-            this.txtClientId.Size = new System.Drawing.Size(926, 29);
+            this.txtClientId.Size = new System.Drawing.Size(896, 29);
             this.txtClientId.TabIndex = 4;
             // 
             // label1
@@ -90,59 +94,86 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(14, 120);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 25);
+            this.label1.Size = new System.Drawing.Size(121, 25);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Player nick";
+            this.label1.Text = "Player name";
             // 
             // txtPlayerNick
             // 
-            this.txtPlayerNick.Location = new System.Drawing.Point(127, 116);
+            this.txtPlayerNick.Location = new System.Drawing.Point(157, 116);
             this.txtPlayerNick.Name = "txtPlayerNick";
-            this.txtPlayerNick.Size = new System.Drawing.Size(926, 29);
+            this.txtPlayerNick.Size = new System.Drawing.Size(896, 29);
             this.txtPlayerNick.TabIndex = 6;
             // 
             // txtStatus
             // 
-            this.txtStatus.Location = new System.Drawing.Point(17, 887);
+            this.txtStatus.Location = new System.Drawing.Point(17, 930);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(1036, 389);
+            this.txtStatus.Size = new System.Drawing.Size(1036, 346);
             this.txtStatus.TabIndex = 7;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(301, 163);
+            this.btnUpdate.Location = new System.Drawing.Point(303, 248);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(278, 46);
             this.btnUpdate.TabIndex = 8;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             // 
-            // btnDrawTiles
+            // btnDrawStatus
             // 
-            this.btnDrawTiles.Location = new System.Drawing.Point(585, 163);
-            this.btnDrawTiles.Name = "btnDrawTiles";
-            this.btnDrawTiles.Size = new System.Drawing.Size(278, 46);
-            this.btnDrawTiles.TabIndex = 9;
-            this.btnDrawTiles.Text = "Draw tiles";
-            this.btnDrawTiles.UseVisualStyleBackColor = true;
-            this.btnDrawTiles.Click += new System.EventHandler(this.btnDrawTiles_Click);
+            this.btnDrawStatus.Location = new System.Drawing.Point(587, 248);
+            this.btnDrawStatus.Name = "btnDrawStatus";
+            this.btnDrawStatus.Size = new System.Drawing.Size(278, 46);
+            this.btnDrawStatus.TabIndex = 9;
+            this.btnDrawStatus.Text = "Draw status";
+            this.btnDrawStatus.UseVisualStyleBackColor = true;
+            this.btnDrawStatus.Click += new System.EventHandler(this.btnDrawStatus_Click);
             // 
             // picBoard
             // 
-            this.picBoard.Location = new System.Drawing.Point(17, 243);
+            this.picBoard.Location = new System.Drawing.Point(19, 310);
             this.picBoard.Name = "picBoard";
             this.picBoard.Size = new System.Drawing.Size(600, 600);
             this.picBoard.TabIndex = 10;
             this.picBoard.TabStop = false;
+            // 
+            // rtxPlayerStatus
+            // 
+            this.rtxPlayerStatus.Location = new System.Drawing.Point(625, 310);
+            this.rtxPlayerStatus.Name = "rtxPlayerStatus";
+            this.rtxPlayerStatus.Size = new System.Drawing.Size(430, 591);
+            this.rtxPlayerStatus.TabIndex = 11;
+            this.rtxPlayerStatus.Text = "";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 173);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(136, 25);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Session GUID";
+            // 
+            // txtSessionGuid
+            // 
+            this.txtSessionGuid.Location = new System.Drawing.Point(157, 169);
+            this.txtSessionGuid.Name = "txtSessionGuid";
+            this.txtSessionGuid.Size = new System.Drawing.Size(896, 29);
+            this.txtSessionGuid.TabIndex = 13;
             // 
             // GameClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1869, 1297);
+            this.Controls.Add(this.txtSessionGuid);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.rtxPlayerStatus);
             this.Controls.Add(this.picBoard);
-            this.Controls.Add(this.btnDrawTiles);
+            this.Controls.Add(this.btnDrawStatus);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.txtPlayerNick);
@@ -173,7 +204,10 @@
         private System.Windows.Forms.Timer tmrPoll;
         private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Button btnUpdate;
-        private System.Windows.Forms.Button btnDrawTiles;
+        private System.Windows.Forms.Button btnDrawStatus;
         private System.Windows.Forms.PictureBox picBoard;
+        private System.Windows.Forms.RichTextBox rtxPlayerStatus;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtSessionGuid;
     }
 }

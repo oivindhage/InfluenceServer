@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Influence.Domain;
 using System.Linq;
+using System.Net;
+using System.IO;
 
 namespace Influence.GameClient
 {
@@ -34,24 +36,16 @@ namespace Influence.GameClient
         {
             txtClientId.Text = Guid.NewGuid().ToString();
             txtPlayerNick.Text = "Playername";
-        }
-
-        private void btnDrawTiles_Click(object sender, EventArgs e)
-        {
-            var session = DummyService.GetDummySession();
-            var board = session.Board;
-            maxY = board.TileRows.Count;
-            maxX = board.TileRows.First().Tiles.Count;
-            tileWidth = picBoard.Width / maxX;
-            tileHeight = picBoard.Height / maxY;
-            foreach (var tileRow in board.TileRows)
-                foreach (var tile in tileRow.Tiles)
-                    DrawTile(tile);
+            txtSessionUrl.Text = "http://osl-ejay.co.int:84/ws.ashx?join&session=<sessionId>&playerid=<playerId>&name=<name>";
+            txtSessionGuid.Text = Guid.NewGuid().ToString();
         }
 
         private void DrawTile(Tile tile)
         {
-            Color color = Color.SeaShell;
+            //Color color = string.IsNullOrEmpty(tile.ColorRgb)
+            //    ? Color.SeaShell
+            //    : DecodeRgb(tile.ColorRgb);
+            Color color = Color.SaddleBrown;
             string armyCountText = tile.NumTroops == 0
                 ? string.Empty
                 : $"{tile.NumTroops}";
@@ -59,6 +53,66 @@ namespace Influence.GameClient
             g.FillRectangle(new SolidBrush(color), rectangleF);
             g.DrawRectangle(pen, rectangleF.X, rectangleF.Y, rectangleF.X + rectangleF.Width, rectangleF.Y + rectangleF.Height);
             g.DrawString(armyCountText, font, brush, rectangleF, stringFormat);
+        }
+
+        private Color DecodeRgb(string colorRgb)
+        {
+            int[] rgb = colorRgb
+                .Split(',')
+                .Select(x => int.Parse(x))
+                .ToArray();
+            return Color.FromArgb(rgb[0], rgb[1], rgb[2]);
+        }
+
+        private void btnDrawStatus_Click(object sender, EventArgs e)
+        {
+            var session = DummyService.GetDummySession();
+            var board = session.Board;
+            SetupTileMeasurements(board);
+            DrawBoard(board);
+            WritePlayerStatistics(session);
+        }
+
+        private void WritePlayerStatistics(Session session)
+        {
+            var currentColor = rtxPlayerStatus.ForeColor;
+            foreach (var player in session.Players)
+            {
+                rtxPlayerStatus.ForeColor = DecodeRgb(player.ColorRgb);
+                var participant = session.GameState.Participants.First(x => x.Player.Id.Equals(player.Id));
+                if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
+                    rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
+                else
+                    rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
+                rtxPlayerStatus.AppendText($"{player.Nick}\n\tTiles: {participant.OwnedTiles}\n\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}");
+            }
+            rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
+            rtxPlayerStatus.ForeColor = currentColor;
+        }
+
+        private void DrawBoard(Board board)
+        {
+            foreach (var tileRow in board.TileRows)
+                foreach (var tile in tileRow.Tiles)
+                    DrawTile(tile);
+        }
+
+        private void SetupTileMeasurements(Board board)
+        {
+            maxY = board.TileRows.Count;
+            maxX = board.TileRows.First().Tiles.Count;
+            tileWidth = picBoard.Width / maxX;
+            tileHeight = picBoard.Height / maxY;
+        }
+
+        private void btnConnectToSession_Click(object sender, EventArgs e)
+        {
+            var request = WebRequest.Create("");
+            using (var response = request.GetResponse())
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                txtStatus.Text = reader.ReadToEnd();
+            }
         }
     }
 }
