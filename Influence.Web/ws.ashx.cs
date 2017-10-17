@@ -18,29 +18,75 @@ namespace Influence.Web
 
         public void ProcessRequest(HttpContext context)
         {
-            SetupDummyStuff();
+            lock (Lock)
+                SetupDummyStuff();
 
             context.Response.ContentType = "text/plain";
-
+            
             Match match;
-            if ((match = Regex.Match(context.Request.Url.Query, "session=(?<id>[A-Za-z0-9\\-]+)", RegexOptions.IgnoreCase)).Success)
-            {
-                Guid id;
-                if (Guid.TryParse(match.Groups["id"].Value, out id))
-                    context.Response.Write(JsonConvert.SerializeObject(new { Session = GameMaster.GetSessions() }));
-            }
+            if ((match = Regex.Match(context.Request.Url.Query, "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$", RegexOptions.IgnoreCase)).Success)
+                GetSession(context, match);
 
-            else
-                context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
+            else if ((match = Regex.Match(context.Request.Url.Query, 
+                "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&nick=(?<nick>[a-zA-Z]{3,15})$", RegexOptions.IgnoreCase)).Success)
+                JoinSession(context, match);
+
+            else GetSessions(context);
+        }
+
+        private void JoinSession(HttpContext context, Match match)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            string nick;
+            Guid sessionId, playerId;
+            if (Guid.TryParse(match.Groups["sessionid"].Value, out sessionId) 
+                && Guid.TryParse(match.Groups["playerid"].Value, out playerId) 
+                && !string.IsNullOrEmpty((nick = match.Groups["nick"].Value))
+                && nick.Length > 3)
+            {
+                var session = GameMaster.GetSession(sessionId);
+                if (session != null)
+                {
+                    if (session.AddPlayer(playerId, nick))
+                    {
+                        var player = session.Players.Single(p => p.Id == playerId);
+
+                        context.Response.StatusCode = (int) HttpStatusCode.OK;
+                        context.Response.Write($"Velkommen til session {sessionId}, {nick}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
+                    }
+
+                    else if (session.Players.Any(p => p.Id == playerId))
+                    {
+                        context.Response.Write("Du er allerede med i denne session.");
+                    }
+
+                    else
+                    {
+                        context.Response.Write(
+                            "Dårlig forespørsel.\r\n" +
+                            "Format: sessionid=guid&playerid=guid&nick=something\r\n" +
+                            "Nick: 3-15 bokstaver a-zA-Z\r\n" +
+                            "Se was.ashx/ for liste over sessions. Finn en som kan joines, og et spillernavn som ikke er tatt");
+                    }
+                }
+                else context.Response.Write("Ugyldig session ID");
+            }
+        }
+
+        private void GetSessions(HttpContext context) => context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
+
+        private void GetSession(HttpContext context, Match match)
+        {
+            Guid sessionId;
+            if (Guid.TryParse(match.Groups["sessionid"].Value, out sessionId))
+                context.Response.Write(JsonConvert.SerializeObject(new { Session = GameMaster.GetSessions() }));
         }
 
         private void SetupDummyStuff()
         {
-            lock (Lock)
-            {
-                if (!GameMaster.GetSessions().Any())
-                    GameMaster.CreateSession(RuleSet, new Guid("f041ae8c-e597-4af2-933d-77cf538e14cb"));
-            }
+            if (!GameMaster.GetSessions().Any())
+                GameMaster.CreateSession(RuleSet, new Guid("f041ae8c-e597-4af2-933d-77cf538e14cb"));
         }
     }
 }

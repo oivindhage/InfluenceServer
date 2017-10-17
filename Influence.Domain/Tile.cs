@@ -9,6 +9,7 @@ namespace Influence.Domain
         public Guid OwnerId { get; set; }
 
         public string OwnerNick { get; set; }
+        public string OwnerColorRgbCsv { get; set; }
         public int NumTroops { get; set; }
 
         public int X { get; }

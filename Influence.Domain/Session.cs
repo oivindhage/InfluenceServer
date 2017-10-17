@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Influence.Domain
 {
     public class Session
     {
+        private static readonly List<string> PlayerColors = new List<string> {"255,0,0", "0,0,255", "0,255,0", "128,128,0"};
+
         public Guid Id { get; }
 
         public List<Player> Players { get; set; }
@@ -21,6 +24,17 @@ namespace Influence.Domain
             RoundNumber = 0;
             RuleSet = ruleSet;
             Board = new Board(ruleSet.BoardSize);
+        }
+
+        public bool AddPlayer(Guid playerId, string playerName)
+        {
+            if (playerId != Guid.Empty && Players.All(p => p.Id != playerId) && Players.Count < RuleSet.MaxNumPlayersInGame)
+            {
+                Players.Add(new Player(playerId, playerName, PlayerColors[Players.Count]));
+                return true;
+            }
+
+            return false;
         }
     }
 }
