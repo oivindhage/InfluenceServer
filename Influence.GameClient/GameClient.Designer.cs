@@ -51,6 +51,7 @@
             this.lblAttackFrom = new System.Windows.Forms.Label();
             this.lblAttackTo = new System.Windows.Forms.Label();
             this.lblReinforce = new System.Windows.Forms.Label();
+            this.btnCreateSession = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
@@ -245,11 +246,22 @@
             this.lblReinforce.Size = new System.Drawing.Size(0, 25);
             this.lblReinforce.TabIndex = 21;
             // 
+            // btnCreateSession
+            // 
+            this.btnCreateSession.Location = new System.Drawing.Point(303, 367);
+            this.btnCreateSession.Name = "btnCreateSession";
+            this.btnCreateSession.Size = new System.Drawing.Size(278, 46);
+            this.btnCreateSession.TabIndex = 22;
+            this.btnCreateSession.Text = "Create session";
+            this.btnCreateSession.UseVisualStyleBackColor = true;
+            this.btnCreateSession.Click += new System.EventHandler(this.btnCreateSession_Click);
+            // 
             // GameClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1869, 1442);
+            this.Controls.Add(this.btnCreateSession);
             this.Controls.Add(this.lblReinforce);
             this.Controls.Add(this.lblAttackTo);
             this.Controls.Add(this.lblAttackFrom);
@@ -304,5 +316,6 @@
         private System.Windows.Forms.Label lblAttackFrom;
         private System.Windows.Forms.Label lblAttackTo;
         private System.Windows.Forms.Label lblReinforce;
+        private System.Windows.Forms.Button btnCreateSession;
     }
 }

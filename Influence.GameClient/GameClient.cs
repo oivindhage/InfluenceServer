@@ -198,5 +198,14 @@ namespace Influence.GameClient
 
         private void radioReinforce_CheckedChanged(object sender, EventArgs e)
             => targetForClick = lblReinforce;
+
+        private void btnCreateSession_Click(object sender, EventArgs e)
+        {
+            var response = GetResponse("?create");
+            if (response.StatusCode != HttpStatusCode.OK)
+                txtStatus.Text = response.StatusDescription;
+            else
+                txtStatus.Text = response.Content;
+        }
     }
 }
