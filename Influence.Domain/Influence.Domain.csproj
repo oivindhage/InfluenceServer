@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Consts.cs" />
+    <Compile Include="Coordinate.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Participant.cs" />
     <Compile Include="Player.cs" />

@@ -13,36 +13,34 @@ namespace Influence.Web
     public class ws : IHttpHandler
     {
         public bool IsReusable => false;
-
-        private const string DummySessionGuid = "f041ae8c-e597-4af2-933d-77cf538e14cb";
+        public void ProcessRequest(HttpContext context) => HandleQuery(context, context.Request.Url.Query);
 
         private const string RxViewAllSessions = "^\\?sessions$";
         private const string RxViewSpecificSession = "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$";
-        private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z]{3,15})$";
+        private const string RxCreateSession = "^\\?create=?(?<sessionid>[A-Za-z0-9\\-]*)$";
+        private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
-
-        private static readonly object Lock = new object();
+        
         private static readonly RuleSet RuleSet = RuleSet.Default;
 
-        public void ProcessRequest(HttpContext context)
+        private void HandleQuery(HttpContext context, string query)
         {
+            Match match;
             context.Response.ContentType = "text/plain";
 
-            lock (Lock)
-                SetupDummyStuff();
-
-            Match match;
-
-            if (Regex.IsMatch(context.Request.Url.Query, RxViewAllSessions))
+            if (Regex.IsMatch(query, RxViewAllSessions))
                 GetSessions(context);
 
-            else if ((match = Regex.Match(context.Request.Url.Query, RxViewSpecificSession)).Success)
+            else if ((match = Regex.Match(query, RxCreateSession)).Success)
+                CreateSession(context, match);
+
+            else if ((match = Regex.Match(query, RxViewSpecificSession)).Success)
                 GetSession(context, match);
 
-            else if ((match = Regex.Match(context.Request.Url.Query, RxJoinSession)).Success)
+            else if ((match = Regex.Match(query, RxJoinSession)).Success)
                 JoinSession(context, match);
 
-            else if ((match = Regex.Match(context.Request.Url.Query, RxStartSession)).Success)
+            else if ((match = Regex.Match(query, RxStartSession)).Success)
                 StartSession(context, match);
 
             else
@@ -51,86 +49,112 @@ namespace Influence.Web
 
         private void Help(HttpContext context)
         {
-            context.Response.Write(
+            Ok(context,
                 "Brukerhilfe:\r\n\r\n" +
                 "Vis alle sessions: ws.ashx?sessions\r\n" +
                 "Vis spesifikk session: ws.ashx?session=guid\r\n" +
-                "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alpha3to15chars\r\n" +
+                "Opprett session: ws.ashx?create\r\n" +
+                "Opprett spesifikk session: ws.ashx?create=guid\r\n" +
+                "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n" +
                 "Start en session: ws.ashx?start&session=guid");
         }
 
+        private void CreateSession(HttpContext context, Match match)
+        {
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            if (sessionId.NotValid())
+                sessionId = Guid.NewGuid();
+
+            if (GameMaster.GetSession(sessionId) != null)
+                BadRequest(context, "En session med denne id-en finnes fra før");
+            else
+            {
+                GameMaster.CreateSession(RuleSet, sessionId);
+                Ok(context, $"Session {sessionId} opprettet");
+            }
+        }
+
+
         private void StartSession(HttpContext context, Match match)
         {
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            var session = sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
 
+            if (session == null)
+                BadRequest(context, "Det fins ingen session med den Id-en der");
+            else if (session.Players.Count < 1)
+                BadRequest(context, "Minst 1 spiller må ha joinet denne session før den kan startes");
+            else
+            {
+                session.Start();
+                Ok(context, $"Session {session.Id} startet");
+            }
         }
 
         private void JoinSession(HttpContext context, Match match)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
             var name = match.Groups["name"].Value.DefaultTo(string.Empty);
             var sessionId = match.Groups["sessionid"].Value.ToGuid();
             var playerId = match.Groups["playerid"].Value.ToGuid();
 
-            if (name.Length < 3 || name.Length > 15)
-                context.Response.Write("Navn må være 3-15 bokstaver, A-Z");
+            if (name.Length < 3 || name.Length > 20)
+                BadRequest(context, "Navn må være 3-20 bokstaver, A-Z");
 
             else if (sessionId.NotValid())
-                context.Response.Write("SessionId ser ikke riktig ut");
+                BadRequest(context, "SessionId ser ikke riktig ut");
 
             else if (playerId.NotValid())
-                context.Response.Write("PlayerId ser ikke riktig ut");
+                BadRequest(context, "PlayerId ser ikke riktig ut");
 
             else
             {
                 var session = GameMaster.GetSession(sessionId);
 
                 if (session == null)
-                    context.Response.Write("Ugyldig SessionId");
+                    BadRequest(context, "Ugyldig SessionId");
 
                 else if (session.Id == playerId)
-                    context.Response.Write("PlayerId må være ulik SessionId");
+                    BadRequest(context, "PlayerId må være ulik SessionId");
 
                 else
                 {
                     if (session.AddPlayer(playerId, name))
                     {
                         var player = session.Players.Single(p => p.Id == playerId);
-
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
-                        context.Response.Write($"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
+                        Ok(context, $"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
                     }
 
                     else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        context.Response.Write("Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
+                        BadRequest(context, "Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
                     }
                 }
             }
         }
 
         private void GetSessions(HttpContext context) 
-            => context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
+            => Ok(context, JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
 
         private void GetSession(HttpContext context, Match match)
         {
             var sessionId = match.Groups["sessionid"].Value.ToGuid();
             var session = sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
             if (session != null)
-            {
-                context.Response.Write(JsonConvert.SerializeObject(new { Session = session }));
-            }
+                Ok(context, JsonConvert.SerializeObject(new { Session = session }));
             else
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.Write("Ugyldig SessionId");
-            }
+                BadRequest(context, "Ugyldig SessionId");
         }
 
-        private void SetupDummyStuff()
+        private void Ok(HttpContext context, string message)
         {
-            if (!GameMaster.GetSessions().Any())
-                GameMaster.CreateSession(RuleSet, new Guid(DummySessionGuid));
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+            context.Response.Write(message);
+        }
+
+        private void BadRequest(HttpContext context, string message)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            context.Response.Write(message);
         }
     }
 }
