@@ -185,7 +185,7 @@ namespace Influence.GameClient
             Point coordinates = me.Location;
             int x = coordinates.X / (picBoard.Width / maxX);
             int y = coordinates.Y / (picBoard.Height / maxY);
-            txtStatus.Text = $"Clicked on tile {x+1},{y+1}";
+            txtStatus.Text = $"Clicked on tile {x + 1},{y + 1}";
             if (targetForClick != null)
                 targetForClick.Text = $"{x},{y}";
         }
@@ -202,6 +202,20 @@ namespace Influence.GameClient
         private void btnCreateSession_Click(object sender, EventArgs e)
         {
             var response = GetResponse("?create");
+            if (response.StatusCode != HttpStatusCode.OK)
+                txtStatus.Text = response.StatusDescription;
+            else
+                txtStatus.Text = response.Content;
+        }
+
+        private void btnStartSession_Click(object sender, EventArgs e)
+        {
+            if (!cmbCurrentGames.Enabled)
+            {
+                txtStatus.Text = "List sessions first";
+                return;
+            }
+            var response = GetResponse($"ws.ashx?start&session={cmbCurrentGames.Text}");
             if (response.StatusCode != HttpStatusCode.OK)
                 txtStatus.Text = response.StatusDescription;
             else
