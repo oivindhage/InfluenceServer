@@ -13,9 +13,9 @@ namespace Influence.Domain
         public RuleSet RuleSet { get; set; }
         public Board Board { get; set; }
 
-        public Session(RuleSet ruleSet)
+        public Session(RuleSet ruleSet, Guid id = default(Guid))
         {
-            Id = Guid.NewGuid();
+            Id = id == Guid.Empty ? Guid.NewGuid() : id;
             Players = new List<Player>();
             GameState = new GameState();
             RoundNumber = 0;

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Influence.Domain;
 
 namespace Influence.Services
@@ -7,9 +9,13 @@ namespace Influence.Services
     {
         private static List<Session> Sessions { get; } = new List<Session>();
 
-        public static List<Session> GetSessions() => Sessions;
+        public static List<Session> GetSessions() 
+            => Sessions;
 
-        public static void CreateSession(RuleSet ruleSet) 
-            => Sessions.Add(new Session(ruleSet));
+        public static Session GetSession(Guid guid) 
+            => Sessions.FirstOrDefault(s => s.Id == guid);
+
+        public static void CreateSession(RuleSet ruleSet, Guid id = default(Guid)) 
+            => Sessions.Add(new Session(ruleSet, id));
     }
 }
