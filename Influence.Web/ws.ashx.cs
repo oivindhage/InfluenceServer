@@ -74,7 +74,6 @@ namespace Influence.Web
             }
         }
 
-
         private void StartSession(HttpContext context, Match match)
         {
             var sessionId = match.Groups["sessionid"].Value.ToGuid();
@@ -86,8 +85,12 @@ namespace Influence.Web
                 BadRequest(context, "Minst 1 spiller må ha joinet denne session før den kan startes");
             else
             {
-                session.Start();
-                Ok(context, $"Session {session.Id} startet");
+                bool couldStart = session.Start();
+
+                if (!couldStart)
+                    BadRequest(context, $"Klarte ikke å starte session {session.Id}. Er den allerede startet?");
+                else
+                    Ok(context, $"Session {session.Id} startet");
             }
         }
 

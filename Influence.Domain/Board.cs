@@ -85,6 +85,7 @@ namespace Influence.Domain
 
             tile.NumTroops = Math.Min(_ruleSet.MaxNumTroopsInTile, numTroops);
             tile.OwnerId = owner.Id;
+            tile.OwnerName = owner.Name;
             tile.OwnerColorRgbCsv = owner.ColorRgbCsv;
 
             if (!DirtyTiles.Any(d => d.X == tileX && d.Y == tileY))

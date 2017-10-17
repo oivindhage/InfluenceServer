@@ -49,11 +49,16 @@ namespace Influence.Domain
             return false;
         }
 
-        public void Start()
+        public bool Start()
         {
+            if (GameState.GamePhase != Consts.GamePhase.NotStarted)
+                return false;
+
             GameState.GamePhase = Consts.GamePhase.Ongoing;
             CurrentBoard.PlacePlayers(Players);
             RoundNumber = 1;
+
+            return true;
         }
     }
 }
