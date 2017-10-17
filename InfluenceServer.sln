@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Web", "Influence.Web\Influence.Web.csproj", "{81EF8DF0-B5FC-4514-B692-B5C06D5DD5C5}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Services", "Influence.Services\Influence.Services.csproj", "{3291F932-D71F-4A6D-8025-2FB823E95B14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.WinClient", "Influence.WinClient\Influence.WinClient.csproj", "{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.GameClient", "Influence.GameClient\Influence.GameClient.csproj", "{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +35,15 @@ Global
 		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68A69F3B-D2F8-4E80-8242-7F03A583AFB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DD11A55D-E019-4D4C-9A5A-CDE1300CD573}
 	EndGlobalSection
 EndGlobal
