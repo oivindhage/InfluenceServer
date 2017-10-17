@@ -24,11 +24,11 @@ namespace Influence.Web
             context.Response.ContentType = "text/plain";
             
             Match match;
-            if ((match = Regex.Match(context.Request.Url.Query, "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$", RegexOptions.IgnoreCase)).Success)
+            if ((match = Regex.Match(context.Request.Url.Query, "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$")).Success)
                 GetSession(context, match);
 
             else if ((match = Regex.Match(context.Request.Url.Query, 
-                "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&nick=(?<nick>[a-zA-Z]{3,15})$", RegexOptions.IgnoreCase)).Success)
+                "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&nick=(?<nick>[a-zA-Z]{3,15})$")).Success)
                 JoinSession(context, match);
 
             else GetSessions(context);
