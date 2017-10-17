@@ -9,3 +9,5 @@ Influence.WinClient/obj/
 packages/
 .vs/
 *.csproj.user
+Influence.Common/bin/
+Influence.Common/obj/

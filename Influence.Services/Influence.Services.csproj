@@ -52,6 +52,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Influence.Common\Influence.Common.csproj">
+      <Project>{a5eed967-4465-4eba-b1e9-74cbbe5dc3e8}</Project>
+      <Name>Influence.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Influence.Domain\Influence.Domain.csproj">
       <Project>{1f1f5abc-3b01-454a-909d-2894eaef680f}</Project>
       <Name>Influence.Domain</Name>

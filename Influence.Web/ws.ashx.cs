@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using Influence.Common.Extensions;
 using Influence.Domain;
 using Influence.Services;
 using Newtonsoft.Json;
@@ -38,15 +39,27 @@ namespace Influence.Web
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            string name;
-            Guid sessionId, playerId;
-            if (Guid.TryParse(match.Groups["sessionid"].Value, out sessionId) 
-                && Guid.TryParse(match.Groups["playerid"].Value, out playerId) 
-                && !string.IsNullOrEmpty((name = match.Groups["name"].Value))
-                && name.Length > 3)
+            string name = match.Groups["name"].Value.DefaultTo(string.Empty);
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            var playerId = match.Groups["playerid"].Value.ToGuid();
+
+            if (name.Length < 3 || name.Length > 15)
+                context.Response.Write("Navn må være 3-15 bokstaver, A-Z");
+
+            else if (sessionId.NotValid())
+                context.Response.Write("SessionId ser ikke riktig ut");
+
+            else if (playerId.NotValid())
+                context.Response.Write("PlayerId ser ikke riktig ut");
+
+            else
             {
                 var session = GameMaster.GetSession(sessionId);
-                if (session != null)
+
+                if (session == null)
+                    context.Response.Write("Ugyldig session ID");
+
+                else
                 {
                     if (session.AddPlayer(playerId, name))
                     {
@@ -56,21 +69,11 @@ namespace Influence.Web
                         context.Response.Write($"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
                     }
 
-                    else if (session.Players.Any(p => p.Id == playerId))
+                    else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        context.Response.Write("Du er allerede med i denne session.");
-                    }
-
-                    else
-                    {
-                        context.Response.Write(
-                            "Dårlig forespørsel.\r\n" +
-                            "Format: sessionid=guid&playerid=guid&name=something\r\n" +
-                            "Name: 3-15 bokstaver a-zA-Z\r\n" +
-                            "Se was.ashx/ for liste over sessions. Finn en som kan joines, og et spillernavn som ikke er tatt");
+                        context.Response.Write("Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
                     }
                 }
-                else context.Response.Write("Ugyldig session ID");
             }
         }
 

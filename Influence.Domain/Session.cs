@@ -10,10 +10,10 @@ namespace Influence.Domain
 
         public Guid Id { get; }
 
-        public List<Player> Players { get; set; }
+        public List<Player> Players { get; }
         public int RoundNumber { get; set; }
-        public GameState GameState { get; set; }
-        public RuleSet RuleSet { get; set; }
+        public GameState GameState { get;  }
+        public RuleSet RuleSet { get; }
         public Board Board { get; set; }
 
         public Session(RuleSet ruleSet, Guid id = default(Guid))
@@ -23,13 +23,19 @@ namespace Influence.Domain
             GameState = new GameState();
             RoundNumber = 0;
             RuleSet = ruleSet;
-            Board = new Board(ruleSet.BoardSize);
+            
+            GenerateNewBoard();
+        }
+
+        public void GenerateNewBoard()
+        {
+            Board = new Board(RuleSet.BoardSize);
         }
 
         public bool AddPlayer(Guid playerId, string playerName)
         {
             if (playerId != Guid.Empty && Players.All(p => p.Id != playerId) 
-                && Players.All(p => p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) 
+                && Players.All(p => !p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) 
                 && Players.Count < RuleSet.MaxNumPlayersInGame)
             {
                 Players.Add(new Player(playerId, playerName, PlayerColors[Players.Count]));
