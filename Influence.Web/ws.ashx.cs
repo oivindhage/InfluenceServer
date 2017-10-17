@@ -14,6 +14,8 @@ namespace Influence.Web
     {
         public bool IsReusable => false;
 
+        private const string DummySessionGuid = "f041ae8c-e597-4af2-933d-77cf538e14cb";
+
         private const string RxViewAllSessions = "^\\?sessions$";
         private const string RxViewSpecificSession = "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z]{3,15})$";
@@ -50,7 +52,7 @@ namespace Influence.Web
         private void Help(HttpContext context)
         {
             context.Response.Write(
-                "Brukerhilfe:\r\n" +
+                "Brukerhilfe:\r\n\r\n" +
                 "Vis alle sessions: ws.ashx?sessions\r\n" +
                 "Vis spesifikk session: ws.ashx?session=guid\r\n" +
                 "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alpha3to15chars\r\n" +
@@ -66,7 +68,7 @@ namespace Influence.Web
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            string name = match.Groups["name"].Value.DefaultTo(string.Empty);
+            var name = match.Groups["name"].Value.DefaultTo(string.Empty);
             var sessionId = match.Groups["sessionid"].Value.ToGuid();
             var playerId = match.Groups["playerid"].Value.ToGuid();
 
@@ -107,7 +109,8 @@ namespace Influence.Web
             }
         }
 
-        private void GetSessions(HttpContext context) => context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
+        private void GetSessions(HttpContext context) 
+            => context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
 
         private void GetSession(HttpContext context, Match match)
         {
@@ -127,7 +130,7 @@ namespace Influence.Web
         private void SetupDummyStuff()
         {
             if (!GameMaster.GetSessions().Any())
-                GameMaster.CreateSession(RuleSet, new Guid("f041ae8c-e597-4af2-933d-77cf538e14cb"));
+                GameMaster.CreateSession(RuleSet, new Guid(DummySessionGuid));
         }
     }
 }
