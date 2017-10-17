@@ -6,6 +6,8 @@ using Influence.Domain;
 using System.Linq;
 using System.Net;
 using System.IO;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace Influence.GameClient
 {
@@ -34,18 +36,17 @@ namespace Influence.GameClient
 
         private void GameClient_Load(object sender, EventArgs e)
         {
-            txtClientId.Text = Guid.NewGuid().ToString();
-            txtPlayerNick.Text = "Playername";
-            txtSessionUrl.Text = "http://osl-ejay.co.int:84/ws.ashx?join&session=<sessionId>&playerid=<playerId>&name=<name>";
+            txtPlayerId.Text = Guid.NewGuid().ToString();
+            txtPlayerName.Text = "Playername";
+            txtSessionBaseUrl.Text = "http://osl-ejay.co.int:84/ws.ashx";
             txtSessionGuid.Text = Guid.NewGuid().ToString();
         }
 
         private void DrawTile(Tile tile)
         {
-            //Color color = string.IsNullOrEmpty(tile.ColorRgb)
-            //    ? Color.SeaShell
-            //    : DecodeRgb(tile.ColorRgb);
-            Color color = Color.SaddleBrown;
+            Color color = string.IsNullOrEmpty(tile.OwnerColorRgbCsv)
+                ? Color.RosyBrown
+                : DecodeRgb(tile.OwnerColorRgbCsv);
             string armyCountText = tile.NumTroops == 0
                 ? string.Empty
                 : $"{tile.NumTroops}";
@@ -67,6 +68,11 @@ namespace Influence.GameClient
         private void btnDrawStatus_Click(object sender, EventArgs e)
         {
             var session = DummyService.GetDummySession();
+            PresentSession(session);
+        }
+
+        private void PresentSession(Session session)
+        {
             var board = session.Board;
             SetupTileMeasurements(board);
             DrawBoard(board);
@@ -75,19 +81,23 @@ namespace Influence.GameClient
 
         private void WritePlayerStatistics(Session session)
         {
-            var currentColor = rtxPlayerStatus.ForeColor;
+            if (session.GameState.GamePhase.Equals(Consts.GamePhase.NotStarted))
+                return;
+            rtxPlayerStatus.Text = string.Empty;
             foreach (var player in session.Players)
             {
-                rtxPlayerStatus.ForeColor = DecodeRgb(player.ColorRgb);
                 var participant = session.GameState.Participants.First(x => x.Player.Id.Equals(player.Id));
+                rtxPlayerStatus.SelectionStart = rtxPlayerStatus.TextLength;
+                rtxPlayerStatus.SelectionLength = 0;
+                rtxPlayerStatus.SelectionColor = DecodeRgb(player.ColorRgbCsv);
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
-                    rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
-                else
-                    rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
-                rtxPlayerStatus.AppendText($"{player.Nick}\n\tTiles: {participant.OwnedTiles}\n\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}");
+                    rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
+                rtxPlayerStatus.AppendText($"{player.Name}\n");
+                rtxPlayerStatus.AppendText($"\tTiles: {participant.OwnedTiles.Count}\n");
+                rtxPlayerStatus.AppendText($"\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}\n");
+                rtxPlayerStatus.SelectionColor = rtxPlayerStatus.ForeColor;
+                rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
             }
-            rtxPlayerStatus.Font = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
-            rtxPlayerStatus.ForeColor = currentColor;
         }
 
         private void DrawBoard(Board board)
@@ -107,12 +117,51 @@ namespace Influence.GameClient
 
         private void btnConnectToSession_Click(object sender, EventArgs e)
         {
-            var request = WebRequest.Create("");
-            using (var response = request.GetResponse())
-            using (var reader = new StreamReader(response.GetResponseStream()))
+            var url = $"?join&session={txtSessionGuid.Text}&playerid={txtPlayerId.Text}&name={txtPlayerName.Text}";
+            var response = GetResponse(url);
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                txtStatus.Text = reader.ReadToEnd();
+                txtStatus.Text += response.StatusDescription;
+                return;
+            }
+            txtStatus.Text += response.Content;
+        }
+
+        private void btnListAllSessions_Click(object sender, EventArgs e)
+        {
+            txtStatus.Text = string.Empty;
+            var response = GetResponse("?sessions");
+            dynamic converted = JsonConvert.DeserializeObject(response.Content);
+            var sessionsJson = converted.Sessions.ToString();
+            Session[] sessions = JsonConvert.DeserializeObject<Session[]>(sessionsJson);
+            cmbCurrentGames.Items.Clear();
+            foreach (var session in sessions)
+            {
+                txtStatus.Text += $"Session: {session.Id}, Players: {session.Players.Count}{Environment.NewLine}";
+                cmbCurrentGames.Enabled = true;
+                cmbCurrentGames.Items.Insert(0, session.Id.ToString());
             }
         }
+
+        private void btnShowSessionDetails_Click(object sender, EventArgs e)
+        {
+            var response = GetResponse($"?session={txtSessionGuid.Text}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                txtStatus.Text += response.StatusDescription;
+                return;
+            }
+            txtStatus.Text = response.Content;
+            dynamic converted = JsonConvert.DeserializeObject(response.Content);
+            var sessionJson = converted.Session.ToString();
+            Session session = JsonConvert.DeserializeObject<Session>(sessionJson);
+            PresentSession(session);
+        }
+
+        private IRestResponse GetResponse(string url)
+            => new RestClient(txtSessionBaseUrl.Text).Get(new RestRequest(url));
+
+        private void cmbCurrentGames_SelectedIndexChanged(object sender, EventArgs e)
+            => txtSessionGuid.Text = cmbCurrentGames.Text;
     }
 }
