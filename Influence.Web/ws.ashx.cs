@@ -43,14 +43,23 @@ namespace Influence.Web
             else if ((match = Regex.Match(context.Request.Url.Query, RxStartSession)).Success)
                 StartSession(context, match);
 
-            // Default behavior: List all sessions
             else
-                GetSessions(context);
+                Help(context);
+        }
+
+        private void Help(HttpContext context)
+        {
+            context.Response.Write(
+                "Brukerhilfe:\r\n" +
+                "Vis alle sessions: ws.ashx?sessions\r\n" +
+                "Vis spesifikk session: ws.ashx?session=guid\r\n" +
+                "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alpha3to15chars\r\n" +
+                "Start en session: ws.ashx?start&session=guid");
         }
 
         private void StartSession(HttpContext context, Match match)
         {
-            
+
         }
 
         private void JoinSession(HttpContext context, Match match)
@@ -75,7 +84,10 @@ namespace Influence.Web
                 var session = GameMaster.GetSession(sessionId);
 
                 if (session == null)
-                    context.Response.Write("Ugyldig session ID");
+                    context.Response.Write("Ugyldig SessionId");
+
+                else if (session.Id == playerId)
+                    context.Response.Write("PlayerId må være ulik SessionId");
 
                 else
                 {
@@ -83,7 +95,7 @@ namespace Influence.Web
                     {
                         var player = session.Players.Single(p => p.Id == playerId);
 
-                        context.Response.StatusCode = (int) HttpStatusCode.OK;
+                        context.Response.StatusCode = (int)HttpStatusCode.OK;
                         context.Response.Write($"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
                     }
 
@@ -99,9 +111,17 @@ namespace Influence.Web
 
         private void GetSession(HttpContext context, Match match)
         {
-            Guid sessionId;
-            if (Guid.TryParse(match.Groups["sessionid"].Value, out sessionId))
-                context.Response.Write(JsonConvert.SerializeObject(new { Session = GameMaster.GetSessions() }));
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            var session = sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
+            if (session != null)
+            {
+                context.Response.Write(JsonConvert.SerializeObject(new { Session = session }));
+            }
+            else
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.Write("Ugyldig SessionId");
+            }
         }
 
         private void SetupDummyStuff()
