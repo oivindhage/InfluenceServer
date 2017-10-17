@@ -9,15 +9,7 @@ namespace Influence.Services
 
         public static List<Session> GetSessions() => Sessions;
 
-        public static void CreateSession()
-        {
-            Sessions.Add(new Session
-            {
-                Board = new Board(6),
-                GameState = new GameState { CurrentPlayer = null, GamePhase = GamePhaseEnum.NotStarted, PlayerPlayerPhase = PlayerPhaseEnum.Undefined},
-                Players = new List<Player>(),
-                RoundNumber = 0
-            });
-        }
+        public static void CreateSession(RuleSet ruleSet) 
+            => Sessions.Add(new Session(ruleSet));
     }
 }

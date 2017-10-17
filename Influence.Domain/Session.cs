@@ -11,10 +11,16 @@ namespace Influence.Domain
         public int RoundNumber { get; set; }
         public Board Board { get; set; }
         public GameState GameState { get; set; }
+        public RuleSet RuleSet { get; set; }
 
-        public Session()
+        public Session(RuleSet ruleSet)
         {
             Id = Guid.NewGuid();
+            Players = new List<Player>();
+            GameState = new GameState();
+            RoundNumber = 0;
+
+            Board = new Board(ruleSet.BoardSize);
         }
     }
 }

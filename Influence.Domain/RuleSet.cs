@@ -1,4 +1,6 @@
-﻿namespace Influence.Domain
+﻿using System;
+
+namespace Influence.Domain
 {
     public class RuleSet
     {
@@ -12,5 +14,7 @@
         public int BoardSize { get; }
         public int NumTroopsInStartTile { get; }
         public int MaxNumTroopsInTile { get; }
+
+        public static readonly RuleSet Default = new RuleSet(boardSize: 6, numTroopsInStartTile:2, maxNumTroopsInTile:5);
     }
 }
