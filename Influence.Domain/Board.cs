@@ -10,7 +10,7 @@ namespace Influence.Domain
         {
             for (int rowNum = 0; rowNum < size; rowNum++)
             {
-                var row = new TileRow();
+                var row = new TileRow(rowNum);
 
                 for (int colNum = 0; colNum < size; colNum++)
                 {

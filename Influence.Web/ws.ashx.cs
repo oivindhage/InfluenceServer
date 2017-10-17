@@ -27,11 +27,11 @@ namespace Influence.Web
             {
                 Guid id;
                 if (Guid.TryParse(match.Groups["id"].Value, out id))
-                    context.Response.Write(JsonConvert.SerializeObject(new {Session = GameMaster.GetSessions()}));
+                    context.Response.Write(JsonConvert.SerializeObject(new { Session = GameMaster.GetSessions() }));
             }
 
             else
-                context.Response.Write(JsonConvert.SerializeObject(new {Sessions = GameMaster.GetSessions()}));
+                context.Response.Write(JsonConvert.SerializeObject(new { Sessions = GameMaster.GetSessions() }));
         }
 
         private void SetupDummyStuff()
