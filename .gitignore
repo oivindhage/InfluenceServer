@@ -11,3 +11,5 @@ packages/
 *.csproj.user
 Influence.Common/bin/
 Influence.Common/obj/
+Tester/bin/
+Tester/obj/
