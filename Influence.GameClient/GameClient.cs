@@ -242,5 +242,8 @@ namespace Influence.GameClient
 
         private void txtSessionBaseUrl_TextChanged(object sender, EventArgs e)
             => influenceGateway.SessionBaseUrl = txtSessionBaseUrl.Text;
+
+        private void txtPlayerId_TextChanged(object sender, EventArgs e)
+            => clientState.PlayerId = txtPlayerId.Text;
     }
 }
