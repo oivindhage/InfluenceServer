@@ -92,8 +92,8 @@ namespace Influence.GameClient
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
                     rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
                 rtxPlayerStatus.AppendText($"{player.Name}\n");
-                rtxPlayerStatus.AppendText($"\tTiles: {participant.OwnedTiles.Count}\n");
-                rtxPlayerStatus.AppendText($"\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}\n");
+                //rtxPlayerStatus.AppendText($"\tTiles: {participant.OwnedTiles.Count}\n");
+                //rtxPlayerStatus.AppendText($"\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}\n");
                 rtxPlayerStatus.SelectionColor = rtxPlayerStatus.ForeColor;
                 rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
             }

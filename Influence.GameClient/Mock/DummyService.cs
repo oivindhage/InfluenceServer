@@ -46,7 +46,7 @@ namespace Influence.GameClient.Mock
                 var ownedTiles = session.CurrentBoard.TileRows
                     .SelectMany(x => x.Tiles)
                     .Where(x => player.Name.Equals(x.OwnerName));
-                participant.OwnedTiles.AddRange(ownedTiles);
+                //participant.OwnedTiles.AddRange();
                 participant.IsAlive = true;
                 participants.Add(participant);
             }

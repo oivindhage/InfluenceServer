@@ -20,6 +20,7 @@ namespace Influence.Web
         private const string RxCreateSession = "^\\?create=?(?<sessionid>[A-Za-z0-9\\-]*)$";
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
+        private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&from=\\d+&to=\\d+$";
         
         private static readonly RuleSet RuleSet = RuleSet.Default;
 
@@ -43,8 +44,22 @@ namespace Influence.Web
             else if ((match = Regex.Match(query, RxStartSession)).Success)
                 StartSession(context, match);
 
+            else if ((match = Regex.Match(query, RxMove)).Success)
+                Move(context, match);
+
             else
                 Help(context);
+        }
+
+        private void Move(HttpContext context, Match match)
+        {
+            var session = GetSession(match);
+        }
+
+        private Session GetSession(Match match)
+        {
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            return sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
         }
 
         private void Help(HttpContext context)
@@ -76,8 +91,7 @@ namespace Influence.Web
 
         private void StartSession(HttpContext context, Match match)
         {
-            var sessionId = match.Groups["sessionid"].Value.ToGuid();
-            var session = sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
+            var session = GetSession(match);
 
             if (session == null)
                 BadRequest(context, "Det fins ingen session med den Id-en der");
@@ -97,40 +111,29 @@ namespace Influence.Web
         private void JoinSession(HttpContext context, Match match)
         {
             var name = match.Groups["name"].Value.DefaultTo(string.Empty);
-            var sessionId = match.Groups["sessionid"].Value.ToGuid();
             var playerId = match.Groups["playerid"].Value.ToGuid();
+            Session session;
 
             if (name.Length < 3 || name.Length > 20)
                 BadRequest(context, "Navn må være 3-20 bokstaver, A-Z");
 
-            else if (sessionId.NotValid())
-                BadRequest(context, "SessionId ser ikke riktig ut");
-
             else if (playerId.NotValid())
                 BadRequest(context, "PlayerId ser ikke riktig ut");
 
+            else if ((session = GetSession(match)) == null)
+                BadRequest(context, "Ugyldig SessionId");
+
             else
             {
-                var session = GameMaster.GetSession(sessionId);
-
-                if (session == null)
-                    BadRequest(context, "Ugyldig SessionId");
-
-                else if (session.Id == playerId)
-                    BadRequest(context, "PlayerId må være ulik SessionId");
-
-                else
+                if (session.AddPlayer(playerId, name))
                 {
-                    if (session.AddPlayer(playerId, name))
-                    {
-                        var player = session.Players.Single(p => p.Id == playerId);
-                        Ok(context, $"Velkommen til session {sessionId}, {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
-                    }
+                    var player = session.Players.Single(p => p.Id == playerId);
+                    Ok(context, $"Velkommen til session '{session.Name}' ({session.Id}), {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
+                }
 
-                    else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        BadRequest(context, "Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
-                    }
+                else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    BadRequest(context, "Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
                 }
             }
         }
