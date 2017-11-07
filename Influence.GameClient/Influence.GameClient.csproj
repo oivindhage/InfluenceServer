@@ -59,10 +59,10 @@
     <Compile Include="GameClient.Designer.cs">
       <DependentUpon>GameClient.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mock\DummyService.cs" />
+    <Compile Include="InfluenceGateway.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\ConfigurationSettings.cs" />
+    <Compile Include="ConfigurationSettings.cs" />
     <EmbeddedResource Include="GameClient.resx">
       <DependentUpon>GameClient.cs</DependentUpon>
     </EmbeddedResource>

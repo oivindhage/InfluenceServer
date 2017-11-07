@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Influence.GameClient.Util
+namespace Influence.GameClient
 {
     public static class ConfigurationSettings
     {

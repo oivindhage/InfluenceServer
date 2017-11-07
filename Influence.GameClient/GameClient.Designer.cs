@@ -86,6 +86,7 @@
             this.txtSessionBaseUrl.Name = "txtSessionBaseUrl";
             this.txtSessionBaseUrl.Size = new System.Drawing.Size(542, 20);
             this.txtSessionBaseUrl.TabIndex = 2;
+            this.txtSessionBaseUrl.TextChanged += new System.EventHandler(this.txtSessionBaseUrl_TextChanged);
             // 
             // lblClientId
             // 
@@ -104,6 +105,7 @@
             this.txtPlayerId.Name = "txtPlayerId";
             this.txtPlayerId.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerId.TabIndex = 4;
+            this.txtPlayerId.TextChanged += new System.EventHandler(this.txtPlayerId_TextChanged);
             // 
             // label1
             // 

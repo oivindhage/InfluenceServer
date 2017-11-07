@@ -1,4 +1,5 @@
 ﻿using Influence.Domain;
+using static Influence.Domain.Consts;
 
 namespace Influence.GameClient
 {
@@ -7,8 +8,22 @@ namespace Influence.GameClient
         public Coordinate AttackFrom;
         public Coordinate AttackTo;
         public Coordinate Reinforce;
-        public PlayerState CurrentPlayerState;
         public Session Session;
+        public string PlayerId;
+
+        public PlayerState CurrentPlayerState
+        {
+            get
+            {
+                var currentPlayerId = Session?.GameState?.CurrentPlayer?.Id.ToString();
+                if (currentPlayerId == null || !PlayerId.Equals(currentPlayerId))
+                    return PlayerState.Waiting;
+                if (PlayerPhase.MoveAndAttack.Equals(Session.GameState.PlayerPhase))
+                    return PlayerState.Attacking;
+                return PlayerState.Reinforcing;
+            }
+        }
+
         public int BoardSize
             => Session?.CurrentBoard?.Size ?? 0;
 
