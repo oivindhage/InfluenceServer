@@ -61,6 +61,11 @@ namespace Influence.Domain
             CurrentBoard.PlacePlayers(Players);
             RoundNumber = 1;
 
+            GameState.Participants = new List<Participant>();
+            Players.ForEach(p => GameState.Participants.Add(new Participant(p)));
+
+            GameState.CurrentPlayer = GameState.Participants.First().Player;
+
             return true;
         }
     }
