@@ -118,7 +118,7 @@ namespace Influence.GameClient
             tileHeight = picBoard.Height / maxY;
         }
 
-        private void btnConnectToSession_Click(object sender, EventArgs e)
+        private void btnJoinSession_Click(object sender, EventArgs e)
         {
             if (!cmbCurrentGames.Enabled)
             {

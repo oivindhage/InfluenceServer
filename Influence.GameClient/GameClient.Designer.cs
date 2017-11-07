@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btnConnectToSession = new System.Windows.Forms.Button();
+            this.btnJoinSession = new System.Windows.Forms.Button();
             this.lblSessionUrl = new System.Windows.Forms.Label();
             this.txtSessionBaseUrl = new System.Windows.Forms.TextBox();
             this.lblClientId = new System.Windows.Forms.Label();
@@ -58,16 +58,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnConnectToSession
+            // btnJoinSession
             // 
-            this.btnConnectToSession.Location = new System.Drawing.Point(10, 164);
-            this.btnConnectToSession.Margin = new System.Windows.Forms.Padding(2);
-            this.btnConnectToSession.Name = "btnConnectToSession";
-            this.btnConnectToSession.Size = new System.Drawing.Size(152, 25);
-            this.btnConnectToSession.TabIndex = 0;
-            this.btnConnectToSession.Text = "Connect to session";
-            this.btnConnectToSession.UseVisualStyleBackColor = true;
-            this.btnConnectToSession.Click += new System.EventHandler(this.btnConnectToSession_Click);
+            this.btnJoinSession.Location = new System.Drawing.Point(320, 141);
+            this.btnJoinSession.Margin = new System.Windows.Forms.Padding(2);
+            this.btnJoinSession.Name = "btnJoinSession";
+            this.btnJoinSession.Size = new System.Drawing.Size(152, 25);
+            this.btnJoinSession.TabIndex = 0;
+            this.btnJoinSession.Text = "Join session";
+            this.btnJoinSession.UseVisualStyleBackColor = true;
+            this.btnJoinSession.Click += new System.EventHandler(this.btnJoinSession_Click);
             // 
             // lblSessionUrl
             // 
@@ -84,7 +84,7 @@
             this.txtSessionBaseUrl.Location = new System.Drawing.Point(86, 11);
             this.txtSessionBaseUrl.Margin = new System.Windows.Forms.Padding(2);
             this.txtSessionBaseUrl.Name = "txtSessionBaseUrl";
-            this.txtSessionBaseUrl.Size = new System.Drawing.Size(491, 20);
+            this.txtSessionBaseUrl.Size = new System.Drawing.Size(542, 20);
             this.txtSessionBaseUrl.TabIndex = 2;
             // 
             // lblClientId
@@ -102,7 +102,7 @@
             this.txtPlayerId.Location = new System.Drawing.Point(86, 37);
             this.txtPlayerId.Margin = new System.Windows.Forms.Padding(2);
             this.txtPlayerId.Name = "txtPlayerId";
-            this.txtPlayerId.Size = new System.Drawing.Size(491, 20);
+            this.txtPlayerId.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerId.TabIndex = 4;
             // 
             // label1
@@ -120,7 +120,7 @@
             this.txtPlayerName.Location = new System.Drawing.Point(86, 63);
             this.txtPlayerName.Margin = new System.Windows.Forms.Padding(2);
             this.txtPlayerName.Name = "txtPlayerName";
-            this.txtPlayerName.Size = new System.Drawing.Size(491, 20);
+            this.txtPlayerName.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerName.TabIndex = 6;
             // 
             // txtStatus
@@ -137,7 +137,7 @@
             // 
             // btnShowSessionDetails
             // 
-            this.btnShowSessionDetails.Location = new System.Drawing.Point(165, 164);
+            this.btnShowSessionDetails.Location = new System.Drawing.Point(9, 170);
             this.btnShowSessionDetails.Margin = new System.Windows.Forms.Padding(2);
             this.btnShowSessionDetails.Name = "btnShowSessionDetails";
             this.btnShowSessionDetails.Size = new System.Drawing.Size(152, 25);
@@ -148,7 +148,7 @@
             // 
             // btnDrawStatus
             // 
-            this.btnDrawStatus.Location = new System.Drawing.Point(320, 164);
+            this.btnDrawStatus.Location = new System.Drawing.Point(164, 170);
             this.btnDrawStatus.Margin = new System.Windows.Forms.Padding(2);
             this.btnDrawStatus.Name = "btnDrawStatus";
             this.btnDrawStatus.Size = new System.Drawing.Size(152, 25);
@@ -188,7 +188,7 @@
             // 
             // btnListAllSessions
             // 
-            this.btnListAllSessions.Location = new System.Drawing.Point(10, 199);
+            this.btnListAllSessions.Location = new System.Drawing.Point(164, 141);
             this.btnListAllSessions.Margin = new System.Windows.Forms.Padding(2);
             this.btnListAllSessions.Name = "btnListAllSessions";
             this.btnListAllSessions.Size = new System.Drawing.Size(152, 25);
@@ -204,7 +204,7 @@
             this.cmbCurrentGames.Location = new System.Drawing.Point(87, 92);
             this.cmbCurrentGames.Margin = new System.Windows.Forms.Padding(2);
             this.cmbCurrentGames.Name = "cmbCurrentGames";
-            this.cmbCurrentGames.Size = new System.Drawing.Size(491, 21);
+            this.cmbCurrentGames.Size = new System.Drawing.Size(542, 21);
             this.cmbCurrentGames.TabIndex = 15;
             // 
             // radioAttackFrom
@@ -275,7 +275,7 @@
             // 
             // btnCreateSession
             // 
-            this.btnCreateSession.Location = new System.Drawing.Point(165, 199);
+            this.btnCreateSession.Location = new System.Drawing.Point(9, 141);
             this.btnCreateSession.Margin = new System.Windows.Forms.Padding(2);
             this.btnCreateSession.Name = "btnCreateSession";
             this.btnCreateSession.Size = new System.Drawing.Size(152, 25);
@@ -286,7 +286,7 @@
             // 
             // btnStartSession
             // 
-            this.btnStartSession.Location = new System.Drawing.Point(320, 199);
+            this.btnStartSession.Location = new System.Drawing.Point(476, 141);
             this.btnStartSession.Margin = new System.Windows.Forms.Padding(2);
             this.btnStartSession.Name = "btnStartSession";
             this.btnStartSession.Size = new System.Drawing.Size(152, 25);
@@ -297,7 +297,7 @@
             // 
             // btnEndAttack
             // 
-            this.btnEndAttack.Location = new System.Drawing.Point(477, 164);
+            this.btnEndAttack.Location = new System.Drawing.Point(320, 172);
             this.btnEndAttack.Name = "btnEndAttack";
             this.btnEndAttack.Size = new System.Drawing.Size(152, 23);
             this.btnEndAttack.TabIndex = 24;
@@ -306,7 +306,7 @@
             // 
             // btnEndReinforce
             // 
-            this.btnEndReinforce.Location = new System.Drawing.Point(477, 199);
+            this.btnEndReinforce.Location = new System.Drawing.Point(476, 172);
             this.btnEndReinforce.Name = "btnEndReinforce";
             this.btnEndReinforce.Size = new System.Drawing.Size(152, 23);
             this.btnEndReinforce.TabIndex = 25;
@@ -342,7 +342,7 @@
             this.Controls.Add(this.lblClientId);
             this.Controls.Add(this.txtSessionBaseUrl);
             this.Controls.Add(this.lblSessionUrl);
-            this.Controls.Add(this.btnConnectToSession);
+            this.Controls.Add(this.btnJoinSession);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GameClient";
             this.Text = "GameClient";
@@ -355,7 +355,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnConnectToSession;
+        private System.Windows.Forms.Button btnJoinSession;
         private System.Windows.Forms.Label lblSessionUrl;
         private System.Windows.Forms.TextBox txtSessionBaseUrl;
         private System.Windows.Forms.Label lblClientId;
