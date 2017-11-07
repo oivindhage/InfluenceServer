@@ -18,10 +18,7 @@ namespace Tester
                 var response = client.Get(new RestRequest($"{baseUrl}?create={sessionGuid}"));
                 var content = response.Content;
 
-                // Join 4 players
-                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=EJay"));
-                content = response.Content;
-
+                // Join 3 players
                 response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=Dummy1"));
                 content = response.Content;
 
