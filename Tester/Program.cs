@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using System;
+using RestSharp;
 
 namespace Tester
 {
@@ -8,19 +9,28 @@ namespace Tester
         {
             var client = new RestClient("http://osl-ejay:84/");
 
-            const string baseUrl = "http://osl-ejay.co.int:85/ws.ashx";
-            const string sessionGuid = "ebd2a1f4-d240-42ed-8d5e-74b0e40269cb";
-            const string nick = "EJay";
-            const string playerGuid = "E4B676A0-7875-4F56-8FBC-C49E2A4FE2E5";
+            while (true)
+            {
+                const string baseUrl = "ws.ashx";
+                const string nick = "EJay";
+                string sessionGuid = Guid.NewGuid().ToString();
+                string playerGuid = Guid.NewGuid().ToString();
 
-            // Create
-            client.Get(new RestRequest($"{baseUrl}?create={sessionGuid}"));
+                // Create
+                var response = client.Get(new RestRequest($"{baseUrl}?create={sessionGuid}"));
+                var content = response.Content;
 
-            // Join
-            client.Get(new RestRequest($"{baseUrl}?join={sessionGuid}&playerid={playerGuid}&name={nick}"));
+                // Join
+                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={playerGuid}&name={nick}"));
+                content = response.Content;
 
-            // Start
-            client.Get(new RestRequest($"{baseUrl}?start&session={sessionGuid}"));
+                // Start
+                response = client.Get(new RestRequest($"{baseUrl}?start&session={sessionGuid}"));
+                content = response.Content;
+
+                Console.WriteLine(content);
+                Console.ReadLine();
+            }
         }
     }
 }
