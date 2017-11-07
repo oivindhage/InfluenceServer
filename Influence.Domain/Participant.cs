@@ -9,6 +9,9 @@ namespace Influence.Domain
         public bool IsAlive { get; set; }
         public int Rank { get; set; }
 
+        public Participant()
+        { }
+
         public Participant(Player player)
         {
             Player = player;

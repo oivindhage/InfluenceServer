@@ -7,15 +7,18 @@ namespace Influence.Domain
 {
     public class Board
     {
-        private readonly int _size;
-        private readonly RuleSet _ruleSet;
+        public int _size;
+        public RuleSet _ruleSet;
 
         private static readonly Random Rand = new Random();
-        private readonly Dictionary<Guid, List<Tile>> _tilesOfPlayers = new Dictionary<Guid, List<Tile>>();
-        private readonly Dictionary<int, Tile> _tilesById = new Dictionary<int, Tile>();
-        private List<Tile> DirtyTiles { get; } = new List<Tile>();
+        public Dictionary<Guid, List<Tile>> _tilesOfPlayers = new Dictionary<Guid, List<Tile>>();
+        public Dictionary<int, Tile> _tilesById = new Dictionary<int, Tile>();
+        public List<Tile> DirtyTiles { get; } = new List<Tile>();
 
         public List<TileRow> TileRows { get; }
+
+        public Board()
+        { }
 
         public Board(RuleSet ruleSet)
         {

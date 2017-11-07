@@ -38,7 +38,7 @@ namespace Influence.GameClient
         {
             txtPlayerId.Text = Guid.NewGuid().ToString();
             txtPlayerName.Text = "Playername";
-            txtSessionBaseUrl.Text = "http://osl-ejay.co.int:85/ws.ashx";
+            txtSessionBaseUrl.Text = "http://localhost:82/ws.ashx";
         }
 
         private void DrawTile(Tile tile)
