@@ -53,13 +53,15 @@
             this.lblReinforce = new System.Windows.Forms.Label();
             this.btnCreateSession = new System.Windows.Forms.Button();
             this.btnStartSession = new System.Windows.Forms.Button();
+            this.btnEndAttack = new System.Windows.Forms.Button();
+            this.btnEndReinforce = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
             // btnConnectToSession
             // 
             this.btnConnectToSession.Location = new System.Drawing.Point(10, 164);
-            this.btnConnectToSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnConnectToSession.Margin = new System.Windows.Forms.Padding(2);
             this.btnConnectToSession.Name = "btnConnectToSession";
             this.btnConnectToSession.Size = new System.Drawing.Size(152, 25);
             this.btnConnectToSession.TabIndex = 0;
@@ -80,7 +82,7 @@
             // txtSessionBaseUrl
             // 
             this.txtSessionBaseUrl.Location = new System.Drawing.Point(86, 11);
-            this.txtSessionBaseUrl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtSessionBaseUrl.Margin = new System.Windows.Forms.Padding(2);
             this.txtSessionBaseUrl.Name = "txtSessionBaseUrl";
             this.txtSessionBaseUrl.Size = new System.Drawing.Size(491, 20);
             this.txtSessionBaseUrl.TabIndex = 2;
@@ -98,7 +100,7 @@
             // txtPlayerId
             // 
             this.txtPlayerId.Location = new System.Drawing.Point(86, 37);
-            this.txtPlayerId.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtPlayerId.Margin = new System.Windows.Forms.Padding(2);
             this.txtPlayerId.Name = "txtPlayerId";
             this.txtPlayerId.Size = new System.Drawing.Size(491, 20);
             this.txtPlayerId.TabIndex = 4;
@@ -116,7 +118,7 @@
             // txtPlayerName
             // 
             this.txtPlayerName.Location = new System.Drawing.Point(86, 63);
-            this.txtPlayerName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtPlayerName.Margin = new System.Windows.Forms.Padding(2);
             this.txtPlayerName.Name = "txtPlayerName";
             this.txtPlayerName.Size = new System.Drawing.Size(491, 20);
             this.txtPlayerName.TabIndex = 6;
@@ -127,7 +129,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.Location = new System.Drawing.Point(9, 581);
-            this.txtStatus.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtStatus.Margin = new System.Windows.Forms.Padding(2);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.Size = new System.Drawing.Size(986, 247);
@@ -136,7 +138,7 @@
             // btnShowSessionDetails
             // 
             this.btnShowSessionDetails.Location = new System.Drawing.Point(165, 164);
-            this.btnShowSessionDetails.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnShowSessionDetails.Margin = new System.Windows.Forms.Padding(2);
             this.btnShowSessionDetails.Name = "btnShowSessionDetails";
             this.btnShowSessionDetails.Size = new System.Drawing.Size(152, 25);
             this.btnShowSessionDetails.TabIndex = 8;
@@ -147,7 +149,7 @@
             // btnDrawStatus
             // 
             this.btnDrawStatus.Location = new System.Drawing.Point(320, 164);
-            this.btnDrawStatus.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDrawStatus.Margin = new System.Windows.Forms.Padding(2);
             this.btnDrawStatus.Name = "btnDrawStatus";
             this.btnDrawStatus.Size = new System.Drawing.Size(152, 25);
             this.btnDrawStatus.TabIndex = 9;
@@ -158,7 +160,7 @@
             // picBoard
             // 
             this.picBoard.Location = new System.Drawing.Point(10, 245);
-            this.picBoard.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.picBoard.Margin = new System.Windows.Forms.Padding(2);
             this.picBoard.Name = "picBoard";
             this.picBoard.Size = new System.Drawing.Size(327, 325);
             this.picBoard.TabIndex = 10;
@@ -168,9 +170,9 @@
             // rtxPlayerStatus
             // 
             this.rtxPlayerStatus.Location = new System.Drawing.Point(341, 245);
-            this.rtxPlayerStatus.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtxPlayerStatus.Margin = new System.Windows.Forms.Padding(2);
             this.rtxPlayerStatus.Name = "rtxPlayerStatus";
-            this.rtxPlayerStatus.Size = new System.Drawing.Size(236, 207);
+            this.rtxPlayerStatus.Size = new System.Drawing.Size(288, 207);
             this.rtxPlayerStatus.TabIndex = 11;
             this.rtxPlayerStatus.Text = "";
             // 
@@ -187,7 +189,7 @@
             // btnListAllSessions
             // 
             this.btnListAllSessions.Location = new System.Drawing.Point(10, 199);
-            this.btnListAllSessions.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnListAllSessions.Margin = new System.Windows.Forms.Padding(2);
             this.btnListAllSessions.Name = "btnListAllSessions";
             this.btnListAllSessions.Size = new System.Drawing.Size(152, 25);
             this.btnListAllSessions.TabIndex = 14;
@@ -200,7 +202,7 @@
             this.cmbCurrentGames.Enabled = false;
             this.cmbCurrentGames.FormattingEnabled = true;
             this.cmbCurrentGames.Location = new System.Drawing.Point(87, 92);
-            this.cmbCurrentGames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbCurrentGames.Margin = new System.Windows.Forms.Padding(2);
             this.cmbCurrentGames.Name = "cmbCurrentGames";
             this.cmbCurrentGames.Size = new System.Drawing.Size(491, 21);
             this.cmbCurrentGames.TabIndex = 15;
@@ -209,7 +211,7 @@
             // 
             this.radioAttackFrom.AutoSize = true;
             this.radioAttackFrom.Location = new System.Drawing.Point(341, 461);
-            this.radioAttackFrom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioAttackFrom.Margin = new System.Windows.Forms.Padding(2);
             this.radioAttackFrom.Name = "radioAttackFrom";
             this.radioAttackFrom.Size = new System.Drawing.Size(79, 17);
             this.radioAttackFrom.TabIndex = 16;
@@ -222,7 +224,7 @@
             // 
             this.radioAttackDestination.AutoSize = true;
             this.radioAttackDestination.Location = new System.Drawing.Point(341, 480);
-            this.radioAttackDestination.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioAttackDestination.Margin = new System.Windows.Forms.Padding(2);
             this.radioAttackDestination.Name = "radioAttackDestination";
             this.radioAttackDestination.Size = new System.Drawing.Size(110, 17);
             this.radioAttackDestination.TabIndex = 17;
@@ -235,7 +237,7 @@
             // 
             this.radioReinforce.AutoSize = true;
             this.radioReinforce.Location = new System.Drawing.Point(341, 499);
-            this.radioReinforce.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radioReinforce.Margin = new System.Windows.Forms.Padding(2);
             this.radioReinforce.Name = "radioReinforce";
             this.radioReinforce.Size = new System.Drawing.Size(71, 17);
             this.radioReinforce.TabIndex = 18;
@@ -274,7 +276,7 @@
             // btnCreateSession
             // 
             this.btnCreateSession.Location = new System.Drawing.Point(165, 199);
-            this.btnCreateSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCreateSession.Margin = new System.Windows.Forms.Padding(2);
             this.btnCreateSession.Name = "btnCreateSession";
             this.btnCreateSession.Size = new System.Drawing.Size(152, 25);
             this.btnCreateSession.TabIndex = 22;
@@ -285,7 +287,7 @@
             // btnStartSession
             // 
             this.btnStartSession.Location = new System.Drawing.Point(320, 199);
-            this.btnStartSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnStartSession.Margin = new System.Windows.Forms.Padding(2);
             this.btnStartSession.Name = "btnStartSession";
             this.btnStartSession.Size = new System.Drawing.Size(152, 25);
             this.btnStartSession.TabIndex = 23;
@@ -293,11 +295,31 @@
             this.btnStartSession.UseVisualStyleBackColor = true;
             this.btnStartSession.Click += new System.EventHandler(this.btnStartSession_Click);
             // 
+            // btnEndAttack
+            // 
+            this.btnEndAttack.Location = new System.Drawing.Point(477, 164);
+            this.btnEndAttack.Name = "btnEndAttack";
+            this.btnEndAttack.Size = new System.Drawing.Size(152, 23);
+            this.btnEndAttack.TabIndex = 24;
+            this.btnEndAttack.Text = "End attack";
+            this.btnEndAttack.UseVisualStyleBackColor = true;
+            // 
+            // btnEndReinforce
+            // 
+            this.btnEndReinforce.Location = new System.Drawing.Point(477, 199);
+            this.btnEndReinforce.Name = "btnEndReinforce";
+            this.btnEndReinforce.Size = new System.Drawing.Size(152, 23);
+            this.btnEndReinforce.TabIndex = 25;
+            this.btnEndReinforce.Text = "End reinforce";
+            this.btnEndReinforce.UseVisualStyleBackColor = true;
+            // 
             // GameClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 839);
+            this.Controls.Add(this.btnEndReinforce);
+            this.Controls.Add(this.btnEndAttack);
             this.Controls.Add(this.btnStartSession);
             this.Controls.Add(this.btnCreateSession);
             this.Controls.Add(this.lblReinforce);
@@ -321,7 +343,7 @@
             this.Controls.Add(this.txtSessionBaseUrl);
             this.Controls.Add(this.lblSessionUrl);
             this.Controls.Add(this.btnConnectToSession);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GameClient";
             this.Text = "GameClient";
             this.Load += new System.EventHandler(this.GameClient_Load);
@@ -357,5 +379,7 @@
         private System.Windows.Forms.Label lblReinforce;
         private System.Windows.Forms.Button btnCreateSession;
         private System.Windows.Forms.Button btnStartSession;
+        private System.Windows.Forms.Button btnEndAttack;
+        private System.Windows.Forms.Button btnEndReinforce;
     }
 }
