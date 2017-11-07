@@ -20,5 +20,11 @@ namespace Influence.Common.Extensions
 
         public static bool IsEmpty(this string str) => string.IsNullOrEmpty(str);
         public static bool NotEmpty(this string str) => !string.IsNullOrEmpty(str);
+
+        public static int ToInt(this string str, int defaultValue = 0)
+        {
+            int i;
+            return int.TryParse(str, out i) ? i : defaultValue;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Influence.Common.Extensions;
+using Influence.Common.Utils;
 
 namespace Influence.Domain
 {
@@ -45,21 +46,46 @@ namespace Influence.Domain
                     TilesById.Add(tile.Id, tile);
         }
 
-        public void PlacePlayers(List<Player> players)
+        private bool TileIsNextToTile(Tile source, Tile dest)
         {
-            var startPositions = new List<Coordinate>();
-            while (startPositions.Count < players.Count)
-            {
-                var position = new Coordinate(Rand.Next(0, Size), Rand.Next(0, Size));
-                if (startPositions.All(p => p.Coordinates != position.Coordinates))
-                    startPositions.Add(position);
-            }
+            if (source.X == dest.X && Math.Abs(source.Y - dest.Y) == 1)
+                return true;
 
-            for (var playerNum = 0; playerNum < players.Count; playerNum++)
-                UpdateTile(startPositions[playerNum].X, startPositions[playerNum].Y, players[playerNum], RuleSet.NumTroopsInStartTile);
+            if (source.Y == dest.Y && Math.Abs(source.X - dest.X) == 1)
+                return true;
+
+            return false;
         }
 
-        public void UpdateTile(int tileX, int tileY, Player owner, int numTroops)
+        private string Attack(int numAttackers, int numDefenders, out bool isAttackSuccessful, out int numTroopsLeftInDestinationCell)
+        {
+            var log = string.Empty;
+
+            int attackerDomination = numAttackers - numDefenders;
+            int winPercent =
+                attackerDomination > 1 ? 100
+                    : attackerDomination == 1 ? 75
+                        : attackerDomination == 0 ? 50
+                            : attackerDomination == -1 ? 25
+                                : 0;
+
+            isAttackSuccessful = Rng.Chance(winPercent);
+
+            log += $"Kamp! {numAttackers} vs {numDefenders} gir {winPercent}% vinnersjanse" + Environment.NewLine;
+
+            if (isAttackSuccessful)
+                numTroopsLeftInDestinationCell = Math.Max(1, numAttackers - numDefenders);
+            else
+                numTroopsLeftInDestinationCell = Math.Max(1, numDefenders - numAttackers);
+
+            log += isAttackSuccessful
+                ? $"Angriper tar over cellen med {numTroopsLeftInDestinationCell} tropper igjen"
+                : $"Forsvarer holder fortet med {numTroopsLeftInDestinationCell} tropper igjen";
+
+            return log;
+        }
+
+        private void UpdateTile(int tileX, int tileY, Player owner, int numTroops)
         {
             var tile = GetTile(tileX, tileY);
 
@@ -90,8 +116,22 @@ namespace Influence.Domain
             tile.OwnerColorRgbCsv = owner.ColorRgbCsv;
         }
 
-        public void UpdateTile(Tile tile, Player owner, int numTroops)
+        private void UpdateTile(Tile tile, Player owner, int numTroops)
             => UpdateTile(tile.X, tile.Y, owner, numTroops);
+
+        public void PlacePlayers(List<Player> players)
+        {
+            var startPositions = new List<Coordinate>();
+            while (startPositions.Count < players.Count)
+            {
+                var position = new Coordinate(Rand.Next(0, Size), Rand.Next(0, Size));
+                if (startPositions.All(p => p.Coordinates != position.Coordinates))
+                    startPositions.Add(position);
+            }
+
+            for (var playerNum = 0; playerNum < players.Count; playerNum++)
+                UpdateTile(startPositions[playerNum].X, startPositions[playerNum].Y, players[playerNum], RuleSet.NumTroopsInStartTile);
+        }
 
         public Tile GetTile(int tileId)
             => TilesById[tileId];
@@ -104,5 +144,48 @@ namespace Influence.Domain
 
         public void GrantReinforcements(Player player) 
             => player.NumAvailableReinforcements = GetTilesOfPlayer(player).Count;
+
+        public string Move(Player player, int fromCellId, int toCellId, List<Participant> participants, out string attackLog)
+        {
+            attackLog = string.Empty;
+
+            var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == fromCellId);
+            if (sourceTile == null)
+                return $"{player.Name} eier ikke cellenummer {fromCellId}";
+
+            if (sourceTile.NumTroops < 2)
+                return "Man kan ikke flytte eller angripe fra en celle med mindre enn 2 tropper";
+
+            Tile destTile;
+            if (!TilesById.TryGetValue(toCellId, out destTile))
+                return $"Det finnes ingen celle med id {toCellId}";
+
+            if (destTile.OwnerId == player.Id)
+                return "Man kan ikke flytte til eller angripe celler man allerede eier";
+
+            if (!TileIsNextToTile(sourceTile, destTile))
+                return "Man kan kun flytte ett hakk til venstre, opp, høyre eller ned";
+
+            if (destTile.OwnerId == Guid.Empty)
+            {
+                UpdateTile(destTile, player, sourceTile.NumTroops - 1);
+                UpdateTile(sourceTile, player, 1);
+                attackLog = $"{player.Name} tar over celle {destTile.Coordinates} med {destTile.NumTroops} tropp(er)";
+                return string.Empty;
+            }
+
+            bool isAttackSuccessful;
+            int numTroopsLeftInDestCell;
+            attackLog = Attack(sourceTile.NumTroops, destTile.NumTroops, out isAttackSuccessful, out numTroopsLeftInDestCell);
+            UpdateTile(sourceTile, player, 1);
+            UpdateTile(
+                destTile,
+                isAttackSuccessful
+                    ? player
+                    : participants.Single(p => p.Player.Id == destTile.OwnerId).Player,
+                numTroopsLeftInDestCell);
+
+            return string.Empty;
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Influence.Web
         private const string RxCreateSession = "^\\?create=?(?<sessionid>[A-Za-z0-9\\-]*)$";
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
-        private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&from=\\d+&to=\\d+$";
+        private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&from=(?<from>\\d+)&to=(?<to>\\d+)$";
         
         private static readonly RuleSet RuleSet = RuleSet.Default;
 
@@ -51,17 +51,6 @@ namespace Influence.Web
                 Help(context);
         }
 
-        private void Move(HttpContext context, Match match)
-        {
-            var session = GetSession(match);
-        }
-
-        private Session GetSession(Match match)
-        {
-            var sessionId = match.Groups["sessionid"].Value.ToGuid();
-            return sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
-        }
-
         private void Help(HttpContext context)
         {
             Ok(context,
@@ -72,6 +61,28 @@ namespace Influence.Web
                 "Opprett spesifikk session: ws.ashx?create=guid\r\n" +
                 "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n" +
                 "Start en session: ws.ashx?start&session=guid");
+        }
+
+        private void Move(HttpContext context, Match match)
+        {
+            var session = GetSession(match);
+            if (session == null)
+                BadRequest(context, "Det fins ingen session med den Id-en der");
+            else
+            {
+                string attackLog;
+                string error = session.Move(match.Groups["playerid"].Value.ToGuid(), match.Groups["from"].Value.ToInt(), match.Groups["to"].Value.ToInt(), out attackLog);
+                if (error.IsEmpty())   
+                    Ok(context, attackLog);
+                else
+                    BadRequest(context, error);
+            }
+        }
+
+        private Session GetSession(Match match)
+        {
+            var sessionId = match.Groups["sessionid"].Value.ToGuid();
+            return sessionId.IsValid() ? GameMaster.GetSession(sessionId) : null;
         }
 
         private void CreateSession(HttpContext context, Match match)
@@ -132,9 +143,7 @@ namespace Influence.Web
                 }
 
                 else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
-                {
                     BadRequest(context, "Det finnes allerede en spiller med den id-en eller det navnet i oppgitt session");
-                }
             }
         }
 

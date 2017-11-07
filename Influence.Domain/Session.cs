@@ -72,5 +72,30 @@ namespace Influence.Domain
 
             return true;
         }
+
+        public string Move(Guid playerId, int fromCellId, int toCellId, out string attackLog)
+        {
+            attackLog = string.Empty;
+
+            if (GameState.GamePhase != Consts.GamePhase.Ongoing)
+                return $"Flytting ikke tillatt i gamephase {GameState.GamePhase}";
+
+            var participant = GameState.Participants.FirstOrDefault(p => p.Player.Id == playerId);
+            if (participant == null)
+                return $"Det finnes ingen spiller med id {playerId} i denne session";
+
+            if (!participant.IsAlive)
+                return $"{participant.Player.Name} har ingen celler igjen i dette gamet";
+
+            var player = participant.Player;
+
+            if (GameState.CurrentPlayer.Id != player.Id)
+                return $"Det er ikke {player.Name} sin tur";
+
+            if (GameState.PlayerPhase != Consts.PlayerPhase.MoveAndAttack)
+                return $"Nåværende fase er {GameState.PlayerPhase}, ikke {Consts.PlayerPhase.MoveAndAttack}";
+
+            return CurrentBoard.Move(player, fromCellId, toCellId, GameState.Participants, out attackLog);
+        }
     }
 }
