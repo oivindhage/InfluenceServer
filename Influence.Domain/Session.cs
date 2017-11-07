@@ -6,6 +6,7 @@ namespace Influence.Domain
 {
     public class Session
     {
+        private static readonly Random Rand = new Random();
         private static readonly List<string> PlayerColors = new List<string> { "255,0,0", "0,0,255", "0,255,0", "128,128,0" };
 
         public Guid Id { get; set; }
@@ -54,6 +55,9 @@ namespace Influence.Domain
 
         public bool Start()
         {
+            if (Players == null || Players.Count < 1 || Players.Count > RuleSet.MaxNumPlayersInGame)
+                return false;
+
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)
                 return false;
 
@@ -64,7 +68,8 @@ namespace Influence.Domain
             GameState.Participants = new List<Participant>();
             Players.ForEach(p => GameState.Participants.Add(new Participant(p)));
 
-            GameState.CurrentPlayer = GameState.Participants.First().Player;
+            GameState.CurrentPlayer = GameState.Participants[Rand.Next(0, Players.Count)].Player;
+            GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
             return true;
         }
