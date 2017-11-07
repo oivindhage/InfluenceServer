@@ -13,12 +13,10 @@ namespace Influence.Domain
         private static readonly Random Rand = new Random();
         public Dictionary<Guid, List<Tile>> TilesOfPlayers = new Dictionary<Guid, List<Tile>>();
         public Dictionary<int, Tile> TilesById = new Dictionary<int, Tile>();
-        public List<Tile> DirtyTiles { get; set; } = new List<Tile>();
 
         public List<TileRow> TileRows { get; set; }
 
-        public Board()
-        { }
+        public Board() { }
 
         public Board(RuleSet ruleSet)
         {
@@ -90,16 +88,10 @@ namespace Influence.Domain
             tile.OwnerId = owner.Id;
             tile.OwnerName = owner.Name;
             tile.OwnerColorRgbCsv = owner.ColorRgbCsv;
-
-            if (!DirtyTiles.Any(d => d.X == tileX && d.Y == tileY))
-                DirtyTiles.Add(tile);
         }
 
         public void UpdateTile(Tile tile, Player owner, int numTroops)
             => UpdateTile(tile.X, tile.Y, owner, numTroops);
-
-        public void ClearDirtyTileList()
-            => DirtyTiles.Clear();
 
         public Tile GetTile(int tileId)
             => TilesById[tileId];
