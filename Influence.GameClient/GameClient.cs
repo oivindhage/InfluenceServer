@@ -231,6 +231,7 @@ namespace Influence.GameClient
 
         private void Attack()
         {
+            //Nein, hilfe=2
             var url = $"?attack&session={clientState.SessionId}&playerid={txtPlayerId.Text}&attackFrom={clientState.AttackFromTileId}&attackTo={clientState.AttackToTileId}";
             var response = GetResponse(url);
             if (response.StatusCode != HttpStatusCode.OK)
