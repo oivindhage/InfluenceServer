@@ -39,7 +39,6 @@
             this.tmrPoll = new System.Windows.Forms.Timer(this.components);
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.btnShowSessionDetails = new System.Windows.Forms.Button();
-            this.btnDrawStatus = new System.Windows.Forms.Button();
             this.picBoard = new System.Windows.Forms.PictureBox();
             this.rtxPlayerStatus = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -55,6 +54,7 @@
             this.btnStartSession = new System.Windows.Forms.Button();
             this.btnEndAttack = new System.Windows.Forms.Button();
             this.btnEndReinforce = new System.Windows.Forms.Button();
+            this.chkAutoUpdateUi = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
@@ -123,6 +123,10 @@
             this.txtPlayerName.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerName.TabIndex = 6;
             // 
+            // tmrPoll
+            // 
+            this.tmrPoll.Tick += new System.EventHandler(this.tmrPoll_Tick);
+            // 
             // txtStatus
             // 
             this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -145,17 +149,6 @@
             this.btnShowSessionDetails.Text = "Show session details";
             this.btnShowSessionDetails.UseVisualStyleBackColor = true;
             this.btnShowSessionDetails.Click += new System.EventHandler(this.btnShowSessionDetails_Click);
-            // 
-            // btnDrawStatus
-            // 
-            this.btnDrawStatus.Location = new System.Drawing.Point(164, 170);
-            this.btnDrawStatus.Margin = new System.Windows.Forms.Padding(2);
-            this.btnDrawStatus.Name = "btnDrawStatus";
-            this.btnDrawStatus.Size = new System.Drawing.Size(152, 25);
-            this.btnDrawStatus.TabIndex = 9;
-            this.btnDrawStatus.Text = "Draw status";
-            this.btnDrawStatus.UseVisualStyleBackColor = true;
-            this.btnDrawStatus.Click += new System.EventHandler(this.btnDrawStatus_Click);
             // 
             // picBoard
             // 
@@ -303,6 +296,7 @@
             this.btnEndAttack.TabIndex = 24;
             this.btnEndAttack.Text = "End attack";
             this.btnEndAttack.UseVisualStyleBackColor = true;
+            this.btnEndAttack.Click += new System.EventHandler(this.btnEndAttack_Click);
             // 
             // btnEndReinforce
             // 
@@ -312,12 +306,25 @@
             this.btnEndReinforce.TabIndex = 25;
             this.btnEndReinforce.Text = "End reinforce";
             this.btnEndReinforce.UseVisualStyleBackColor = true;
+            this.btnEndReinforce.Click += new System.EventHandler(this.btnEndReinforce_Click);
+            // 
+            // chkAutoUpdateUi
+            // 
+            this.chkAutoUpdateUi.AutoSize = true;
+            this.chkAutoUpdateUi.Location = new System.Drawing.Point(342, 553);
+            this.chkAutoUpdateUi.Name = "chkAutoUpdateUi";
+            this.chkAutoUpdateUi.Size = new System.Drawing.Size(98, 17);
+            this.chkAutoUpdateUi.TabIndex = 26;
+            this.chkAutoUpdateUi.Text = "Auto update UI";
+            this.chkAutoUpdateUi.UseVisualStyleBackColor = true;
+            this.chkAutoUpdateUi.CheckedChanged += new System.EventHandler(this.chkAutoUpdateUi_CheckedChanged);
             // 
             // GameClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 839);
+            this.Controls.Add(this.chkAutoUpdateUi);
             this.Controls.Add(this.btnEndReinforce);
             this.Controls.Add(this.btnEndAttack);
             this.Controls.Add(this.btnStartSession);
@@ -333,7 +340,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.rtxPlayerStatus);
             this.Controls.Add(this.picBoard);
-            this.Controls.Add(this.btnDrawStatus);
             this.Controls.Add(this.btnShowSessionDetails);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.txtPlayerName);
@@ -365,7 +371,6 @@
         private System.Windows.Forms.Timer tmrPoll;
         private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Button btnShowSessionDetails;
-        private System.Windows.Forms.Button btnDrawStatus;
         private System.Windows.Forms.PictureBox picBoard;
         private System.Windows.Forms.RichTextBox rtxPlayerStatus;
         private System.Windows.Forms.Label label2;
@@ -381,5 +386,6 @@
         private System.Windows.Forms.Button btnStartSession;
         private System.Windows.Forms.Button btnEndAttack;
         private System.Windows.Forms.Button btnEndReinforce;
+        private System.Windows.Forms.CheckBox chkAutoUpdateUi;
     }
 }
