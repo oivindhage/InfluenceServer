@@ -6,16 +6,19 @@ namespace Influence.Domain
 {
     public class Session
     {
-        private static readonly List<string> PlayerColors = new List<string> {"255,0,0", "0,0,255", "0,255,0", "128,128,0"};
+        private static readonly List<string> PlayerColors = new List<string> { "255,0,0", "0,0,255", "0,255,0", "128,128,0" };
 
-        public Guid Id { get; }
-        public string Name { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
 
-        public List<Player> Players { get; }
+        public List<Player> Players { get; set; }
         public int RoundNumber { get; set; }
-        public GameState GameState { get;  }
-        public RuleSet RuleSet { get; }
+        public GameState GameState { get; set; }
+        public RuleSet RuleSet { get; set; }
         public Board CurrentBoard { get; set; }
+
+        public Session()
+        { }
 
         public Session(RuleSet ruleSet, string name, Guid id = default(Guid))
         {

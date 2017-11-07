@@ -1,11 +1,9 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace Influence.Domain
 {
     public class Tile
     {
-        [JsonIgnore]
         public Guid OwnerId { get; set; }
 
         public string OwnerName { get; set; }

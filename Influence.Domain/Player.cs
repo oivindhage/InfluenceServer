@@ -4,6 +4,9 @@ namespace Influence.Domain
 {
     public class Player
     {
+        public Player()
+        { }
+
         public Player(Guid id, string name, string colorRgbCsv)
         {
             Id = id;
@@ -11,8 +14,8 @@ namespace Influence.Domain
             ColorRgbCsv = colorRgbCsv;
         }
 
-        public Guid Id { get; }
-        public string Name { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
         public string ColorRgbCsv { get; set; }
 
         public int Score { get; set; }

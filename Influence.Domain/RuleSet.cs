@@ -10,11 +10,11 @@
             MaxNumPlayersInGame = maxNumPlayersInGame;
         }
 
-        public int BoardSize { get; }
-        public int NumTroopsInStartTile { get; }
-        public int MaxNumTroopsInTile { get; }
-        public int MaxNumPlayersInGame { get; }
+        public int BoardSize { get; set; }
+        public int NumTroopsInStartTile { get; set; }
+        public int MaxNumTroopsInTile { get; set; }
+        public int MaxNumPlayersInGame { get; set; }
 
-        public static readonly RuleSet Default = new RuleSet(boardSize: 6, numTroopsInStartTile:2, maxNumTroopsInTile:5, maxNumPlayersInGame:4);
+        public static readonly RuleSet Default = new RuleSet(boardSize: 6, numTroopsInStartTile: 2, maxNumTroopsInTile: 5, maxNumPlayersInGame: 4);
     }
 }

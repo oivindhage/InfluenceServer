@@ -9,6 +9,8 @@ Influence.WinClient/obj/
 packages/
 .vs/
 *.csproj.user
+Influence.GameClient/bin/
+Influence.GameClient/obj/
 Influence.Common/bin/
 Influence.Common/obj/
 Tester/bin/
