@@ -7,26 +7,26 @@ namespace Influence.Domain
 {
     public class Board
     {
-        public int _size;
-        public RuleSet _ruleSet;
+        public int Size;
+        public RuleSet RuleSet;
 
         private static readonly Random Rand = new Random();
-        public Dictionary<Guid, List<Tile>> _tilesOfPlayers = new Dictionary<Guid, List<Tile>>();
-        public Dictionary<int, Tile> _tilesById = new Dictionary<int, Tile>();
-        public List<Tile> DirtyTiles { get; } = new List<Tile>();
+        public Dictionary<Guid, List<Tile>> TilesOfPlayers = new Dictionary<Guid, List<Tile>>();
+        public Dictionary<int, Tile> TilesById = new Dictionary<int, Tile>();
+        public List<Tile> DirtyTiles { get; set; } = new List<Tile>();
 
-        public List<TileRow> TileRows { get; }
+        public List<TileRow> TileRows { get; set; }
 
         public Board()
         { }
 
         public Board(RuleSet ruleSet)
         {
-            _size = ruleSet.BoardSize;
-            _ruleSet = ruleSet;
+            Size = ruleSet.BoardSize;
+            RuleSet = ruleSet;
 
             TileRows = new List<TileRow>();
-            _tilesOfPlayers.Clear();
+            TilesOfPlayers.Clear();
 
             for (int rowNum = 0; rowNum < ruleSet.BoardSize; rowNum++)
             {
@@ -41,10 +41,10 @@ namespace Influence.Domain
                 TileRows.Add(row);
             }
 
-            _tilesById.Clear();
+            TilesById.Clear();
             foreach (var row in TileRows)
                 foreach (var tile in row.Tiles)
-                    _tilesById.Add(tile.Id, tile);
+                    TilesById.Add(tile.Id, tile);
         }
 
         public void PlacePlayers(List<Player> players)
@@ -52,13 +52,13 @@ namespace Influence.Domain
             var startPositions = new List<Coordinate>();
             while (startPositions.Count < players.Count)
             {
-                var position = new Coordinate(Rand.Next(0, _size), Rand.Next(0, _size));
+                var position = new Coordinate(Rand.Next(0, Size), Rand.Next(0, Size));
                 if (startPositions.All(p => p.Coordinates != position.Coordinates))
                     startPositions.Add(position);
             }
 
             for (var playerNum = 0; playerNum < players.Count; playerNum++)
-                UpdateTile(startPositions[playerNum].X, startPositions[playerNum].Y, players[playerNum], _ruleSet.NumTroopsInStartTile);
+                UpdateTile(startPositions[playerNum].X, startPositions[playerNum].Y, players[playerNum], RuleSet.NumTroopsInStartTile);
         }
 
         public void UpdateTile(int tileX, int tileY, Player owner, int numTroops)
@@ -68,25 +68,25 @@ namespace Influence.Domain
             if (tile.OwnerId.NotValid())
             {
                 // Tile was not owned, give to player
-                if (!_tilesOfPlayers.ContainsKey(owner.Id))
-                    _tilesOfPlayers.Add(owner.Id, new List<Tile> { tile });
+                if (!TilesOfPlayers.ContainsKey(owner.Id))
+                    TilesOfPlayers.Add(owner.Id, new List<Tile> { tile });
                 else
-                    _tilesOfPlayers[owner.Id].Add(tile);
+                    TilesOfPlayers[owner.Id].Add(tile);
             }
 
             else if (tile.OwnerId != owner.Id)
             {
                 // Tile changed ownership, remove from old owner
-                _tilesOfPlayers[tile.OwnerId].RemoveAt(_tilesOfPlayers[tile.OwnerId].FindIndex(c => c.Id == tile.Id));
+                TilesOfPlayers[tile.OwnerId].RemoveAt(TilesOfPlayers[tile.OwnerId].FindIndex(c => c.Id == tile.Id));
 
                 // And give to new
-                if (!_tilesOfPlayers.ContainsKey(owner.Id))
-                    _tilesOfPlayers.Add(owner.Id, new List<Tile> { tile });
+                if (!TilesOfPlayers.ContainsKey(owner.Id))
+                    TilesOfPlayers.Add(owner.Id, new List<Tile> { tile });
                 else
-                    _tilesOfPlayers[owner.Id].Add(tile);
+                    TilesOfPlayers[owner.Id].Add(tile);
             }
 
-            tile.NumTroops = Math.Min(_ruleSet.MaxNumTroopsInTile, numTroops);
+            tile.NumTroops = Math.Min(RuleSet.MaxNumTroopsInTile, numTroops);
             tile.OwnerId = owner.Id;
             tile.OwnerName = owner.Name;
             tile.OwnerColorRgbCsv = owner.ColorRgbCsv;
@@ -102,13 +102,13 @@ namespace Influence.Domain
             => DirtyTiles.Clear();
 
         public Tile GetTile(int tileId)
-            => _tilesById[tileId];
+            => TilesById[tileId];
 
         public Tile GetTile(int x, int y)
             => TileRows[y].Tiles[x];
 
         public List<Tile> GetTilesOfPlayer(Player player)
-            => _tilesOfPlayers[player.Id];
+            => TilesOfPlayers[player.Id];
 
         public void GrantReinforcements(Player player) 
             => player.NumAvailableReinforcements = GetTilesOfPlayer(player).Count;
