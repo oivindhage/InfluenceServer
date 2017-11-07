@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Influence.Common.Utils;
 
 namespace Influence.Domain
 {
     public class Session
     {
-        private static readonly Random Rand = new Random();
         private static readonly List<string> PlayerColors = new List<string> { "255,0,0", "0,0,255", "0,255,0", "128,128,0" };
 
         public Guid Id { get; set; }
@@ -18,8 +18,7 @@ namespace Influence.Domain
         public RuleSet RuleSet { get; set; }
         public Board CurrentBoard { get; set; }
 
-        public Session()
-        { }
+        public Session() { }
 
         public Session(RuleSet ruleSet, string name, Guid id = default(Guid))
         {
@@ -66,9 +65,9 @@ namespace Influence.Domain
             RoundNumber = 1;
 
             GameState.Participants = new List<Participant>();
-            Players.ForEach(p => GameState.Participants.Add(new Participant(p)));
+            Rng.ShuffleList(Players.ToList()).ForEach(p => GameState.Participants.Add(new Participant(p)));
 
-            GameState.CurrentPlayer = GameState.Participants[Rand.Next(0, Players.Count)].Player;
+            GameState.CurrentPlayer = GameState.Participants.First().Player;
             GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
             return true;

@@ -12,16 +12,23 @@ namespace Tester
             while (true)
             {
                 const string baseUrl = "ws.ashx";
-                const string nick = "EJay";
                 string sessionGuid = Guid.NewGuid().ToString();
-                string playerGuid = Guid.NewGuid().ToString();
 
                 // Create
                 var response = client.Get(new RestRequest($"{baseUrl}?create={sessionGuid}"));
                 var content = response.Content;
 
-                // Join
-                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={playerGuid}&name={nick}"));
+                // Join 4 players
+                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=EJay"));
+                content = response.Content;
+
+                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=Dummy1"));
+                content = response.Content;
+
+                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=Dummy2"));
+                content = response.Content;
+
+                response = client.Get(new RestRequest($"{baseUrl}?join&session={sessionGuid}&playerid={Guid.NewGuid().ToString()}&name=Dummy3"));
                 content = response.Content;
 
                 // Start
