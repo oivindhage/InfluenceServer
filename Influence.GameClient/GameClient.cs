@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
+using Influence.GameClient.Util;
 
 namespace Influence.GameClient
 {
@@ -37,8 +38,8 @@ namespace Influence.GameClient
         private void GameClient_Load(object sender, EventArgs e)
         {
             txtPlayerId.Text = Guid.NewGuid().ToString();
-            txtPlayerName.Text = "Playername";
-            txtSessionBaseUrl.Text = "http://localhost:82/ws.ashx";
+            txtPlayerName.Text = ConfigurationSettings.PlayerName;
+            txtSessionBaseUrl.Text = ConfigurationSettings.ServerUrl;
         }
 
         private void DrawTile(Tile tile)
@@ -117,7 +118,7 @@ namespace Influence.GameClient
             tileHeight = picBoard.Height / maxY;
         }
 
-        private void btnConnectToSession_Click(object sender, EventArgs e)
+        private void btnJoinSession_Click(object sender, EventArgs e)
         {
             if (!cmbCurrentGames.Enabled)
             {
