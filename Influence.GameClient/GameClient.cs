@@ -3,10 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Influence.Domain;
 using System.Linq;
-using System.Net;
-using Newtonsoft.Json;
-using RestSharp;
-using Influence.GameClient.Util;
 using static Influence.GameClient.ClientState;
 
 namespace Influence.GameClient
@@ -23,6 +19,7 @@ namespace Influence.GameClient
         private int tileHeight;
         private Label targetForClick;
         private ClientState clientState;
+        private InfluenceGateway influenceGateway;
 
         public GameClient()
         {
@@ -39,6 +36,7 @@ namespace Influence.GameClient
         {
             txtPlayerId.Text = Guid.NewGuid().ToString();
             txtPlayerName.Text = ConfigurationSettings.PlayerName;
+            influenceGateway = new InfluenceGateway();
             txtSessionBaseUrl.Text = ConfigurationSettings.ServerUrl;
         }
 
@@ -91,7 +89,12 @@ namespace Influence.GameClient
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
                     rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
                 var participantTiles = session.CurrentBoard.GetTilesOfPlayer(participant.Player);
-                rtxPlayerStatus.AppendText($"{player.Name}\n");
+                string extraPlayerInfo = string.Empty;
+                if (txtPlayerId.Text.Equals(player.Id.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                    extraPlayerInfo = " (you)";
+                if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
+                    extraPlayerInfo += " <- This players turn";
+                rtxPlayerStatus.AppendText($"{player.Name}{extraPlayerInfo}\n");
                 rtxPlayerStatus.AppendText($"\tTiles: {participantTiles.Count()}\n");
                 rtxPlayerStatus.AppendText($"\tTroops: {participantTiles.Sum(x => x.NumTroops)}\n");
                 rtxPlayerStatus.SelectionColor = rtxPlayerStatus.ForeColor;
@@ -137,23 +140,13 @@ namespace Influence.GameClient
                 txtStatus.Text = "List sessions first";
                 return;
             }
-            var url = $"?join&session={cmbCurrentGames.Text}&playerid={txtPlayerId.Text}&name={txtPlayerName.Text}";
-            var response = GetResponse(url);
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                txtStatus.Text += response.StatusDescription;
-                return;
-            }
-            txtStatus.Text += response.Content;
+            txtStatus.Text += influenceGateway.Join(cmbCurrentGames.Text, txtPlayerId.Text, txtPlayerName.Text);
         }
 
         private void btnListAllSessions_Click(object sender, EventArgs e)
         {
             txtStatus.Text = string.Empty;
-            var response = GetResponse("?sessions");
-            dynamic converted = JsonConvert.DeserializeObject(response.Content);
-            var sessionsJson = converted.Sessions.ToString();
-            Session[] sessions = JsonConvert.DeserializeObject<Session[]>(sessionsJson);
+            Session[] sessions = influenceGateway.GetSessions();
             cmbCurrentGames.Items.Clear();
             foreach (var session in sessions)
             {
@@ -177,21 +170,9 @@ namespace Influence.GameClient
                 txtStatus.Text = "List sessions first";
                 return;
             }
-            var response = GetResponse($"?session={cmbCurrentGames.Text}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                txtStatus.Text += response.StatusDescription;
-                return;
-            }
-            txtStatus.Text = response.Content;
-            dynamic converted = JsonConvert.DeserializeObject(response.Content);
-            var sessionJson = converted.Session.ToString();
-            clientState.Session = JsonConvert.DeserializeObject<Session>(sessionJson);
+            clientState.Session = influenceGateway.GetSession(cmbCurrentGames.Text);
             PresentSession();
         }
-
-        private IRestResponse GetResponse(string url)
-            => new RestClient(txtSessionBaseUrl.Text).Get(new RestRequest(url));
 
         private void picBoard_Click(object sender, EventArgs e)
         {
@@ -218,28 +199,10 @@ namespace Influence.GameClient
         }
 
         private void Reinforce()
-        {
-            var url = $"?reinforce&session={clientState.SessionId}&playerid={txtPlayerId.Text}&reinforce={clientState.ReinforceTileId}";
-            var response = GetResponse(url);
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                txtStatus.Text += response.StatusDescription;
-                return;
-            }
-            txtStatus.Text += response.Content;
-        }
+            => influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, clientState.ReinforceTileId);
 
         private void Attack()
-        {
-            var url = $"?attack&session={clientState.SessionId}&playerid={txtPlayerId.Text}&attackFrom={clientState.AttackFromTileId}&attackTo={clientState.AttackToTileId}";
-            var response = GetResponse(url);
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                txtStatus.Text += response.StatusDescription;
-                return;
-            }
-            txtStatus.Text += response.Content;
-        }
+            => influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, clientState.AttackFromTileId, clientState.AttackToTileId);
 
         private void radioAttackFrom_CheckedChanged(object sender, EventArgs e)
             => targetForClick = lblAttackFrom;
@@ -251,13 +214,7 @@ namespace Influence.GameClient
             => targetForClick = lblReinforce;
 
         private void btnCreateSession_Click(object sender, EventArgs e)
-        {
-            var response = GetResponse("?create");
-            if (response.StatusCode != HttpStatusCode.OK)
-                txtStatus.Text = response.StatusDescription;
-            else
-                txtStatus.Text = response.Content;
-        }
+            => txtStatus.Text += influenceGateway.Create();
 
         private void btnStartSession_Click(object sender, EventArgs e)
         {
@@ -266,29 +223,24 @@ namespace Influence.GameClient
                 txtStatus.Text = "List sessions first";
                 return;
             }
-            var response = GetResponse($"ws.ashx?start&session={cmbCurrentGames.Text}");
-            if (response.StatusCode != HttpStatusCode.OK)
-                txtStatus.Text = response.StatusDescription;
-            else
-                txtStatus.Text = response.Content;
+            txtStatus.Text = influenceGateway.StartSession(cmbCurrentGames.Text);
+            if (!chkAutoUpdateUi.Checked)
+                chkAutoUpdateUi.Checked = true;
         }
 
         private void chkAutoUpdateUi_CheckedChanged(object sender, EventArgs e)
-        {
-            tmrPoll.Enabled = !tmrPoll.Enabled;
-        }
+            => tmrPoll.Enabled = !tmrPoll.Enabled;
 
         private void tmrPoll_Tick(object sender, EventArgs e)
             => RefreshState();
 
         private void btnEndAttack_Click(object sender, EventArgs e)
-        {
-            clientState.CurrentPlayerState = PlayerState.Reinforcing;
-        }
+            => txtStatus.Text += influenceGateway.EndAttack(clientState.SessionId, txtPlayerId.Text);
 
         private void btnEndReinforce_Click(object sender, EventArgs e)
-        {
-            clientState.CurrentPlayerState = PlayerState.Attacking;
-        }
+            => txtStatus.Text += influenceGateway.EndReinforce(clientState.SessionId, txtPlayerId.Text);
+
+        private void txtSessionBaseUrl_TextChanged(object sender, EventArgs e)
+            => influenceGateway.SessionBaseUrl = txtSessionBaseUrl.Text;
     }
 }
