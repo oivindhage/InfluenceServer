@@ -1,5 +1,4 @@
-﻿using Influence.GameClient.Mock;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Influence.Domain;
@@ -8,6 +7,7 @@ using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
 using Influence.GameClient.Util;
+using static Influence.GameClient.ClientState;
 
 namespace Influence.GameClient
 {
@@ -15,7 +15,6 @@ namespace Influence.GameClient
     {
         private Graphics g;
         private Font font;
-        private SolidBrush brush;
         private Pen pen;
         private StringFormat stringFormat;
         private int maxX;
@@ -23,6 +22,7 @@ namespace Influence.GameClient
         private int tileWidth;
         private int tileHeight;
         private Label targetForClick;
+        private ClientState clientState;
 
         public GameClient()
         {
@@ -30,9 +30,9 @@ namespace Influence.GameClient
             g = picBoard.CreateGraphics();
             var fontFamily = new FontFamily("Times New Roman");
             font = new Font(fontFamily, 16, FontStyle.Regular, GraphicsUnit.Pixel);
-            brush = new SolidBrush(Color.FromArgb(255, 0, 0, 255));
             pen = new Pen(Color.Black);
             stringFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+            clientState = new ClientState();
         }
 
         private void GameClient_Load(object sender, EventArgs e)
@@ -47,14 +47,19 @@ namespace Influence.GameClient
             Color color = string.IsNullOrEmpty(tile.OwnerColorRgbCsv)
                 ? Color.RosyBrown
                 : DecodeRgb(tile.OwnerColorRgbCsv);
-            string armyCountText = tile.NumTroops == 0
-                ? string.Empty
-                : $"{tile.NumTroops}";
             var rectangleF = new RectangleF(tile.X * tileWidth, tile.Y * tileHeight, tileWidth, tileHeight);
             g.FillRectangle(new SolidBrush(color), rectangleF);
             g.DrawRectangle(pen, rectangleF.X, rectangleF.Y, rectangleF.X + rectangleF.Width, rectangleF.Y + rectangleF.Height);
-            g.DrawString(armyCountText, font, brush, rectangleF, stringFormat);
+            if (tile.NumTroops == 0)
+                return;
+            var brush = GetBrush(color);
+            g.DrawString($"{tile.NumTroops}", font, brush, rectangleF, stringFormat);
         }
+
+        private SolidBrush GetBrush(Color color)
+            => color.R > 200 || color.G > 200
+                ? new SolidBrush(Color.Black)
+                : new SolidBrush(Color.White);
 
         private Color DecodeRgb(string colorRgb)
         {
@@ -65,17 +70,11 @@ namespace Influence.GameClient
             return Color.FromArgb(rgb[0], rgb[1], rgb[2]);
         }
 
-        private void btnDrawStatus_Click(object sender, EventArgs e)
+        private void PresentSession()
         {
-            var session = DummyService.GetDummySession();
-            PresentSession(session);
-        }
-
-        private void PresentSession(Session session)
-        {
-            SetupTileMeasurements(session.CurrentBoard);
-            DrawBoard(session.CurrentBoard);
-            WritePlayerStatistics(session);
+            SetupTileMeasurements(clientState.Session.CurrentBoard);
+            DrawBoard(clientState.Session.CurrentBoard);
+            WritePlayerStatistics(clientState.Session);
         }
 
         private void WritePlayerStatistics(Session session)
@@ -91,12 +90,25 @@ namespace Influence.GameClient
                 rtxPlayerStatus.SelectionColor = DecodeRgb(player.ColorRgbCsv);
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
                     rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
+                var participantTiles = session.CurrentBoard.GetTilesOfPlayer(participant.Player);
                 rtxPlayerStatus.AppendText($"{player.Name}\n");
-                rtxPlayerStatus.AppendText($"\tTiles: {participant.OwnedTiles.Count}\n");
-                rtxPlayerStatus.AppendText($"\tTroops: {participant.OwnedTiles.Sum(x => x.NumTroops)}\n");
+                rtxPlayerStatus.AppendText($"\tTiles: {participantTiles.Count()}\n");
+                rtxPlayerStatus.AppendText($"\tTroops: {participantTiles.Sum(x => x.NumTroops)}\n");
                 rtxPlayerStatus.SelectionColor = rtxPlayerStatus.ForeColor;
                 rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Regular);
             }
+            if (clientState.CurrentPlayerState == PlayerState.Waiting)
+                rtxPlayerStatus.AppendText("The current player is awaiting his turn.");
+            else if (clientState.CurrentPlayerState == PlayerState.Attacking)
+            {
+                if (clientState.AttackFrom == null)
+                    rtxPlayerStatus.AppendText("The current player is attacking.");
+                else
+                    rtxPlayerStatus.AppendText($"The current player is attacking from ({clientState.AttackFrom.X},{clientState.AttackFrom.Y}).");
+            }
+            else if (clientState.CurrentPlayerState == PlayerState.Reinforcing)
+                rtxPlayerStatus.AppendText("The current player is reinforcing.");
+
         }
 
         private void DrawBoard(Board board)
@@ -156,6 +168,9 @@ namespace Influence.GameClient
         }
 
         private void btnShowSessionDetails_Click(object sender, EventArgs e)
+            => RefreshState();
+
+        private void RefreshState()
         {
             if (!cmbCurrentGames.Enabled)
             {
@@ -171,8 +186,8 @@ namespace Influence.GameClient
             txtStatus.Text = response.Content;
             dynamic converted = JsonConvert.DeserializeObject(response.Content);
             var sessionJson = converted.Session.ToString();
-            Session session = JsonConvert.DeserializeObject<Session>(sessionJson);
-            PresentSession(session);
+            clientState.Session = JsonConvert.DeserializeObject<Session>(sessionJson);
+            PresentSession();
         }
 
         private IRestResponse GetResponse(string url)
@@ -186,9 +201,44 @@ namespace Influence.GameClient
             Point coordinates = me.Location;
             int x = coordinates.X / (picBoard.Width / maxX);
             int y = coordinates.Y / (picBoard.Height / maxY);
-            txtStatus.Text = $"Clicked on tile {x + 1},{y + 1}";
-            if (targetForClick != null)
-                targetForClick.Text = $"{x},{y}";
+            if (me.Button == MouseButtons.Left)
+            {
+                txtStatus.Text = $"Leftclicked on tile {x + 1},{y + 1}";
+                clientState.ClickCoordinate(x, y);
+            }
+            else if (me.Button == MouseButtons.Right)
+            {
+                txtStatus.Text = $"Rightclicked on tile {x + 1},{y + 1}";
+                clientState.RightClickCoordinate(x, y);
+            }
+            if (clientState.CanAttack)
+                Attack();
+            else if (clientState.CanReinforce)
+                Reinforce();
+        }
+
+        private void Reinforce()
+        {
+            var url = $"?reinforce&session={clientState.SessionId}&playerid={txtPlayerId.Text}&reinforce={clientState.ReinforceTileId}";
+            var response = GetResponse(url);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                txtStatus.Text += response.StatusDescription;
+                return;
+            }
+            txtStatus.Text += response.Content;
+        }
+
+        private void Attack()
+        {
+            var url = $"?attack&session={clientState.SessionId}&playerid={txtPlayerId.Text}&attackFrom={clientState.AttackFromTileId}&attackTo={clientState.AttackToTileId}";
+            var response = GetResponse(url);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                txtStatus.Text += response.StatusDescription;
+                return;
+            }
+            txtStatus.Text += response.Content;
         }
 
         private void radioAttackFrom_CheckedChanged(object sender, EventArgs e)
@@ -221,6 +271,24 @@ namespace Influence.GameClient
                 txtStatus.Text = response.StatusDescription;
             else
                 txtStatus.Text = response.Content;
+        }
+
+        private void chkAutoUpdateUi_CheckedChanged(object sender, EventArgs e)
+        {
+            tmrPoll.Enabled = !tmrPoll.Enabled;
+        }
+
+        private void tmrPoll_Tick(object sender, EventArgs e)
+            => RefreshState();
+
+        private void btnEndAttack_Click(object sender, EventArgs e)
+        {
+            clientState.CurrentPlayerState = PlayerState.Reinforcing;
+        }
+
+        private void btnEndReinforce_Click(object sender, EventArgs e)
+        {
+            clientState.CurrentPlayerState = PlayerState.Attacking;
         }
     }
 }
