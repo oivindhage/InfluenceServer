@@ -7,7 +7,7 @@ namespace Tester
     {
         static void Main()
         {
-            var client = new RestClient("http://osl-ejay:84/");
+            var client = new RestClient("http://osl-ejay:82/");
 
             while (true)
             {
