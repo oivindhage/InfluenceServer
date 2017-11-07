@@ -143,22 +143,23 @@ namespace Influence.Domain
             => TilesOfPlayers[player.Id];
 
         public void GrantReinforcements(Player player) 
-            => player.NumAvailableReinforcements = GetTilesOfPlayer(player).Count;
+            => player.NumAvailableReinforcements += GetTilesOfPlayer(player).Count;
 
-        public string Move(Player player, int fromCellId, int toCellId, List<Participant> participants, out string attackLog)
+        public string Move(Player player, int fromTileId, int toTileId, List<Participant> participants, out string attackLog, out Participant deadDefender)
         {
+            deadDefender = null;
             attackLog = string.Empty;
 
-            var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == fromCellId);
+            var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == fromTileId);
             if (sourceTile == null)
-                return $"{player.Name} eier ikke cellenummer {fromCellId}";
+                return $"{player.Name} eier ikke cellenummer {fromTileId}";
 
             if (sourceTile.NumTroops < 2)
                 return "Man kan ikke flytte eller angripe fra en celle med mindre enn 2 tropper";
 
             Tile destTile;
-            if (!TilesById.TryGetValue(toCellId, out destTile))
-                return $"Det finnes ingen celle med id {toCellId}";
+            if (!TilesById.TryGetValue(toTileId, out destTile))
+                return $"Det finnes ingen celle med id {toTileId}";
 
             if (destTile.OwnerId == player.Id)
                 return "Man kan ikke flytte til eller angripe celler man allerede eier";
@@ -174,16 +175,34 @@ namespace Influence.Domain
                 return string.Empty;
             }
 
+            Player defender = null;
             bool isAttackSuccessful;
             int numTroopsLeftInDestCell;
             attackLog = Attack(sourceTile.NumTroops, destTile.NumTroops, out isAttackSuccessful, out numTroopsLeftInDestCell);
+
             UpdateTile(sourceTile, player, 1);
-            UpdateTile(
-                destTile,
-                isAttackSuccessful
-                    ? player
-                    : participants.Single(p => p.Player.Id == destTile.OwnerId).Player,
-                numTroopsLeftInDestCell);
+            UpdateTile(destTile, isAttackSuccessful ? player : (defender = participants.Single(p => p.Player.Id == destTile.OwnerId).Player), numTroopsLeftInDestCell);
+
+            if (defender != null && TilesOfPlayers[defender.Id].Count == 0)
+                deadDefender = participants.First(p => p.Player.Id == defender.Id);
+
+            return string.Empty;
+        }
+
+        public string Reinforce(Player player, int tileId)
+        {
+            if (player.NumAvailableReinforcements < 1)
+                return $"{player.Name} har ingen forsterkninger å plassere";
+
+            var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == tileId);
+            if (sourceTile == null)
+                return $"{player.Name} eier ikke cellenummer {tileId}";
+
+            if (sourceTile.NumTroops >= RuleSet.MaxNumTroopsInTile)
+                return $"Cellen {sourceTile.Coordinates} er full ({sourceTile.NumTroops} tropper)";
+
+            UpdateTile(sourceTile, player, sourceTile.NumTroops + 1);
+            player.NumAvailableReinforcements--;
 
             return string.Empty;
         }
