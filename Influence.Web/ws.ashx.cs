@@ -56,6 +56,9 @@ namespace Influence.Web
             else if ((match = Regex.Match(query, RxReinforce)).Success)
                 Reinforce(context, match);
 
+            else if ((match = Regex.Match(query, RxEndReinforce)).Success)
+                EndReinforce(context, match);
+
             else
                 Help(context);
         }
@@ -113,6 +116,21 @@ namespace Influence.Web
                 string error = session.Reinforce(match.Groups["playerid"].Value.ToGuid(), match.Groups["tileid"].Value.ToInt());
                 if (error.IsEmpty())
                     Ok(context, "Reinforce OK");
+                else
+                    BadRequest(context, error);
+            }
+        }
+
+        private void EndReinforce(HttpContext context, Match match)
+        {
+            var session = GetSession(match);
+            if (session == null)
+                BadRequest(context, "Det fins ingen session med den Id-en der");
+            else
+            {
+                string error = session.EndReinforce(match.Groups["playerid"].Value.ToGuid());
+                if (error.IsEmpty())
+                    Ok(context, "OK. Avsluttet forsterkningsfasen");
                 else
                     BadRequest(context, error);
             }
