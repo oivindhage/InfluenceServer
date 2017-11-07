@@ -54,13 +54,15 @@ namespace Influence.Domain
 
         public bool Start()
         {
-            if (Players == null || Players.Count < 1 || Players.Count > RuleSet.MaxNumPlayersInGame)
+            if (Players == null || Players.Count < 2 || Players.Count > RuleSet.MaxNumPlayersInGame)
                 return false;
 
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)
                 return false;
 
             GameState.GamePhase = Consts.GamePhase.Ongoing;
+
+            Players.ForEach(p => p.NumAvailableReinforcements = 0);
             CurrentBoard.PlacePlayers(Players);
             RoundNumber = 1;
 
@@ -78,7 +80,7 @@ namespace Influence.Domain
             attackLog = string.Empty;
 
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
-                return $"Flytting ikke tillatt i gamephase {GameState.GamePhase}";
+                return $"Flytting ikke tillatt i fasen {GameState.GamePhase}";
 
             var participant = GameState.Participants.FirstOrDefault(p => p.Player.Id == playerId);
             if (participant == null)
@@ -95,7 +97,43 @@ namespace Influence.Domain
             if (GameState.PlayerPhase != Consts.PlayerPhase.MoveAndAttack)
                 return $"Nåværende fase er {GameState.PlayerPhase}, ikke {Consts.PlayerPhase.MoveAndAttack}";
 
-            return CurrentBoard.Move(player, fromCellId, toCellId, GameState.Participants, out attackLog);
+            Participant deadDefender;
+            string moveResult = CurrentBoard.Move(player, fromCellId, toCellId, GameState.Participants, out attackLog, out deadDefender);
+
+            if (deadDefender != null)
+            {
+                deadDefender.Rank = GameState.Participants.Count(p => p.IsAlive);
+                deadDefender.IsAlive = false;
+            }
+
+            return moveResult;
+        }
+
+        public string EndMove(Guid playerId)
+        {
+            if (GameState.GamePhase != Consts.GamePhase.Ongoing)
+                return $"Avslutting av flytting ikke tillatt i fasen {GameState.GamePhase}";
+
+            var participant = GameState.Participants.FirstOrDefault(p => p.Player.Id == playerId);
+            if (participant == null)
+                return $"Det finnes ingen spiller med id {playerId} i denne session";
+
+            if (!participant.IsAlive)
+                return $"{participant.Player.Name} har ingen celler igjen i dette gamet";
+
+            var player = participant.Player;
+
+            if (GameState.CurrentPlayer.Id != player.Id)
+                return $"Det er ikke {player.Name} sin tur";
+
+            if (GameState.PlayerPhase != Consts.PlayerPhase.MoveAndAttack)
+                return $"Nåværende fase er {GameState.PlayerPhase}, ikke {Consts.PlayerPhase.MoveAndAttack}";
+
+            GameState.PlayerPhase = Consts.PlayerPhase.Reinforce;
+
+            CurrentBoard.GrantReinforcements(GameState.CurrentPlayer);
+
+            return string.Empty;
         }
     }
 }

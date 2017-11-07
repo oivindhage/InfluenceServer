@@ -17,7 +17,7 @@ namespace Influence.Common.Utils
                 while (n > 1)
                 {
                     n--;
-                    int k = Rand.Next(0, n);
+                    int k = Rand.Next(n + 1);
                     T value = list[k];
                     list[k] = list[n];
                     list[n] = value;
@@ -35,20 +35,8 @@ namespace Influence.Common.Utils
             if (percent > 99)
                 return true;
 
-            lock(RngLock)
+            lock (RngLock)
                 return Rand.Next(1, 101) <= percent;
-        }
-
-        public static bool Chance(double percent)
-        {
-            lock (RngLock)
-                return Rand.NextDouble() <= percent * 0.01;
-        }
-
-        public static int NumberBetween(int minInclusive, int maxInclusive)
-        {
-            lock (RngLock)
-                return Rand.Next(minInclusive, maxInclusive + 1);
         }
     }
 }

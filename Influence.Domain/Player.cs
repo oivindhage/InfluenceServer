@@ -4,8 +4,7 @@ namespace Influence.Domain
 {
     public class Player
     {
-        public Player()
-        { }
+        public Player() { }
 
         public Player(Guid id, string name, string colorRgbCsv)
         {

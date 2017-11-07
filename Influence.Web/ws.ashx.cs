@@ -21,6 +21,9 @@ namespace Influence.Web
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&from=(?<from>\\d+)&to=(?<to>\\d+)$";
+        private const string RxEndMove = "^\\?endmove&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)$";
+        private const string RxReinforce = "^\\?reinforce&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&tileid=(?<tileid>\\d+)$";
+        private const string RxEndReinforce = "^\\?endreinforce&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)$";
         
         private static readonly RuleSet RuleSet = RuleSet.Default;
 
@@ -46,6 +49,9 @@ namespace Influence.Web
 
             else if ((match = Regex.Match(query, RxMove)).Success)
                 Move(context, match);
+
+            else if ((match = Regex.Match(query, RxEndMove)).Success)
+                EndMove(context, match);
 
             else
                 Help(context);
@@ -79,6 +85,21 @@ namespace Influence.Web
             }
         }
 
+        private void EndMove(HttpContext context, Match match)
+        {
+            var session = GetSession(match);
+            if (session == null)
+                BadRequest(context, "Det fins ingen session med den Id-en der");
+            else
+            {
+                string error = session.EndMove(match.Groups["playerid"].Value.ToGuid());
+                if (error.IsEmpty())
+                    Ok(context, "OK. Avsluttet flyttefasen");
+                else
+                    BadRequest(context, error);
+            }
+        }
+
         private Session GetSession(Match match)
         {
             var sessionId = match.Groups["sessionid"].Value.ToGuid();
@@ -96,7 +117,7 @@ namespace Influence.Web
             else
             {
                 GameMaster.CreateSession(RuleSet, sessionId);
-                Ok(context, $"Session {sessionId} opprettet");
+                Ok(context, $"OK. Session {sessionId} opprettet");
             }
         }
 
@@ -115,7 +136,7 @@ namespace Influence.Web
                 if (!couldStart)
                     BadRequest(context, $"Klarte ikke å starte session {session.Id}. Er den allerede startet?");
                 else
-                    Ok(context, $"Session {session.Id} startet");
+                    Ok(context, $"OK. Session {session.Id} startet");
             }
         }
 
