@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Domain", "Influen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Services", "Influence.Services\Influence.Services.csproj", "{3291F932-D71F-4A6D-8025-2FB823E95B14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.GameClient", "Influence.GameClient\Influence.GameClient.csproj", "{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Common", "Influence.Common\Influence.Common.csproj", "{A5EED967-4465-4EBA-B1E9-74CBBE5DC3E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{3AEFD308-8D01-4B84-92F8-7C360580702C}"
@@ -31,6 +33,10 @@ Global
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3291F932-D71F-4A6D-8025-2FB823E95B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B20E39-98AC-4B9D-AC5B-BF15B3B4C82F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5EED967-4465-4EBA-B1E9-74CBBE5DC3E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5EED967-4465-4EBA-B1E9-74CBBE5DC3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5EED967-4465-4EBA-B1E9-74CBBE5DC3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
