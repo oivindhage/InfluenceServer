@@ -64,10 +64,10 @@ namespace Influence.Domain
             int attackerDomination = numAttackers - numDefenders;
             int winPercent =
                 attackerDomination > 1 ? 100
-                    : attackerDomination == 1 ? 75
-                        : attackerDomination == 0 ? 50
-                            : attackerDomination == -1 ? 25
-                                : 0;
+                : attackerDomination == 1 ? 75
+                : attackerDomination == 0 ? 50
+                : attackerDomination == -1 ? 25
+                : 0;
 
             isAttackSuccessful = Rng.Chance(winPercent);
 
@@ -175,13 +175,13 @@ namespace Influence.Domain
                 return string.Empty;
             }
 
-            Player defender = null;
             bool isAttackSuccessful;
             int numTroopsLeftInDestCell;
+            Player defender = participants.Single(p => p.Player.Id == destTile.OwnerId).Player;
             attackLog = Attack(sourceTile.NumTroops, destTile.NumTroops, out isAttackSuccessful, out numTroopsLeftInDestCell);
 
             UpdateTile(sourceTile, player, 1);
-            UpdateTile(destTile, isAttackSuccessful ? player : (defender = participants.Single(p => p.Player.Id == destTile.OwnerId).Player), numTroopsLeftInDestCell);
+            UpdateTile(destTile, isAttackSuccessful ? player : defender, numTroopsLeftInDestCell);
 
             if (defender != null && TilesOfPlayers[defender.Id].Count == 0)
                 deadDefender = participants.First(p => p.Player.Id == defender.Id);
@@ -191,15 +191,15 @@ namespace Influence.Domain
 
         public string Reinforce(Player player, int tileId)
         {
-            if (player.NumAvailableReinforcements < 1)
-                return $"{player.Name} har ingen forsterkninger å plassere";
-
             var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == tileId);
             if (sourceTile == null)
                 return $"{player.Name} eier ikke cellenummer {tileId}";
 
             if (sourceTile.NumTroops >= RuleSet.MaxNumTroopsInTile)
                 return $"Cellen {sourceTile.Coordinates} er full ({sourceTile.NumTroops} tropper)";
+
+            if (player.NumAvailableReinforcements < 1)
+                return $"{player.Name} har ingen forsterkninger å plassere";
 
             UpdateTile(sourceTile, player, sourceTile.NumTroops + 1);
             player.NumAvailableReinforcements--;

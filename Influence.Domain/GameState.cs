@@ -12,7 +12,7 @@ namespace Influence.Domain
         public GameState()
         {
             CurrentPlayer = null;
-            PlayerPhase = Consts.PlayerPhase.Undefined;
+            PlayerPhase = Consts.PlayerPhase.NotAvailable;
             GamePhase = Consts.GamePhase.NotStarted;
             Participants = new List<Participant>();
         }

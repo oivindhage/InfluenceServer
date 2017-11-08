@@ -12,6 +12,8 @@ namespace Influence.Web
 {
     public class ws : IHttpHandler
     {
+        private static readonly object SequentialAccessLock = new object();
+
         public bool IsReusable => false;
         public void ProcessRequest(HttpContext context) => HandleQuery(context, context.Request.Url.Query);
 
@@ -20,6 +22,7 @@ namespace Influence.Web
         private const string RxCreateSession = "^\\?create=?(?<sessionid>[A-Za-z0-9\\-]*)$";
         private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
+        private const string RxNewGame = "^\\?newgame&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&from=(?<from>\\d+)&to=(?<to>\\d+)$";
         private const string RxEndMove = "^\\?endmove&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)$";
         private const string RxReinforce = "^\\?reinforce&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&tileid=(?<tileid>\\d+)$";
@@ -32,35 +35,41 @@ namespace Influence.Web
             Match match;
             context.Response.ContentType = "text/plain";
 
-            if (Regex.IsMatch(query, RxViewAllSessions))
-                GetSessions(context);
+            lock (SequentialAccessLock)
+            {
+                if (Regex.IsMatch(query, RxViewAllSessions))
+                    GetSessions(context);
 
-            else if ((match = Regex.Match(query, RxCreateSession)).Success)
-                CreateSession(context, match);
+                else if ((match = Regex.Match(query, RxCreateSession)).Success)
+                    CreateSession(context, match);
 
-            else if ((match = Regex.Match(query, RxViewSpecificSession)).Success)
-                GetSession(context, match);
+                else if ((match = Regex.Match(query, RxViewSpecificSession)).Success)
+                    GetSession(context, match);
 
-            else if ((match = Regex.Match(query, RxJoinSession)).Success)
-                JoinSession(context, match);
+                else if ((match = Regex.Match(query, RxJoinSession)).Success)
+                    JoinSession(context, match);
 
-            else if ((match = Regex.Match(query, RxStartSession)).Success)
-                StartSession(context, match);
+                else if ((match = Regex.Match(query, RxStartSession)).Success)
+                    StartSession(context, match);
 
-            else if ((match = Regex.Match(query, RxMove)).Success)
-                Move(context, match);
+                else if ((match = Regex.Match(query, RxNewGame)).Success)
+                    NewGame(context, match);
 
-            else if ((match = Regex.Match(query, RxEndMove)).Success)
-                EndMove(context, match);
+                else if ((match = Regex.Match(query, RxMove)).Success)
+                    Move(context, match);
 
-            else if ((match = Regex.Match(query, RxReinforce)).Success)
-                Reinforce(context, match);
+                else if ((match = Regex.Match(query, RxEndMove)).Success)
+                    EndMove(context, match);
 
-            else if ((match = Regex.Match(query, RxEndReinforce)).Success)
-                EndReinforce(context, match);
+                else if ((match = Regex.Match(query, RxReinforce)).Success)
+                    Reinforce(context, match);
 
-            else
-                Help(context);
+                else if ((match = Regex.Match(query, RxEndReinforce)).Success)
+                    EndReinforce(context, match);
+
+                else
+                    Help(context);
+            }
         }
 
         private void Help(HttpContext context)
@@ -163,16 +172,35 @@ namespace Influence.Web
 
             if (session == null)
                 BadRequest(context, "Det fins ingen session med den Id-en der");
-            else if (session.Players.Count < 1)
-                BadRequest(context, "Minst 1 spiller må ha joinet denne session før den kan startes");
+            else if (session.Players.Count < 2)
+                BadRequest(context, "Minst 2 spillere må ha joinet denne session før den kan startes");
             else
             {
                 bool couldStart = session.Start();
 
                 if (!couldStart)
-                    BadRequest(context, $"Klarte ikke å starte session {session.Id}. Er den allerede startet?");
+                    BadRequest(context, $"Klarte ikke å starte session {session.Name} ({session.Id}). Er den allerede startet?");
                 else
-                    Ok(context, $"OK. Session {session.Id} startet");
+                    Ok(context, $"OK. Session {session.Name} ({session.Id}) startet");
+            }
+        }
+
+        private void NewGame(HttpContext context, Match match)
+        {
+            var session = GetSession(match);
+
+            if (session == null)
+                BadRequest(context, "Det fins ingen session med den Id-en der");
+            else if (session.Players.Count < 2)
+                BadRequest(context, "Minst 2 spillere må ha joinet denne session før den kan startes");
+            else
+            {
+                bool couldStartNextRound = session.NewGame();
+
+                if (!couldStartNextRound)
+                    BadRequest(context, $"Klarte ikke å starte nytt spill i session {session.Name} ({session.Id}). Er forrige spill avsluttet?");
+                else
+                    Ok(context, $"OK. Nytt spill i session {session.Name} ({session.Id}) startet");
             }
         }
 

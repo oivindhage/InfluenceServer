@@ -28,14 +28,8 @@ namespace Influence.Domain
             RoundNumber = 0;
             RuleSet = ruleSet;
             Name = name;
-            
-            GenerateNewBoard();
         }
 
-        public void GenerateNewBoard()
-        {
-            CurrentBoard = new Board(RuleSet);
-        }
 
         public bool AddPlayer(Guid playerId, string playerName)
         {
@@ -60,18 +54,28 @@ namespace Influence.Domain
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)
                 return false;
 
+            RoundNumber++;
             GameState.GamePhase = Consts.GamePhase.Ongoing;
 
-            Players.ForEach(p => p.NumAvailableReinforcements = 0);
+            CurrentBoard = new Board(RuleSet);
             CurrentBoard.PlacePlayers(Players);
-            RoundNumber = 1;
 
+            Players.ForEach(p => p.NumAvailableReinforcements = 0);
             GameState.Participants = new List<Participant>();
             Rng.ShuffleList(Players.ToList()).ForEach(p => GameState.Participants.Add(new Participant(p)));
-
             GiveTurnToNextPlayer();
 
             return true;
+        }
+
+        public bool NewGame()
+        {
+            if (GameState.GamePhase != Consts.GamePhase.Finished)
+                return false;
+
+            GameState.GamePhase = Consts.GamePhase.NotStarted;
+
+            return Start();
         }
 
         private void GiveTurnToNextPlayer()
@@ -94,13 +98,37 @@ namespace Influence.Domain
 
                     if (idxNextPlayer >= GameState.Participants.Count)
                         idxNextPlayer = 0;
-                } while (!GameState.Participants[idxNextPlayer].IsAlive);
+                }
+                while (!GameState.Participants[idxNextPlayer].IsAlive);
 
                 GameState.CurrentPlayer = GameState.Participants[idxNextPlayer].Player;
+            }
+        }
 
-                // todo ejay remove
-                if (!GameState.Participants[idxNextPlayer].IsAlive)
-                    throw new Exception("HILFE - logisk feil i GiveTurnToNextPlayer()");
+        private void AwardScoreToParticipants(IEnumerable<Participant> participants)
+        {
+            foreach (var participant in participants)
+            {
+                if (participant.Rank == 1)
+                {
+                    participant.Player.Score += 5;
+                    participant.Player.NumPos1++;
+                }
+                else if (participant.Rank == 2)
+                {
+                    participant.Player.Score += 3;
+                    participant.Player.NumPos2++;
+                }
+                else if (participant.Rank == 3)
+                {
+                    participant.Player.Score += 2;
+                    participant.Player.NumPos3++;
+                }
+                else
+                {
+                    participant.Player.Score += 0;
+                    participant.Player.NumPos4++;
+                }
             }
         }
 
@@ -136,24 +164,16 @@ namespace Influence.Domain
 
                 if (GameState.Participants.Count(p => p.IsAlive) == 1)
                 {
+                    // Give last survivor aka winner Rank 1
+                    GameState.Participants.First(p => p.IsAlive).Rank = 1;
+
                     GameState.GamePhase = Consts.GamePhase.Finished;
+                    GameState.PlayerPhase = Consts.PlayerPhase.NotAvailable;
                     AwardScoreToParticipants(GameState.Participants);
                 }
             }
 
             return moveResult;
-        }
-
-        private void AwardScoreToParticipants(List<Participant> participants)
-        {
-            foreach (var participant in participants)
-            {
-                participant.Player.Score += 
-                    participant.Rank == 1 ? 5 
-                    : participant.Rank == 2 ? 3
-                    : participant.Rank == 3 ? 2 
-                    : 0;
-            }
         }
 
         public string EndMove(Guid playerId)
