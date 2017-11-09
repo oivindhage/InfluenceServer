@@ -75,13 +75,25 @@ namespace Influence.Web
         private void Help(HttpContext context)
         {
             Ok(context,
-                "Brukerhilfe:\r\n\r\n" +
+                "Brukerhilfe:\r\n\r\n" +                
+                "En session er en slags turnering der spillere kan melde seg på én gang og så spille mange brett.\r\n" +
+                "PlayerId og navn når man melder seg velges av spilleren, men må være unikt innenfor session.\r\n" +
+                "TileId som oppgis ved flytting og forsterking er cellens autonummer, f.eks. oppgitt i Session.CurrentBoard.TilesOfPlayers\r\n\r\n" +
+                
+                "-------------------------------------------------------------------------------------------------------------------------\r\n\r\n" +
+
                 "Vis alle sessions: ws.ashx?sessions\r\n" +
-                "Vis spesifikk session: ws.ashx?session=guid\r\n" +
-                "Opprett session: ws.ashx?create\r\n" +
-                "Opprett spesifikk session: ws.ashx?create=guid\r\n" +
-                "Join en session: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n" +
-                "Start en session: ws.ashx?start&session=guid");
+                "Vis spesifikk session: ws.ashx?session=guid\r\n\r\n" +
+                "Ny session: ws.ashx?create\r\n" +
+                "Ny spesifikk session: ws.ashx?create=guid\r\n\r\n" +
+                "Meld på spiller: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n\r\n" +
+                "Start session (deaktiverer påmelding, initierer, starter første brett): ws.ashx?start&session=guid\r\n" +
+                "Start nytt brett i session: ws.ashx?newgame&session=guid\r\n\r\n" +
+                "Flytting og angrep: ws.ashx?move&session=guid&playerid=guid&from=tileid&to=tileid\r\n" +
+                "Avslutt flyttefase: ws.ashx?endmove&session=guid&playerid=guid\r\n\r\n" +
+                "Forsterking: ws.ashx?reinforce&session=guid&playerid=guid&tileid=tileid\r\n" +
+                "Avslutt forsterkingsfase: ws.ashx?endreinforce&session=guid&playerid=guid\r\n" +
+                "");
         }
 
         private void Move(HttpContext context, Match match)
