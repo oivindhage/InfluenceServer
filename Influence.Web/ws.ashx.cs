@@ -20,7 +20,7 @@ namespace Influence.Web
         private const string RxViewAllSessions = "^\\?sessions$";
         private const string RxViewSpecificSession = "^\\?session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxCreateSession = "^\\?create=?(?<sessionid>[A-Za-z0-9\\-]*)$";
-        private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9]{3,20})$";
+        private const string RxJoinSession = "^\\?join&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&name=(?<name>[a-zA-Z0-9 ]{3,20})$";
         private const string RxStartSession = "^\\?start&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxNewGame = "^\\?newgame&session=(?<sessionid>[A-Za-z0-9\\-]+)$";
         private const string RxMove = "^\\?move&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&from=(?<from>\\d+)&to=(?<to>\\d+)$";
@@ -34,6 +34,7 @@ namespace Influence.Web
         {
             Match match;
             context.Response.ContentType = "text/plain";
+            query = HttpUtility.UrlDecode(query ?? string.Empty);
 
             lock (SequentialAccessLock)
             {
@@ -67,27 +68,29 @@ namespace Influence.Web
                 else if ((match = Regex.Match(query, RxEndReinforce)).Success)
                     EndReinforce(context, match);
 
-                else
+                else if (query.IsEmpty())
                     Help(context);
+
+                else
+                    BadRequest(context, "Querystringen er ikke riktig");
             }
         }
 
         private void Help(HttpContext context)
         {
             Ok(context,
-                "Brukerhilfe:\r\n\r\n" +                
-                "En session er en slags turnering der spillere kan melde seg på én gang og så spille mange brett.\r\n" +
-                "PlayerId og navn når man melder seg velges av spilleren, men må være unikt innenfor session.\r\n" +
-                "TileId som oppgis ved flytting og forsterking er cellens autonummer, f.eks. oppgitt i Session.CurrentBoard.TilesOfPlayers\r\n\r\n" +
+                "Brukerhilfe:\r\n\r\n" +
+                "For å spille mot en annen spiller, join en session. Oppgi din PlayerId (guid) og nick.\r\n" +
+                "TileId som oppgis ved flytting og forsterking er cellens autonummer, f.eks. oppgitt i Session.CurrentBoard.TilesById\r\n\r\n" +
                 
-                "-------------------------------------------------------------------------------------------------------------------------\r\n\r\n" +
+                "-------------------------------------------------------------------------------------------------\r\n\r\n" +
 
                 "Vis alle sessions: ws.ashx?sessions\r\n" +
                 "Vis spesifikk session: ws.ashx?session=guid\r\n\r\n" +
                 "Ny session: ws.ashx?create\r\n" +
                 "Ny spesifikk session: ws.ashx?create=guid\r\n\r\n" +
-                "Meld på spiller: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n\r\n" +
-                "Start session (deaktiverer påmelding, initierer, starter første brett): ws.ashx?start&session=guid\r\n" +
+                "Join session: ws.ashx?join&session=guid&playerid=guid&name=alphanumeric3to20chars\r\n\r\n" +
+                "Start session (deaktiverer joins, initierer, starter første brett): ws.ashx?start&session=guid\r\n" +
                 "Start nytt brett i session: ws.ashx?newgame&session=guid\r\n\r\n" +
                 "Flytting og angrep: ws.ashx?move&session=guid&playerid=guid&from=tileid&to=tileid\r\n" +
                 "Avslutt flyttefase: ws.ashx?endmove&session=guid&playerid=guid\r\n\r\n" +
@@ -108,7 +111,12 @@ namespace Influence.Web
                 if (error.IsEmpty())   
                     Ok(context, attackLog);
                 else
+                {
+                    // Punish invalid actions and force the game to move on
+                    session.GiveTurnToNextPlayer();
+
                     BadRequest(context, error);
+                }
             }
         }
 
@@ -134,11 +142,17 @@ namespace Influence.Web
                 BadRequest(context, "Det fins ingen session med den Id-en der");
             else
             {
-                string error = session.Reinforce(match.Groups["playerid"].Value.ToGuid(), match.Groups["tileid"].Value.ToInt());
+                string reinforceLog;
+                string error = session.Reinforce(match.Groups["playerid"].Value.ToGuid(), match.Groups["tileid"].Value.ToInt(), out reinforceLog);
                 if (error.IsEmpty())
-                    Ok(context, "Reinforce OK");
+                    Ok(context, "OK. " + reinforceLog);
                 else
+                {
+                    // Punish invalid actions and force the game to move on
+                    session.GiveTurnToNextPlayer();
+
                     BadRequest(context, error);
+                }
             }
         }
 
@@ -236,7 +250,7 @@ namespace Influence.Web
                 if (session.AddPlayer(playerId, name))
                 {
                     var player = session.Players.Single(p => p.Id == playerId);
-                    Ok(context, $"Velkommen til session '{session.Name}' ({session.Id}), {name}. Du har fått fargen {player.ColorRgbCsv} (rgbcsv)");
+                    Ok(context, $"Velkommen til session '{session.Name}' ({session.Id}), {name}. Du har fått fargen {player.ColorRgbCsv}");
                 }
 
                 else if (session.Players.Any(p => p.Id == playerId) || session.Players.Any(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
@@ -266,6 +280,7 @@ namespace Influence.Web
         private void BadRequest(HttpContext context, string message)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            context.Response.StatusDescription = "Bad request: " + message;
             context.Response.Write(message);
         }
     }

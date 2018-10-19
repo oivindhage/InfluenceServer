@@ -12,6 +12,7 @@ namespace Influence.Domain
         public RuleSet RuleSet;
 
         private static readonly Random Rand = new Random();
+
         public Dictionary<Guid, List<Tile>> TilesOfPlayers = new Dictionary<Guid, List<Tile>>();
         public Dictionary<int, Tile> TilesById = new Dictionary<int, Tile>();
 
@@ -189,8 +190,10 @@ namespace Influence.Domain
             return string.Empty;
         }
 
-        public string Reinforce(Player player, int tileId)
+        public string Reinforce(Player player, int tileId, out string reinforceLog)
         {
+            reinforceLog = string.Empty;
+
             var sourceTile = GetTilesOfPlayer(player).FirstOrDefault(c => c.Id == tileId);
             if (sourceTile == null)
                 return $"{player.Name} eier ikke cellenummer {tileId}";
@@ -204,6 +207,7 @@ namespace Influence.Domain
             UpdateTile(sourceTile, player, sourceTile.NumTroops + 1);
             player.NumAvailableReinforcements--;
 
+            reinforceLog = $"{player.Name} forsterker celle {sourceTile.Coordinates}";
             return string.Empty;
         }
     }

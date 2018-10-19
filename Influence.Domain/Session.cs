@@ -78,7 +78,7 @@ namespace Influence.Domain
             return Start();
         }
 
-        private void GiveTurnToNextPlayer()
+        public void GiveTurnToNextPlayer()
         {
             GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
@@ -203,8 +203,10 @@ namespace Influence.Domain
             return string.Empty;
         }
 
-        public string Reinforce(Guid playerId, int tileId)
+        public string Reinforce(Guid playerId, int tileId, out string reinforceLog)
         {
+            reinforceLog = string.Empty;
+
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return $"Forsterking ikke mulig i spillfasen {GameState.GamePhase}";
 
@@ -223,7 +225,7 @@ namespace Influence.Domain
             if (GameState.PlayerPhase != Consts.PlayerPhase.Reinforce)
                 return $"Nåværende fase er {GameState.PlayerPhase}, ikke {Consts.PlayerPhase.Reinforce}";
 
-            return CurrentBoard.Reinforce(player, tileId);
+            return CurrentBoard.Reinforce(player, tileId, out reinforceLog);
         }
 
         public string EndReinforce(Guid playerId)

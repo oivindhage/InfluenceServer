@@ -1,11 +1,12 @@
-﻿using RestSharp;
+﻿using System;
 using System.Net;
 using Influence.Domain;
 using Newtonsoft.Json;
+using RestSharp;
 
-namespace Influence.GameClient
+namespace Influence.Services
 {
-    public class InfluenceGateway
+    public class Gateway
     {
         public string SessionBaseUrl;
         public string EndReinforce(string sessionId, string playerId)
@@ -17,14 +18,14 @@ namespace Influence.GameClient
         public string StartSession(string sessionId)
            => GetResponseOrErrorMessage($"?start&session={sessionId}");
 
-        public string Create()
-           => GetResponseOrErrorMessage($"?create");
+        public string Create(string guid = "")
+           => GetResponseOrErrorMessage($"?create={guid ?? Guid.NewGuid().ToString()}");
 
-        public string Move(string sessionId, string text, int attackFromTileId, int attackToTileId)
-           => GetResponseOrErrorMessage($"?move&session={sessionId}&playerid={text}&from={attackFromTileId}&to={attackToTileId}");
+        public string Move(string sessionId, string playerId, int attackFromTileId, int attackToTileId)
+           => GetResponseOrErrorMessage($"?move&session={sessionId}&playerid={playerId}&from={attackFromTileId}&to={attackToTileId}");
 
-        public string Reinforce(string sessionId, string text, int reinforceTileId)
-           => GetResponseOrErrorMessage($"?reinforce&session={sessionId}&playerid={text}&tileid={reinforceTileId}");
+        public string Reinforce(string sessionId, string playerId, int reinforceTileId)
+           => GetResponseOrErrorMessage($"?reinforce&session={sessionId}&playerid={playerId}&tileid={reinforceTileId}");
 
         public string Join(string sessionId, string playerId, string name)
            => GetResponseOrErrorMessage($"?join&session={sessionId}&playerid={playerId}&name={name}");
@@ -36,6 +37,8 @@ namespace Influence.GameClient
                 return null;
             dynamic converted = JsonConvert.DeserializeObject(response.Content);
             var sessionsJson = converted.Sessions.ToString();
+
+            // todo: see todo in GetSession(string)
             return JsonConvert.DeserializeObject<Session[]>(sessionsJson);
         }
 
@@ -46,6 +49,10 @@ namespace Influence.GameClient
                 return null;
             dynamic converted = JsonConvert.DeserializeObject(response.Content);
             var sessionJson = converted.Session.ToString();
+
+            // todo: the session object isn't created correctly here
+            // for example, instances of Tile get the wrong Id in the constructor due to the ctor param "numColumns" always having the value 0
+            // also see todo note in GetSessions()
             return JsonConvert.DeserializeObject<Session>(sessionJson);
         }
 

@@ -19,13 +19,16 @@ namespace Influence.Services
         public static Session GetSession(Guid guid) 
             => Sessions.FirstOrDefault(s => s.Id == guid);
 
-        public static void CreateSession(RuleSet ruleSet, Guid id = default(Guid))
+        public static Session CreateSession(RuleSet ruleSet, Guid id = default(Guid))
         {
             string name;
             do { name = SessionNames[Rand.Next(0, SessionNames.Count)]; }
             while (Sessions.Any(s => s.Name == name));
 
-            Sessions.Add(new Session(ruleSet, name, id));
+            var session = new Session(ruleSet, name, id);
+            Sessions.Add(session);
+
+            return session;
         }
     }
 }

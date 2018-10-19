@@ -16,3 +16,5 @@ Influence.Common/obj/
 Tester/bin/
 Tester/obj/
 *.user
+Influence.SampleBot/obj/
+Influence.SampleBot/bin/

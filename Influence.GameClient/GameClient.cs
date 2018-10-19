@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Influence.Domain;
 using System.Linq;
+using Influence.Services;
 using static Influence.GameClient.ClientState;
 
 namespace Influence.GameClient
@@ -19,7 +20,7 @@ namespace Influence.GameClient
         private int tileHeight;
         private Label targetForClick;
         private ClientState clientState;
-        private InfluenceGateway influenceGateway;
+        private Gateway influenceGateway;
 
         public GameClient()
         {
@@ -36,7 +37,7 @@ namespace Influence.GameClient
         {
             txtPlayerId.Text = Guid.NewGuid().ToString();
             txtPlayerName.Text = ConfigurationSettings.PlayerName;
-            influenceGateway = new InfluenceGateway();
+            influenceGateway = new Gateway();
             txtSessionBaseUrl.Text = ConfigurationSettings.ServerUrl;
         }
 
