@@ -23,5 +23,9 @@ namespace Influence.Domain
             Id = x + (y * numColumns);
             Coordinates = $"({x}, {y})";
         }
+
+        // Deserialization of Tile.Id is buggy at this point. Re-create tile in memory to get proper Id.
+        public static int ConstructTileId(int x, int y, int boardSize)
+            => new Tile(x, y, boardSize).Id;
     }
 }

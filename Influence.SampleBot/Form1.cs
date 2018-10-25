@@ -12,7 +12,7 @@ namespace Influence.SampleBot
 {
     public partial class Form1 : Form
     {
-        private int stepIntervalMs = 500;
+        private int _stepIntervalMs = 500;
 
         // API documentation: /ws.ashx
         private readonly Gateway _gateway = new Gateway { SessionBaseUrl = "http://localhost:82/ws.ashx" };
@@ -27,8 +27,8 @@ namespace Influence.SampleBot
         {
             InitializeComponent();
 
-            trackBar1.Value = stepIntervalMs;
-            _stepTimer.Interval = stepIntervalMs;
+            trackBar1.Value = _stepIntervalMs;
+            _stepTimer.Interval = _stepIntervalMs;
             _stepTimer.Tick += (sender, args) => PerformStep();
 
             trackBar1_Scroll(null, null);
@@ -78,9 +78,10 @@ namespace Influence.SampleBot
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            stepIntervalMs = _stepTimer.Interval = trackBar1.Value;
-            lblStepDelayMs.Text = $"Interval {stepIntervalMs} ms";
+            _stepIntervalMs = _stepTimer.Interval = trackBar1.Value;
+            lblStepDelayMs.Text = $"Interval {_stepIntervalMs} ms";
         }
+
 
         private void PerformStep()
         {
@@ -92,14 +93,20 @@ namespace Influence.SampleBot
             var gamestate = session.GameState;
             var activeBot = _bots.First(b => b.Id == gamestate.CurrentPlayer.Id);
             var board = session.CurrentBoard;
-            var playersTiles = board.TilesOfPlayers[gamestate.CurrentPlayer.Id];
 
             if (gamestate.PlayerPhase == Consts.PlayerPhase.MoveAndAttack)
             {
                 MoveInstruction instruction;
-                if (playersTiles.Any(t => t.NumTroops > 1) && (instruction = activeBot.MoveAndAttack(playersTiles, board.Size, board.GetTile)) != null)
+
+                bool PlayerCanMoveOrAttackFromTileFunc(Tile t) 
+                    => t.OwnerId == gamestate.CurrentPlayer.Id && t.NumTroops > 1;
+
+                if (board.AllTiles.Any(PlayerCanMoveOrAttackFromTileFunc) && (instruction = activeBot.MoveAndAttack(board.AllTiles, PlayerCanMoveOrAttackFromTileFunc, x => Board.GetTilesOneCanMoveTo(x, board))) != null)
                 {
-                    Log(_gateway.Move(_sessionId, activeBot.Id.ToString(), instruction.SourceTileId, instruction.DestTileId));
+                    var sourceTileId = Tile.ConstructTileId(instruction.SourceTile.X, instruction.SourceTile.Y, board.Size);
+                    var destTileId = Tile.ConstructTileId(instruction.DestinationTile.X, instruction.DestinationTile.Y, board.Size);
+
+                    Log(_gateway.Move(_sessionId, activeBot.Id.ToString(), sourceTileId, destTileId));
                     return;
                 }
 
@@ -108,10 +115,15 @@ namespace Influence.SampleBot
 
             else if (gamestate.PlayerPhase == Consts.PlayerPhase.Reinforce)
             {
-                ReinforceInstruction instruction;
-                if (gamestate.CurrentPlayer.NumAvailableReinforcements > 0 && (instruction = activeBot.Reinforce(playersTiles, board.Size, board.RuleSet.MaxNumTroopsInTile)) != null)
+                Tile tileToReinforce;
+
+                bool PlayerCanReinforceTile(Tile t)
+                    => t.OwnerId == gamestate.CurrentPlayer.Id && t.NumTroops < board.RuleSet.MaxNumTroopsInTile && gamestate.CurrentPlayer.NumAvailableReinforcements > 0;
+
+                if (board.AllTiles.Any(PlayerCanReinforceTile) && (tileToReinforce = activeBot.Reinforce(board.AllTiles, PlayerCanReinforceTile)) != null)
                 {
-                    Log(_gateway.Reinforce(_sessionId, activeBot.Id.ToString(), instruction.TileId));
+                    var tileId = Tile.ConstructTileId(tileToReinforce.X, tileToReinforce.Y, board.Size);
+                    Log(_gateway.Reinforce(_sessionId, activeBot.Id.ToString(), tileId));
                     return;
                 }
 

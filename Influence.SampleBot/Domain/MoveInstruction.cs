@@ -1,14 +1,16 @@
-﻿namespace Influence.SampleBot.Domain
+﻿using Influence.Domain;
+
+namespace Influence.SampleBot.Domain
 {
     public class MoveInstruction
     {
-        public int SourceTileId { get; set; }
-        public int DestTileId { get; set; }
+        public Tile SourceTile { get; }
+        public Tile DestinationTile { get; }
 
-        public MoveInstruction(int sourceTileId, int destTileId)
+        public MoveInstruction(Tile sourceTile, Tile destinationTile)
         {
-            SourceTileId = sourceTileId;
-            DestTileId = destTileId;
+            SourceTile = sourceTile;
+            DestinationTile = destinationTile;
         }
     }
 }

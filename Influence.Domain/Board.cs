@@ -17,6 +17,7 @@ namespace Influence.Domain
         public Dictionary<int, Tile> TilesById = new Dictionary<int, Tile>();
 
         public List<TileRow> TileRows { get; set; }
+        public List<Tile> AllTiles => TileRows.SelectMany(r => r.Tiles).ToList();
 
         public Board() { }
 
@@ -209,6 +210,32 @@ namespace Influence.Domain
 
             reinforceLog = $"{player.Name} forsterker celle {sourceTile.Coordinates}";
             return string.Empty;
+        }
+
+        public static List<Tile> GetTilesOneCanMoveTo(Tile fromTile, Board board)
+        {
+            var nearbyTiles = new List<Tile>();
+
+            for (int xOffset = -1; xOffset <= 1; xOffset++)
+            {
+                for (int yOffset = -1; yOffset <= 1; yOffset++)
+                {
+                    if (Math.Abs(xOffset) + Math.Abs(yOffset) == 1)
+                    {
+                        var x = fromTile.X + xOffset;
+                        var y = fromTile.Y + yOffset;
+                        if (x.IsBetween(0, board.Size - 1) && y.IsBetween(0, board.Size - 1))
+                        {
+                            var destTile = board.GetTile(x, y);
+                            if (destTile.OwnerId != fromTile.OwnerId)
+                                nearbyTiles.Add(destTile);
+                        }
+
+                    }
+                }
+            }
+
+            return nearbyTiles;
         }
     }
 }
