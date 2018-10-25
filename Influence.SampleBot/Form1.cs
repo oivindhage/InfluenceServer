@@ -46,8 +46,15 @@ namespace Influence.SampleBot
             Log(response);
         }
 
-        private void btnStartGame_Click(object sender, EventArgs e) 
-            => Log(_gateway.StartSession(_sessionId));
+        private void btnStartGame_Click(object sender, EventArgs e)
+        {
+            var currentSession = _gateway.GetSession(_sessionId);
+               
+            if (currentSession?.GameState.GamePhase == Consts.GamePhase.Finished)
+                Log(_gateway.NewGameInSession(_sessionId));
+            else
+                Log(_gateway.StartSession(_sessionId));
+        }
 
         private void btnAddTwoBots_Click(object sender, EventArgs e)
         {

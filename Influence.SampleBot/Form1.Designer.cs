@@ -63,9 +63,9 @@
             // 
             this.btnStartGame.Location = new System.Drawing.Point(200, 13);
             this.btnStartGame.Name = "btnStartGame";
-            this.btnStartGame.Size = new System.Drawing.Size(86, 23);
+            this.btnStartGame.Size = new System.Drawing.Size(98, 23);
             this.btnStartGame.TabIndex = 2;
-            this.btnStartGame.Text = "Start game";
+            this.btnStartGame.Text = "Start / new game";
             this.btnStartGame.UseVisualStyleBackColor = true;
             this.btnStartGame.Click += new System.EventHandler(this.btnStartGame_Click);
             // 

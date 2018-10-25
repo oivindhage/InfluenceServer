@@ -18,6 +18,9 @@ namespace Influence.Services
         public string StartSession(string sessionId)
            => GetResponseOrErrorMessage($"?start&session={sessionId}");
 
+        public string NewGameInSession(string sessionId)
+            => GetResponseOrErrorMessage($"?newgame&session={sessionId}");
+
         public string Create(string guid = "")
            => GetResponseOrErrorMessage($"?create={guid ?? Guid.NewGuid().ToString()}");
 

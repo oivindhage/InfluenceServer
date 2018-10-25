@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Influence.Common.Extensions;
 using Influence.Domain;
 
 namespace Influence.SampleBot.Domain
@@ -29,9 +30,10 @@ namespace Influence.SampleBot.Domain
                     {
                         if (Math.Abs(xOffset) + Math.Abs(yOffset) == 1)
                         {
-                            // Yes, this is lazy. This loop might request a tile that doesn't exist.
-                            try { nearbyTiles.Add(getTileFunc(tile.X + xOffset, tile.Y + yOffset)); }
-                            catch { }
+                            var x = tile.X + xOffset;
+                            var y = tile.Y + yOffset;
+                            if (x.IsBetween(0, boardSize-1) && y.IsBetween(0, boardSize-1))
+                                nearbyTiles.Add(getTileFunc(x, y)); 
                         }
                     }
                 }
