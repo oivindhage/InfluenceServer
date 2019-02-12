@@ -18,7 +18,6 @@ namespace Influence.GameClient
         private int maxY;
         private int tileWidth;
         private int tileHeight;
-        private Label targetForClick;
         private ClientState clientState;
         private Gateway influenceGateway;
 
@@ -46,13 +45,25 @@ namespace Influence.GameClient
             Color color = string.IsNullOrEmpty(tile.OwnerColorRgbCsv)
                 ? Color.RosyBrown
                 : DecodeRgb(tile.OwnerColorRgbCsv);
-            var rectangleF = new RectangleF(tile.X * tileWidth, tile.Y * tileHeight, tileWidth, tileHeight);
+            RectangleF rectangleF = GetRectangle(tile.X, tile.Y);
             g.FillRectangle(new SolidBrush(color), rectangleF);
-            g.DrawRectangle(pen, rectangleF.X, rectangleF.Y, rectangleF.X + rectangleF.Width, rectangleF.Y + rectangleF.Height);
+            g.DrawRectangle(pen, rectangleF.X, rectangleF.Y, rectangleF.Width, rectangleF.Height);
             if (tile.NumTroops == 0)
                 return;
             var brush = GetBrush(color);
             g.DrawString($"{tile.NumTroops}", font, brush, rectangleF, stringFormat);
+        }
+
+        private RectangleF GetRectangle(int x, int y)
+            => new RectangleF(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+
+        private void DrawBrightFrame(Coordinate attackFrom)
+        {
+            if (attackFrom is null)
+                return;
+            var rectangleF = GetRectangle(attackFrom.X, attackFrom.Y);
+            var whitePen = new Pen(new SolidBrush(Color.White));
+            g.DrawRectangle(whitePen, rectangleF.X, rectangleF.Y, rectangleF.Width, rectangleF.Height);
         }
 
         private SolidBrush GetBrush(Color color)
@@ -74,6 +85,13 @@ namespace Influence.GameClient
             SetupTileMeasurements(clientState.Session.CurrentBoard);
             DrawBoard(clientState.Session.CurrentBoard);
             WritePlayerStatistics(clientState.Session);
+            SetCorrectButtonStates(clientState);
+        }
+
+        private void SetCorrectButtonStates(ClientState clientState)
+        {
+            btnEndAttack.Enabled = clientState.CurrentPlayerState == PlayerState.Attacking;
+            btnEndReinforce.Enabled = clientState.CurrentPlayerState == PlayerState.Reinforcing;
         }
 
         private void WritePlayerStatistics(Session session)
@@ -122,6 +140,7 @@ namespace Influence.GameClient
             foreach (var tileRow in board.TileRows)
                 foreach (var tile in tileRow.Tiles)
                     DrawTile(tile);
+            DrawBrightFrame(clientState.AttackFrom);
         }
 
         private void SetupTileMeasurements(Board board)
@@ -167,10 +186,7 @@ namespace Influence.GameClient
         private void RefreshState()
         {
             if (!cmbCurrentGames.Enabled)
-            {
-                txtStatus.Text = "List sessions first";
                 return;
-            }
             clientState.Session = influenceGateway.GetSession(cmbCurrentGames.Text);
             PresentSession();
         }
@@ -200,19 +216,16 @@ namespace Influence.GameClient
         }
 
         private void Reinforce()
-            => influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, clientState.ReinforceTileId);
+        {
+            influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, clientState.ReinforceTileId);
+            clientState.ResetCoordinates();
+        }
 
         private void Attack()
-            => influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, clientState.AttackFromTileId, clientState.AttackToTileId);
-
-        private void radioAttackFrom_CheckedChanged(object sender, EventArgs e)
-            => targetForClick = lblAttackFrom;
-
-        private void radioAttackDestination_CheckedChanged(object sender, EventArgs e)
-            => targetForClick = lblAttackTo;
-
-        private void radioReinforce_CheckedChanged(object sender, EventArgs e)
-            => targetForClick = lblReinforce;
+        {
+            influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, clientState.AttackFromTileId, clientState.AttackToTileId);
+            clientState.ResetCoordinates();
+        }
 
         private void btnCreateSession_Click(object sender, EventArgs e)
             => txtStatus.Text += influenceGateway.Create();
@@ -225,12 +238,7 @@ namespace Influence.GameClient
                 return;
             }
             txtStatus.Text = influenceGateway.StartSession(cmbCurrentGames.Text);
-            if (!chkAutoUpdateUi.Checked)
-                chkAutoUpdateUi.Checked = true;
         }
-
-        private void chkAutoUpdateUi_CheckedChanged(object sender, EventArgs e)
-            => tmrPoll.Enabled = !tmrPoll.Enabled;
 
         private void tmrPoll_Tick(object sender, EventArgs e)
             => RefreshState();

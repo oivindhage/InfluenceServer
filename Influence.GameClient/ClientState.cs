@@ -1,4 +1,5 @@
-﻿using Influence.Domain;
+﻿using System;
+using Influence.Domain;
 using static Influence.Domain.Consts;
 
 namespace Influence.GameClient
@@ -28,10 +29,44 @@ namespace Influence.GameClient
             => Session?.CurrentBoard?.Size ?? 0;
 
         public bool CanAttack
-            => CurrentPlayerState == PlayerState.Attacking && AttackFrom != null && AttackTo != null;
+        {
+            get
+            {
+                if (CurrentPlayerState != PlayerState.Attacking || AttackFrom is null || AttackTo is null)
+                    return false;
+                var attackFromTile = Session.CurrentBoard.TileRows[AttackFrom.Y].Tiles[AttackFrom.X];
+                if (attackFromTile.OwnerId != Guid.Parse(PlayerId))
+                    return false;
+                if (attackFromTile.NumTroops < 2)
+                    return false;
+                var attackToTile = Session.CurrentBoard.TileRows[AttackTo.Y].Tiles[AttackTo.X];
+                if (attackToTile.OwnerId == Guid.Parse(PlayerId))
+                    return false;
+                if (!AreAdjacent(AttackFrom, AttackTo))
+                    return false;
+                return true;
+            }
+        }
+
+        private bool AreAdjacent(Coordinate attackFrom, Coordinate attackTo)
+        {
+            if (attackFrom.X == attackTo.X && Math.Abs(attackFrom.Y - attackTo.Y) == 1)
+                return true;
+            if (attackFrom.Y == attackTo.Y && Math.Abs(attackFrom.X - attackTo.X) == 1)
+                return true;
+            return false;
+        }
 
         public bool CanReinforce
-            => CurrentPlayerState == PlayerState.Reinforcing && Reinforce != null;
+        {
+            get
+            {
+                if (CurrentPlayerState != PlayerState.Reinforcing || Reinforce is null)
+                    return false;
+                var reinforceTile = Session.CurrentBoard.TileRows[Reinforce.Y].Tiles[Reinforce.X];
+                return reinforceTile.NumTroops != 5 && reinforceTile.OwnerId == Guid.Parse(PlayerId);
+            }
+        }
 
         public string SessionId
             => Session?.Id.ToString() ?? string.Empty;
@@ -75,6 +110,13 @@ namespace Influence.GameClient
             Waiting,
             Attacking,
             Reinforcing
+        }
+
+        public void ResetCoordinates()
+        {
+            AttackFrom = null;
+            AttackTo = null;
+            Reinforce = null;
         }
     }
 }
