@@ -42,13 +42,16 @@ namespace Influence.Web.Controllers
         private List<UploadedBot> GetUploadedBots()
         {
             var bots = new List<UploadedBot>();
-
-            var botFolders = Directory.GetDirectories(Server.MapPath($"~/{UploadController.UploadedBotsFolderName}"));
+            var uploadedPath = Server.MapPath($"~/{UploadController.UploadedBotsFolderName}");
+            if (!Directory.Exists(uploadedPath))
+                Directory.CreateDirectory(uploadedPath);
+            var botFolders = Directory.GetDirectories(uploadedPath);
             foreach (var folder in botFolders)
             {
                 var nameFile = Path.Combine(folder, "name.txt");
-                var name = System.IO.File.Exists(nameFile) ? System.IO.File.ReadAllLines(nameFile).FirstOrDefault().DefaultTo(string.Empty).Trim() : "Bot " + folder.Substring(0, 8);
-
+                var name = System.IO.File.Exists(nameFile) 
+                    ? System.IO.File.ReadAllLines(nameFile).FirstOrDefault().DefaultTo(string.Empty).Trim() 
+                    : "Bot " + folder.Substring(0, 8);
                 bots.Add(new UploadedBot
                 {
                     FolderName = folder,
