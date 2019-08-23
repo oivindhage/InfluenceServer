@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
-    <Compile Include="PlayerBot.cs" />
+    <Compile Include="UploadedBot.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="GameState.cs" />
