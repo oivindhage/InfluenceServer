@@ -1,6 +1,6 @@
 ﻿using Influence.Domain;
 
-namespace Influence.SampleBot.Domain
+namespace Influence.Services.Bot
 {
     public class MoveInstruction
     {

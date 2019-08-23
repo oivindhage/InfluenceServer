@@ -60,8 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientState.cs" />
-    <Compile Include="SampleBot\Domain\Bot.cs" />
-    <Compile Include="SampleBot\Domain\MoveInstruction.cs" />
     <Compile Include="GameClient.cs">
       <SubType>Form</SubType>
     </Compile>

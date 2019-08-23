@@ -5,7 +5,7 @@ using Influence.Domain;
 using System.Linq;
 using Influence.Services;
 using static Influence.GameClient.ClientState;
-using Influence.SampleBot.Domain;
+using Influence.Services.Bot;
 
 namespace Influence.GameClient
 {
@@ -21,7 +21,7 @@ namespace Influence.GameClient
         private int tileHeight;
         private readonly ClientState clientState;
         private Gateway influenceGateway;
-        private Bot Bot1;
+        private SampleBot Bot1;
 
         public GameClient()
         {
@@ -229,7 +229,7 @@ namespace Influence.GameClient
         private void CreateBotIfNotExists()
         {
             if (Bot1 is null)
-                Bot1 = new Bot(txtPlayerName.Text, Guid.Parse(txtPlayerId.Text));
+                Bot1 = new SampleBot(txtPlayerName.Text, Guid.Parse(txtPlayerId.Text));
         }
 
         private void picBoard_Click(object sender, EventArgs e)
