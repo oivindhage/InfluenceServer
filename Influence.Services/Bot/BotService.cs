@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Influence.Domain;
+using System.Diagnostics;
+using System.IO;
 
 namespace Influence.Services.Bot
 {
     public class BotService
     {
-        public static List<UploadedBot> GetAvailableBots()
+        public static void HaveBotJoinGame(string folderName, string botName, Guid sessionId, string serviceUrl)
         {
-            return new List<UploadedBot>
-            {
-                new UploadedBot { UniqueId = "DummyId1", Name="Dummybot 1" },
-                new UploadedBot { UniqueId = "DummyId2", Name="Dummybot 2" }
-            };
-        }
-
-        public static void RequestBotToJoinGame(string botId, Guid gameGuid, string serviceUrl)
-        {
-
+            // todo oivindhage
+            Process.Start(Path.Combine(folderName, "Influence.GameClient.exe"), $"-name {botName} -serverurl {serviceUrl} -session {sessionId}");
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Influence.Web.Controllers
 {
     public class UploadController : Controller
     {
+        public static readonly string UploadedBotsFolderName = "UploadedBots";
+
         public ActionResult Index()
         {
             return View(new UploadModel());
@@ -27,7 +29,7 @@ namespace Influence.Web.Controllers
                     if (Path.GetExtension(file.FileName) != ".zip")
                         return UploadResult("Uploaded file must be .zip");
 
-                    var folderToPutFile = Server.MapPath($"~/UploadedBots/{Guid.NewGuid()}");
+                    var folderToPutFile = Server.MapPath($"~/{UploadedBotsFolderName}/{Guid.NewGuid()}");
                     var dirInfo = Directory.CreateDirectory(folderToPutFile);
                     var fullPath = Path.Combine(dirInfo.FullName, fileName);
                     file.SaveAs(fullPath);
