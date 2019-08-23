@@ -4,18 +4,14 @@ using System.Linq;
 using Influence.Common.Extensions;
 using Influence.Domain;
 
-namespace Influence.SampleBot.Domain
+namespace Influence.Services.Bot
 {
-    public class Bot
+    public class SampleBot : IBot
     {
         public Guid Id { get; }
         public string Name { get; }
 
-        public Bot(string name)
-            : this(name, Guid.NewGuid())
-        { }
-
-        public Bot(string name, Guid id)
+        public SampleBot(string name, Guid id)
         {
             Name = name;
             Id = id;
