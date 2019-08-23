@@ -11,8 +11,9 @@
 
 <h1>Session: @session.Name</h1>
 @session.Id<br />
-    
-@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted) {
+
+@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
+{
     <button class="btnStartGame">Start game</button>
 }
 
@@ -89,7 +90,7 @@
                   $("#sessionContainer").replaceWith(soDirty);
               },
               error: function(error) { location.redirect("/"); }
-            }) 
+            })
         }, 500);
     });
 

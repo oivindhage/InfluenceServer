@@ -11,6 +11,7 @@ namespace Influence.Domain
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public DateTime CreationTime { get; }
 
         public List<Player> Players { get; set; }
         public int RoundNumber { get; set; }
@@ -23,11 +24,13 @@ namespace Influence.Domain
         public Session(RuleSet ruleSet, string name, Guid id = default)
         {
             Id = id == Guid.Empty ? Guid.NewGuid() : id;
+            Name = name;
+            CreationTime = DateTime.Now;
+
             Players = new List<Player>();
             GameState = new GameState();
             RoundNumber = 0;
             RuleSet = ruleSet;
-            Name = name;
         }
 
 

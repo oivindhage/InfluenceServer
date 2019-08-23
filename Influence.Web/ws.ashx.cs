@@ -28,8 +28,6 @@ namespace Influence.Web
         private const string RxReinforce = "^\\?reinforce&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)&tileid=(?<tileid>\\d+)$";
         private const string RxEndReinforce = "^\\?endreinforce&session=(?<sessionid>[A-Za-z0-9\\-]+)&playerid=(?<playerid>[A-Za-z0-9\\-]+)$";
         
-        private static readonly RuleSet RuleSet = RuleSet.Default;
-
         private void HandleQuery(HttpContext context, string query)
         {
             Match match;
@@ -187,7 +185,7 @@ namespace Influence.Web
                 BadRequest(context, "En session med denne id-en finnes fra før");
             else
             {
-                GameMaster.CreateSession(RuleSet, sessionId);
+                GameMaster.CreateSession(id: sessionId);
                 Ok(context, $"OK. Session {sessionId} opprettet");
             }
         }

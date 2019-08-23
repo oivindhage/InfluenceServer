@@ -5,7 +5,7 @@ using Influence.Domain;
 
 namespace Influence.Services
 {
-    public class GameMaster
+    public static class GameMaster
     {
         private static readonly Random Rand = new Random();
 
@@ -19,14 +19,15 @@ namespace Influence.Services
         public static Session GetSession(Guid guid) 
             => Sessions.FirstOrDefault(s => s.Id == guid);
 
-        public static Session CreateSession(RuleSet ruleSet, Guid id = default(Guid))
+        public static Session CreateSession(RuleSet customRuleSet = null, Guid id = default(Guid))
         {
             int numTries = 0;
             string name;
             do { name = SessionNames[Rand.Next(0, SessionNames.Count)]; }
             while (++numTries < 50 && Sessions.Any(s => s.Name == name));
 
-            var session = new Session(ruleSet, name, id);
+            customRuleSet = customRuleSet ?? RuleSet.Default;
+            var session = new Session(customRuleSet, name, id);
             Sessions.Add(session);
 
             return session;
