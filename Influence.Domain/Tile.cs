@@ -19,7 +19,6 @@ namespace Influence.Domain
         {
             X = x;
             Y = y;
-
             Id = x + (y * numColumns);
             Coordinates = $"({x}, {y})";
         }
@@ -27,5 +26,8 @@ namespace Influence.Domain
         // Deserialization of Tile.Id is buggy at this point. Re-create tile in memory to get proper Id.
         public static int ConstructTileId(int x, int y, int boardSize)
             => new Tile(x, y, boardSize).Id;
+
+        public static int ConstructTileId(Tile t, int boardSize)
+            => ConstructTileId(t.X, t.Y, boardSize);
     }
 }
