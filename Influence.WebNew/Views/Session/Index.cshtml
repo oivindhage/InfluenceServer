@@ -1,0 +1,49 @@
+﻿@model Influence.WebNew.Models.SessionModel
+@{
+    var session = Model.Session;
+    if (session == null) { Response.Redirect("/"); return; }
+}
+
+<h1>Session: @session.Name</h1>
+@session.Id
+<br />
+<br />
+
+<table>
+
+    <tr>
+        <td>Players</td>
+        <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => $"{x}, {y}") : "None")</td>
+    </tr>
+
+    <tr><td colspan="2" style="height: 15px"></td></tr>
+
+    <tr>
+        <td>Round</td>
+        <td>@session.RoundNumber</td>
+    </tr>
+
+    <tr>
+        <td>State</td>
+        <td>@session.GameState.GamePhase</td>
+    </tr>
+
+    <tr><td colspan="2" style="height: 15px"></td></tr>
+
+    <tr>
+        <td>Current player</td>
+        <td>@(session.GameState.CurrentPlayer?.Name ?? "N/A")</td>
+    </tr>
+
+    <tr>
+        <td>Player phase</td>
+        <td>@session.GameState.PlayerPhase</td>
+    </tr>
+
+</table>
+
+
+@if (session.CurrentBoard != null)
+{
+    @Html.Partial("Board", session.CurrentBoard)
+}

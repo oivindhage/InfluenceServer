@@ -21,9 +21,10 @@ namespace Influence.Services
 
         public static Session CreateSession(RuleSet ruleSet, Guid id = default(Guid))
         {
+            int numTries = 0;
             string name;
             do { name = SessionNames[Rand.Next(0, SessionNames.Count)]; }
-            while (Sessions.Any(s => s.Name == name));
+            while (++numTries < 50 && Sessions.Any(s => s.Name == name));
 
             var session = new Session(ruleSet, name, id);
             Sessions.Add(session);

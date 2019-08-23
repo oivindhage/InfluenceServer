@@ -1,1 +1,25 @@
-﻿<h1>Hei</h1>
+﻿@model Influence.WebNew.Models.HomeModel
+
+<h1>Session list</h1>
+<br/>
+
+<table>
+    <tr>
+        <th></th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>State</th>
+        <th>Players</th>
+    </tr>
+
+    @foreach (var session in Model.Sessions)
+    {
+        <tr>
+            <td>@Html.ActionLink("View", "Index", new { controller = "Session", sessionId = session.Id })</td>
+            <td>@session.Id</td>
+            <td>@session.Name</td>
+            <td>@session.GameState.GamePhase</td>
+            <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => x + ", " + y) : "None")</td>
+        </tr>
+    }
+</table>

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Influence.Domain;
+using Influence.Services;
+using Influence.WebNew.Models;
 
 namespace Influence.WebNew.Controllers
 {
@@ -10,9 +9,15 @@ namespace Influence.WebNew.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            var model = new HomeModel();
 
-            return View();
+            model.Sessions = GameMaster.GetSessions();
+
+            // temp
+            if (model.Sessions.Count == 0)
+                GameMaster.CreateSession(RuleSet.Default);
+
+            return View(model);
         }
     }
 }

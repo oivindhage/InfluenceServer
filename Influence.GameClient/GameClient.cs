@@ -82,10 +82,14 @@ namespace Influence.GameClient
 
         private void PresentSession()
         {
-            SetupTileMeasurements(clientState.Session.CurrentBoard);
-            DrawBoard(clientState.Session.CurrentBoard);
-            WritePlayerStatistics(clientState.Session);
-            SetCorrectButtonStates(clientState);
+            try
+            {
+                SetupTileMeasurements(clientState.Session.CurrentBoard);
+                DrawBoard(clientState.Session.CurrentBoard);
+                WritePlayerStatistics(clientState.Session);
+                SetCorrectButtonStates(clientState);
+            }
+            catch { }
         }
 
         private void SetCorrectButtonStates(ClientState clientState)
