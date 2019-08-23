@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.SampleBot", "Influence.SampleBot\Influence.SampleBot.csproj", "{338B7348-34C3-403F-84A1-B6619D3A44C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.WebNew", "Influence.WebNew\Influence.WebNew.csproj", "{E89C5DEE-6B39-4CCD-849C-33846C60E90D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Influence.Web", "Influence.Web\Influence.Web.csproj", "{E89C5DEE-6B39-4CCD-849C-33846C60E90D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using Influence.Domain;
 
-namespace Influence.WebNew.Models
+namespace Influence.Web.Models
 {
     public class SessionModel
     {

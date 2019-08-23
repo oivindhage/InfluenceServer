@@ -1,9 +1,9 @@
 ﻿using System.Web.Mvc;
 using Influence.Domain;
 using Influence.Services;
-using Influence.WebNew.Models;
+using Influence.Web.Models;
 
-namespace Influence.WebNew.Controllers
+namespace Influence.Web.Controllers
 {
     public class HomeController : Controller
     {
