@@ -20,7 +20,7 @@ namespace Influence.Domain
 
         public Session() { }
 
-        public Session(RuleSet ruleSet, string name, Guid id = default(Guid))
+        public Session(RuleSet ruleSet, string name, Guid id = default)
         {
             Id = id == Guid.Empty ? Guid.NewGuid() : id;
             Players = new List<Player>();

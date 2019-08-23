@@ -5,21 +5,23 @@ using Influence.Domain;
 using System.Linq;
 using Influence.Services;
 using static Influence.GameClient.ClientState;
+using Influence.SampleBot.Domain;
 
 namespace Influence.GameClient
 {
     public partial class GameClient : Form
     {
-        private Graphics g;
-        private Font font;
-        private Pen pen;
-        private StringFormat stringFormat;
+        private readonly Graphics g;
+        private readonly Font font;
+        private readonly Pen pen;
+        private readonly StringFormat stringFormat;
         private int maxX;
         private int maxY;
         private int tileWidth;
         private int tileHeight;
-        private ClientState clientState;
+        private readonly ClientState clientState;
         private Gateway influenceGateway;
+        private Bot Bot1;
 
         public GameClient()
         {
@@ -112,7 +114,7 @@ namespace Influence.GameClient
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
                     rtxPlayerStatus.SelectionFont = new Font(rtxPlayerStatus.Font, FontStyle.Bold);
                 var participantTiles = session.CurrentBoard.GetTilesOfPlayer(participant.Player);
-                string extraPlayerInfo = string.Empty;
+                var extraPlayerInfo = string.Empty;
                 if (txtPlayerId.Text.Equals(player.Id.ToString(), StringComparison.InvariantCultureIgnoreCase))
                     extraPlayerInfo = " (you)";
                 if (session.GameState.CurrentPlayer.Id.Equals(player.Id))
@@ -192,14 +194,49 @@ namespace Influence.GameClient
             if (!cmbCurrentGames.Enabled)
                 return;
             clientState.Session = influenceGateway.GetSession(cmbCurrentGames.Text);
+            if (clientState.Session is null)
+                return;
             PresentSession();
+            if (chkPlayAsBot.Checked)
+                PlayAsBot();
+        }
+
+        private void PlayAsBot()
+        {
+            CreateBotIfNotExists();
+            if (clientState.Session.GameState.GamePhase != Consts.GamePhase.Ongoing)
+                return;
+            if (clientState.PlayerId != clientState.Session.GameState.CurrentPlayer.Id.ToString())
+                return;
+            if (clientState.Session.GameState.PlayerPhase == Consts.PlayerPhase.MoveAndAttack)
+            {
+                var move = Bot1.MoveAndAttack(clientState.Session);
+                if (move is null)
+                    EndAttack();
+                else
+                    Attack(Tile.ConstructTileId(move.SourceTile, clientState.Session.RuleSet.BoardSize), Tile.ConstructTileId(move.DestinationTile, clientState.Session.RuleSet.BoardSize));
+            }
+            else if (clientState.Session.GameState.PlayerPhase == Consts.PlayerPhase.Reinforce)
+            {
+                var reinforce = Bot1.Reinforce(clientState.Session);
+                if (reinforce is null)
+                    EndReinforce();
+                else
+                    Reinforce(Tile.ConstructTileId(reinforce, clientState.Session.RuleSet.BoardSize));
+            }
+        }
+
+        private void CreateBotIfNotExists()
+        {
+            if (Bot1 is null)
+                Bot1 = new Bot(txtPlayerName.Text, Guid.Parse(txtPlayerId.Text));
         }
 
         private void picBoard_Click(object sender, EventArgs e)
         {
             if (maxX == 0 || maxY == 0)
                 return;
-            MouseEventArgs me = (MouseEventArgs)e;
+            var me = (MouseEventArgs)e;
             Point coordinates = me.Location;
             int x = coordinates.X / (picBoard.Width / maxX);
             int y = coordinates.Y / (picBoard.Height / maxY);
@@ -214,49 +251,50 @@ namespace Influence.GameClient
                 clientState.RightClickCoordinate(x, y);
             }
             if (clientState.CanAttack)
-                Attack();
+                Attack(clientState.AttackFromTileId, clientState.AttackToTileId);
             else if (clientState.CanReinforce)
-                Reinforce();
-        }
-
-        private void Reinforce()
-        {
-            influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, clientState.ReinforceTileId);
-            clientState.ResetCoordinates();
-        }
-
-        private void Attack()
-        {
-            influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, clientState.AttackFromTileId, clientState.AttackToTileId);
-            clientState.ResetCoordinates();
+                Reinforce(clientState.ReinforceTileId);
         }
 
         private void btnCreateSession_Click(object sender, EventArgs e)
             => txtStatus.Text += influenceGateway.Create();
 
-        private void btnStartSession_Click(object sender, EventArgs e)
-        {
-            if (!cmbCurrentGames.Enabled)
-            {
-                txtStatus.Text = "List sessions first";
-                return;
-            }
-            txtStatus.Text = influenceGateway.StartSession(cmbCurrentGames.Text);
-        }
+        private void btnStartSession_Click(object sender, EventArgs e) 
+            => txtStatus.Text = cmbCurrentGames.Enabled 
+                ? influenceGateway.StartSession(cmbCurrentGames.Text) 
+                : "List sessions first";
 
         private void tmrPoll_Tick(object sender, EventArgs e)
             => RefreshState();
 
         private void btnEndAttack_Click(object sender, EventArgs e)
-            => txtStatus.Text += influenceGateway.EndAttack(clientState.SessionId, txtPlayerId.Text);
+            => txtStatus.Text += EndAttack();
 
         private void btnEndReinforce_Click(object sender, EventArgs e)
-            => txtStatus.Text += influenceGateway.EndReinforce(clientState.SessionId, txtPlayerId.Text);
+            => txtStatus.Text += EndReinforce();
 
         private void txtSessionBaseUrl_TextChanged(object sender, EventArgs e)
             => influenceGateway.SessionBaseUrl = txtSessionBaseUrl.Text;
 
         private void txtPlayerId_TextChanged(object sender, EventArgs e)
             => clientState.PlayerId = txtPlayerId.Text;
+
+        private string EndReinforce()
+            => influenceGateway.EndReinforce(clientState.SessionId, txtPlayerId.Text);
+
+        private string EndAttack()
+            => influenceGateway.EndAttack(clientState.SessionId, txtPlayerId.Text);
+
+        private void Reinforce(int reinforceTileId)
+        {
+            influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, reinforceTileId);
+            clientState.ResetCoordinates();
+        }
+
+        private void Attack(int fromTileId, int toTileId)
+        {
+            influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, fromTileId, toTileId);
+            clientState.ResetCoordinates();
+        }
     }
 }

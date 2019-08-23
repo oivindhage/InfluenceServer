@@ -51,15 +51,16 @@
             this.btnStartSession = new System.Windows.Forms.Button();
             this.btnEndAttack = new System.Windows.Forms.Button();
             this.btnEndReinforce = new System.Windows.Forms.Button();
+            this.chkPlayAsBot = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBoard)).BeginInit();
             this.SuspendLayout();
             // 
             // btnJoinSession
             // 
-            this.btnJoinSession.Location = new System.Drawing.Point(587, 260);
-            this.btnJoinSession.Margin = new System.Windows.Forms.Padding(4);
+            this.btnJoinSession.Location = new System.Drawing.Point(320, 141);
+            this.btnJoinSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnJoinSession.Name = "btnJoinSession";
-            this.btnJoinSession.Size = new System.Drawing.Size(279, 46);
+            this.btnJoinSession.Size = new System.Drawing.Size(152, 25);
             this.btnJoinSession.TabIndex = 0;
             this.btnJoinSession.Text = "Join session";
             this.btnJoinSession.UseVisualStyleBackColor = true;
@@ -68,57 +69,57 @@
             // lblSessionUrl
             // 
             this.lblSessionUrl.AutoSize = true;
-            this.lblSessionUrl.Location = new System.Drawing.Point(15, 26);
-            this.lblSessionUrl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSessionUrl.Location = new System.Drawing.Point(8, 14);
+            this.lblSessionUrl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSessionUrl.Name = "lblSessionUrl";
-            this.lblSessionUrl.Size = new System.Drawing.Size(109, 25);
+            this.lblSessionUrl.Size = new System.Drawing.Size(58, 13);
             this.lblSessionUrl.TabIndex = 1;
             this.lblSessionUrl.Text = "Session url";
             // 
             // txtSessionBaseUrl
             // 
-            this.txtSessionBaseUrl.Location = new System.Drawing.Point(158, 20);
-            this.txtSessionBaseUrl.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSessionBaseUrl.Location = new System.Drawing.Point(86, 11);
+            this.txtSessionBaseUrl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtSessionBaseUrl.Name = "txtSessionBaseUrl";
-            this.txtSessionBaseUrl.Size = new System.Drawing.Size(990, 29);
+            this.txtSessionBaseUrl.Size = new System.Drawing.Size(542, 20);
             this.txtSessionBaseUrl.TabIndex = 2;
             this.txtSessionBaseUrl.TextChanged += new System.EventHandler(this.txtSessionBaseUrl_TextChanged);
             // 
             // lblClientId
             // 
             this.lblClientId.AutoSize = true;
-            this.lblClientId.Location = new System.Drawing.Point(15, 68);
-            this.lblClientId.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblClientId.Location = new System.Drawing.Point(8, 37);
+            this.lblClientId.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblClientId.Name = "lblClientId";
-            this.lblClientId.Size = new System.Drawing.Size(82, 25);
+            this.lblClientId.Size = new System.Drawing.Size(44, 13);
             this.lblClientId.TabIndex = 3;
             this.lblClientId.Text = "Client id";
             // 
             // txtPlayerId
             // 
-            this.txtPlayerId.Location = new System.Drawing.Point(158, 68);
-            this.txtPlayerId.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPlayerId.Location = new System.Drawing.Point(86, 37);
+            this.txtPlayerId.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPlayerId.Name = "txtPlayerId";
-            this.txtPlayerId.Size = new System.Drawing.Size(990, 29);
+            this.txtPlayerId.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerId.TabIndex = 4;
             this.txtPlayerId.TextChanged += new System.EventHandler(this.txtPlayerId_TextChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 120);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(8, 65);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(121, 25);
+            this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 5;
             this.label1.Text = "Player name";
             // 
             // txtPlayerName
             // 
-            this.txtPlayerName.Location = new System.Drawing.Point(158, 116);
-            this.txtPlayerName.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPlayerName.Location = new System.Drawing.Point(86, 63);
+            this.txtPlayerName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtPlayerName.Name = "txtPlayerName";
-            this.txtPlayerName.Size = new System.Drawing.Size(990, 29);
+            this.txtPlayerName.Size = new System.Drawing.Size(542, 20);
             this.txtPlayerName.TabIndex = 6;
             // 
             // tmrPoll
@@ -131,19 +132,19 @@
             this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatus.Location = new System.Drawing.Point(13, 1074);
-            this.txtStatus.Margin = new System.Windows.Forms.Padding(4);
+            this.txtStatus.Location = new System.Drawing.Point(7, 582);
+            this.txtStatus.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(1804, 105);
+            this.txtStatus.Size = new System.Drawing.Size(986, 59);
             this.txtStatus.TabIndex = 7;
             // 
             // btnShowSessionDetails
             // 
-            this.btnShowSessionDetails.Location = new System.Drawing.Point(17, 314);
-            this.btnShowSessionDetails.Margin = new System.Windows.Forms.Padding(4);
+            this.btnShowSessionDetails.Location = new System.Drawing.Point(9, 170);
+            this.btnShowSessionDetails.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnShowSessionDetails.Name = "btnShowSessionDetails";
-            this.btnShowSessionDetails.Size = new System.Drawing.Size(279, 46);
+            this.btnShowSessionDetails.Size = new System.Drawing.Size(152, 25);
             this.btnShowSessionDetails.TabIndex = 8;
             this.btnShowSessionDetails.Text = "Show session details";
             this.btnShowSessionDetails.UseVisualStyleBackColor = true;
@@ -151,39 +152,39 @@
             // 
             // picBoard
             // 
-            this.picBoard.Location = new System.Drawing.Point(18, 452);
-            this.picBoard.Margin = new System.Windows.Forms.Padding(4);
+            this.picBoard.Location = new System.Drawing.Point(10, 245);
+            this.picBoard.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.picBoard.Name = "picBoard";
-            this.picBoard.Size = new System.Drawing.Size(600, 600);
+            this.picBoard.Size = new System.Drawing.Size(327, 325);
             this.picBoard.TabIndex = 10;
             this.picBoard.TabStop = false;
             this.picBoard.Click += new System.EventHandler(this.picBoard_Click);
             // 
             // rtxPlayerStatus
             // 
-            this.rtxPlayerStatus.Location = new System.Drawing.Point(625, 452);
-            this.rtxPlayerStatus.Margin = new System.Windows.Forms.Padding(4);
+            this.rtxPlayerStatus.Location = new System.Drawing.Point(341, 245);
+            this.rtxPlayerStatus.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rtxPlayerStatus.Name = "rtxPlayerStatus";
-            this.rtxPlayerStatus.Size = new System.Drawing.Size(525, 379);
+            this.rtxPlayerStatus.Size = new System.Drawing.Size(288, 207);
             this.rtxPlayerStatus.TabIndex = 11;
             this.rtxPlayerStatus.Text = "";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 174);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(8, 94);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 25);
+            this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 12;
             this.label2.Text = "Session GUID";
             // 
             // btnListAllSessions
             // 
-            this.btnListAllSessions.Location = new System.Drawing.Point(301, 260);
-            this.btnListAllSessions.Margin = new System.Windows.Forms.Padding(4);
+            this.btnListAllSessions.Location = new System.Drawing.Point(164, 141);
+            this.btnListAllSessions.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnListAllSessions.Name = "btnListAllSessions";
-            this.btnListAllSessions.Size = new System.Drawing.Size(279, 46);
+            this.btnListAllSessions.Size = new System.Drawing.Size(152, 25);
             this.btnListAllSessions.TabIndex = 14;
             this.btnListAllSessions.Text = "List all sessions";
             this.btnListAllSessions.UseVisualStyleBackColor = true;
@@ -193,45 +194,45 @@
             // 
             this.cmbCurrentGames.Enabled = false;
             this.cmbCurrentGames.FormattingEnabled = true;
-            this.cmbCurrentGames.Location = new System.Drawing.Point(160, 170);
-            this.cmbCurrentGames.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbCurrentGames.Location = new System.Drawing.Point(87, 92);
+            this.cmbCurrentGames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cmbCurrentGames.Name = "cmbCurrentGames";
-            this.cmbCurrentGames.Size = new System.Drawing.Size(990, 32);
+            this.cmbCurrentGames.Size = new System.Drawing.Size(542, 21);
             this.cmbCurrentGames.TabIndex = 15;
             // 
             // lblAttackFrom
             // 
             this.lblAttackFrom.AutoSize = true;
-            this.lblAttackFrom.Location = new System.Drawing.Point(827, 851);
-            this.lblAttackFrom.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAttackFrom.Location = new System.Drawing.Point(451, 461);
+            this.lblAttackFrom.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblAttackFrom.Name = "lblAttackFrom";
-            this.lblAttackFrom.Size = new System.Drawing.Size(0, 25);
+            this.lblAttackFrom.Size = new System.Drawing.Size(0, 13);
             this.lblAttackFrom.TabIndex = 19;
             // 
             // lblAttackTo
             // 
             this.lblAttackTo.AutoSize = true;
-            this.lblAttackTo.Location = new System.Drawing.Point(827, 886);
-            this.lblAttackTo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAttackTo.Location = new System.Drawing.Point(451, 480);
+            this.lblAttackTo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblAttackTo.Name = "lblAttackTo";
-            this.lblAttackTo.Size = new System.Drawing.Size(0, 25);
+            this.lblAttackTo.Size = new System.Drawing.Size(0, 13);
             this.lblAttackTo.TabIndex = 20;
             // 
             // lblReinforce
             // 
             this.lblReinforce.AutoSize = true;
-            this.lblReinforce.Location = new System.Drawing.Point(827, 921);
-            this.lblReinforce.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblReinforce.Location = new System.Drawing.Point(451, 499);
+            this.lblReinforce.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblReinforce.Name = "lblReinforce";
-            this.lblReinforce.Size = new System.Drawing.Size(0, 25);
+            this.lblReinforce.Size = new System.Drawing.Size(0, 13);
             this.lblReinforce.TabIndex = 21;
             // 
             // btnCreateSession
             // 
-            this.btnCreateSession.Location = new System.Drawing.Point(17, 260);
-            this.btnCreateSession.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCreateSession.Location = new System.Drawing.Point(9, 141);
+            this.btnCreateSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCreateSession.Name = "btnCreateSession";
-            this.btnCreateSession.Size = new System.Drawing.Size(279, 46);
+            this.btnCreateSession.Size = new System.Drawing.Size(152, 25);
             this.btnCreateSession.TabIndex = 22;
             this.btnCreateSession.Text = "Create session";
             this.btnCreateSession.UseVisualStyleBackColor = true;
@@ -239,10 +240,10 @@
             // 
             // btnStartSession
             // 
-            this.btnStartSession.Location = new System.Drawing.Point(873, 260);
-            this.btnStartSession.Margin = new System.Windows.Forms.Padding(4);
+            this.btnStartSession.Location = new System.Drawing.Point(476, 141);
+            this.btnStartSession.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnStartSession.Name = "btnStartSession";
-            this.btnStartSession.Size = new System.Drawing.Size(279, 46);
+            this.btnStartSession.Size = new System.Drawing.Size(152, 25);
             this.btnStartSession.TabIndex = 23;
             this.btnStartSession.Text = "Start session";
             this.btnStartSession.UseVisualStyleBackColor = true;
@@ -250,10 +251,9 @@
             // 
             // btnEndAttack
             // 
-            this.btnEndAttack.Location = new System.Drawing.Point(587, 318);
-            this.btnEndAttack.Margin = new System.Windows.Forms.Padding(6);
+            this.btnEndAttack.Location = new System.Drawing.Point(320, 172);
             this.btnEndAttack.Name = "btnEndAttack";
-            this.btnEndAttack.Size = new System.Drawing.Size(279, 42);
+            this.btnEndAttack.Size = new System.Drawing.Size(152, 23);
             this.btnEndAttack.TabIndex = 24;
             this.btnEndAttack.Text = "End attack";
             this.btnEndAttack.UseVisualStyleBackColor = true;
@@ -261,20 +261,30 @@
             // 
             // btnEndReinforce
             // 
-            this.btnEndReinforce.Location = new System.Drawing.Point(873, 318);
-            this.btnEndReinforce.Margin = new System.Windows.Forms.Padding(6);
+            this.btnEndReinforce.Location = new System.Drawing.Point(476, 172);
             this.btnEndReinforce.Name = "btnEndReinforce";
-            this.btnEndReinforce.Size = new System.Drawing.Size(279, 42);
+            this.btnEndReinforce.Size = new System.Drawing.Size(152, 23);
             this.btnEndReinforce.TabIndex = 25;
             this.btnEndReinforce.Text = "End reinforce";
             this.btnEndReinforce.UseVisualStyleBackColor = true;
             this.btnEndReinforce.Click += new System.EventHandler(this.btnEndReinforce_Click);
             // 
+            // chkPlayAsBot
+            // 
+            this.chkPlayAsBot.AutoSize = true;
+            this.chkPlayAsBot.Location = new System.Drawing.Point(12, 200);
+            this.chkPlayAsBot.Name = "chkPlayAsBot";
+            this.chkPlayAsBot.Size = new System.Drawing.Size(78, 17);
+            this.chkPlayAsBot.TabIndex = 26;
+            this.chkPlayAsBot.Text = "Play as bot";
+            this.chkPlayAsBot.UseVisualStyleBackColor = true;
+            // 
             // GameClient
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1844, 1549);
+            this.ClientSize = new System.Drawing.Size(1006, 640);
+            this.Controls.Add(this.chkPlayAsBot);
             this.Controls.Add(this.btnEndReinforce);
             this.Controls.Add(this.btnEndAttack);
             this.Controls.Add(this.btnStartSession);
@@ -296,7 +306,7 @@
             this.Controls.Add(this.txtSessionBaseUrl);
             this.Controls.Add(this.lblSessionUrl);
             this.Controls.Add(this.btnJoinSession);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "GameClient";
             this.Text = "GameClient";
             this.Load += new System.EventHandler(this.GameClient_Load);
@@ -330,5 +340,6 @@
         private System.Windows.Forms.Button btnStartSession;
         private System.Windows.Forms.Button btnEndAttack;
         private System.Windows.Forms.Button btnEndReinforce;
+        private System.Windows.Forms.CheckBox chkPlayAsBot;
     }
 }
