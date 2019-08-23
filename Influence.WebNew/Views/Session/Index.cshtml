@@ -1,49 +1,96 @@
-﻿@model Influence.WebNew.Models.SessionModel
+﻿@using Influence.Domain
+@model Influence.WebNew.Models.SessionModel
 @{
     var session = Model.Session;
-    if (session == null) { Response.Redirect("/"); return; }
+    if (session == null)
+    {
+        Response.Redirect("/");
+        return;
+    }
 }
 
 <h1>Session: @session.Name</h1>
-@session.Id
-<br />
-<br />
-
-<table>
-
-    <tr>
-        <td>Players</td>
-        <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => $"{x}, {y}") : "None")</td>
-    </tr>
-
-    <tr><td colspan="2" style="height: 15px"></td></tr>
-
-    <tr>
-        <td>Round</td>
-        <td>@session.RoundNumber</td>
-    </tr>
-
-    <tr>
-        <td>State</td>
-        <td>@session.GameState.GamePhase</td>
-    </tr>
-
-    <tr><td colspan="2" style="height: 15px"></td></tr>
-
-    <tr>
-        <td>Current player</td>
-        <td>@(session.GameState.CurrentPlayer?.Name ?? "N/A")</td>
-    </tr>
-
-    <tr>
-        <td>Player phase</td>
-        <td>@session.GameState.PlayerPhase</td>
-    </tr>
-
-</table>
-
-
-@if (session.CurrentBoard != null)
-{
-    @Html.Partial("Board", session.CurrentBoard)
+@session.Id<br />
+    
+@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted) {
+    <button class="btnStartGame">Start game</button>
 }
+
+<div id="sessionContainer">
+
+    <table>
+
+        <tr>
+            <td>Players</td>
+            <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => $"{x}, {y}") : "None")</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="height: 15px"></td>
+        </tr>
+
+        <tr>
+            <td>Round</td>
+            <td>@session.RoundNumber</td>
+        </tr>
+
+        <tr>
+            <td>State</td>
+            <td>@session.GameState.GamePhase</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="height: 15px"></td>
+        </tr>
+
+        <tr>
+            <td>Current player</td>
+            <td>
+                @if (session.GameState.CurrentPlayer != null)
+                {
+                    <strong>@session.GameState.CurrentPlayer.Name</strong>
+                }
+                else
+                {
+                    <text>N/A</text>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <td>Player phase</td>
+            <td>@session.GameState.PlayerPhase</td>
+        </tr>
+
+    </table>
+
+
+    @if (session.CurrentBoard != null)
+    {
+        @Html.Partial("Board", session.CurrentBoard)
+    }
+</div>
+
+<script src="/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+        $(".btnStartGame").click(function () {
+            $.get("/Session/StartGame?sessionId=@Model.Session.Id", function (respose) { location.reload(); });
+        });
+
+        setInterval(function() {
+            $.ajax(
+            { url: "/Session?sessionId=@Model.Session.Id",
+              type: "GET",
+              success: function(response) {
+                  var soDirty = $(response).find("#sessionContainer");
+                  $("#sessionContainer").replaceWith(soDirty);
+              },
+              error: function(error) { location.redirect("/"); }
+            }) 
+        }, 500);
+    });
+
+</script>

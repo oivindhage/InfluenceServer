@@ -2,6 +2,10 @@
     padding-right: 30px;
 }
 
+#tableBoard {
+    margin-top: 50px;
+}
+
 #tableBoard td {
     border: 1px solid #333;
     width: 100px;
@@ -13,4 +17,8 @@
     font-size: 18pt;
     color: #FFF;
     text-shadow: 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000, 0px 1px #000;
+}
+
+#sessionContainer {
+    margin-top:30px
 }
