@@ -1,4 +1,5 @@
 ﻿@model Influence.Web.Models.HomeModel
+@{ var norCult = new System.Globalization.CultureInfo("nb-NO"); }
 
 <h1>Sessions</h1>
 @Html.ActionLink("Create new session", "CreateSession")
@@ -20,7 +21,7 @@
             <td>@Html.ActionLink("View", "Index", new { controller = "Session", sessionId = session.Id })</td>
             <td>@session.Id</td>
             <td>@session.Name</td>
-            <td>@session.CreationTime</td>
+            <td>@session.CreationTime.ToString("g", norCult)</td>
             <td>@session.GameState.GamePhase</td>
             <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => x + ", " + y) : "None")</td>
         </tr>

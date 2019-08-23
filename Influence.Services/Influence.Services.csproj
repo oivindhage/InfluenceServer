@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotService.cs" />
     <Compile Include="GameMaster.cs" />
     <Compile Include="InfluenceGateway.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,7 +10,12 @@ namespace Influence.Web.Controllers
     {
         public ActionResult Index(Guid sessionId)
         {
-            var model = new SessionModel { Session = GameMaster.GetSession(sessionId) };
+            var model = new SessionModel
+            {
+                Session = GameMaster.GetSession(sessionId),
+                AvailableBots = BotService.GetAvailableBots()
+            };
+
             return View(model);
         }
 

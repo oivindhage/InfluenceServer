@@ -10,11 +10,13 @@
 }
 
 <h1>Session: @session.Name</h1>
-@session.Id<br />
+@session.Id
+<br />
 
 @if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
 {
-    <button class="btnStartGame">Start game</button>
+    <br />
+    <button class="btnAddPlayers">Add players</button>
 }
 
 <div id="sessionContainer">
@@ -72,6 +74,16 @@
     }
 </div>
 
+@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
+{
+    <br/><br />
+    <h1>Add players to this game</h1>
+    foreach (var bot in Model.AvailableBots)
+    {
+        @bot.Name<br/>
+    }
+}
+
 <script src="/Scripts/jquery-3.3.1.min.js"></script>
 <script>
 
@@ -91,7 +103,7 @@
               },
               error: function(error) { location.redirect("/"); }
             })
-        }, 500);
+        }, 100);
     });
 
 </script>
