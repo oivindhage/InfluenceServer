@@ -3,9 +3,27 @@
 
 @using (Html.BeginForm("UploadFile", "Upload", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    @Html.TextBoxFor(x => x.File, new { type = "file" })
-    <br />
-    <button type="submit">Upload</button>
+    <table>
+        <tr>
+            <td>
+
+            </td>
+            <td >
+                @Html.TextBoxFor(x => x.File, new { type = "file" })
+            </td>
+        </tr>
+        <tr>
+            <td>Bot name</td>
+            <td>
+                @Html.TextBoxFor(x => x.Name)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Upload</button>
+            </td>
+        </tr>
+    </table>
     <br />
     <br />
     <h1>@Model.Message</h1>

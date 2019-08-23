@@ -6,6 +6,7 @@ namespace Influence.Web.Models
     {
         public HttpPostedFileBase File { get; set; }
         public string Message { get; set; }
+        public string Name { get; set; }
     }
 }
 
