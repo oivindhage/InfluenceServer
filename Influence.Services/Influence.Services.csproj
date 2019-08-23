@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot\BotService.cs" />
     <Compile Include="Bot\BotMaster.cs" />
     <Compile Include="Bot\SampleBot.cs" />
     <Compile Include="Bot\IBot.cs" />

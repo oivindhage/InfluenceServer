@@ -1,0 +1,20 @@
+﻿@model Influence.Domain.Board
+
+<table id="tableBoard">
+    @for (int y = 0; y < Model.Size; y++)
+    {
+        <tr>
+            @for (int x = 0; x < Model.Size; x++)
+            {
+                var tile = Model.GetTile(x, y);
+
+                <td style="background-color: rgb(@tile.OwnerColorRgbCsv)">
+                    @if (tile.NumTroops > 0)
+                    {
+                        @tile.NumTroops
+                    }
+                </td>
+            }
+        </tr>
+    }
+</table>
