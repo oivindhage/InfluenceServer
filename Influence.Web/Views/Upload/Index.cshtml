@@ -1,0 +1,12 @@
+﻿@model Influence.Web.Models.UploadModel
+<h1>Upload a bot</h1>
+
+@using (Html.BeginForm("UploadFile", "Upload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.TextBoxFor(x => x.File, new { type = "file" })
+    <br />
+    <button type="submit">Upload</button>
+    <br />
+    <br />
+    <h1>@Model.Message</h1>
+}

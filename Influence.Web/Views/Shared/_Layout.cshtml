@@ -20,6 +20,12 @@
                 </button>
                 @Html.ActionLink("Hilfe", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Upload a bot", "Index", new { controller = "Upload" })</li>
+                </ul>
+            </div>
+
         </div>
     </div>
     <div class="container body-content">
