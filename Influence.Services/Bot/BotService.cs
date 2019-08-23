@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Influence.Domain;
 
-namespace Influence.Services
+namespace Influence.Services.Bot
 {
     public class BotService
     {
@@ -10,8 +10,8 @@ namespace Influence.Services
         {
             return new List<UploadedBot>
             {
-                new UploadedBot { UniqueId = "dummy1", Name="Dummybot 1" },
-                new UploadedBot { UniqueId = "dummy2", Name="Dummybot 2" }
+                new UploadedBot { UniqueId = "DummyId1", Name="Dummybot 1" },
+                new UploadedBot { UniqueId = "DummyId2", Name="Dummybot 2" }
             };
         }
 

@@ -17,6 +17,7 @@
 {
     <br />
     <button class="btnAddPlayers">Add players</button>
+    <button class="btnStartGame">Start game</button>
 }
 
 <div id="sessionContainer">
@@ -76,11 +77,13 @@
 
 @if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
 {
-    <br/><br />
+    <br />
+    <br />
     <h1>Add players to this game</h1>
     foreach (var bot in Model.AvailableBots)
     {
-        @bot.Name<br/>
+        @bot.Name
+        <br />
     }
 }
 

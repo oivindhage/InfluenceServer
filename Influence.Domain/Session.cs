@@ -58,8 +58,7 @@ namespace Influence.Domain
                 return false;
 
             RoundNumber++;
-            GameState.GamePhase = Consts.GamePhase.Ongoing;
-
+            
             CurrentBoard = new Board(RuleSet);
             CurrentBoard.PlacePlayers(Players);
 
@@ -67,6 +66,8 @@ namespace Influence.Domain
             GameState.Participants = new List<Participant>();
             Rng.ShuffleList(Players.ToList()).ForEach(p => GameState.Participants.Add(new Participant(p)));
             GiveTurnToNextPlayer();
+
+            GameState.GamePhase = Consts.GamePhase.Ongoing;
 
             return true;
         }

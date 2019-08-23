@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using Influence.Services;
+using Influence.Services.Bot;
 using Influence.Web.Models;
 
 namespace Influence.Web.Controllers
