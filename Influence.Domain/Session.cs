@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Influence.Common.Extensions;
 using Influence.Common.Utils;
 
@@ -35,6 +36,14 @@ namespace Influence.Domain
         }
 
 
+        private void Log(string message)
+        {
+            return;
+            try { System.IO.File.AppendAllText("C:\\InfluenceLogs\\Session log.txt", message + Environment.NewLine); }
+            catch { }
+        }
+
+
         public bool AddPlayer(Guid playerId, string playerName)
         {
             if (
@@ -52,6 +61,8 @@ namespace Influence.Domain
 
         public bool Start()
         {
+            Log("Start()");
+
             if (Players == null || Players.Count < 2 || Players.Count > RuleSet.MaxNumPlayersInGame)
                 return false;
 
@@ -75,6 +86,8 @@ namespace Influence.Domain
 
         public bool NewGame()
         {
+            Log("NewGame()");
+
             if (GameState.GamePhase != Consts.GamePhase.Finished)
                 return false;
 
@@ -85,6 +98,8 @@ namespace Influence.Domain
 
         public void GiveTurnToNextPlayer()
         {
+            Log("GiveTurnToNextPlayer()");
+
             GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
             if (GameState.CurrentPlayer == null)
@@ -109,6 +124,8 @@ namespace Influence.Domain
 
         private void AwardScoreToParticipants(IEnumerable<Participant> participants)
         {
+            Log("AwardScoreToParticipants()");
+
             foreach (var participant in participants)
             {
                 if (participant.Rank == 1)
@@ -136,6 +153,8 @@ namespace Influence.Domain
 
         public string Move(Guid playerId, int fromTileId, int toTileId, out string attackLog)
         {
+            Log($"Move() - playerId {playerId} - fromTileId {fromTileId} - toTileId {toTileId}");
+
             attackLog = string.Empty;
 
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
@@ -180,6 +199,8 @@ namespace Influence.Domain
 
         public string EndMove(Guid playerId)
         {
+            Log($"EndMove() - playerId {playerId}");
+
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return $"Avslutting av flyttefase ikke mulig i spillfasen {GameState.GamePhase}";
 
@@ -207,6 +228,8 @@ namespace Influence.Domain
 
         public string Reinforce(Guid playerId, int tileId, out string reinforceLog)
         {
+            Log($"Reinforce() - playerId {playerId} - tileId {tileId}");
+
             reinforceLog = string.Empty;
 
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
@@ -232,6 +255,8 @@ namespace Influence.Domain
 
         public string EndReinforce(Guid playerId)
         {
+            Log($"EndReinforce() - playerId {playerId}");
+
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return $"Avslutting av forsterkningsfase ikke mulig i spillfasen {GameState.GamePhase}";
 
