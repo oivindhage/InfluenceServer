@@ -97,26 +97,30 @@
     $(document).ready(function () {
 
         $(".btnStartGame").click(function () {
-            $.get("/Session/StartGame?sessionId=@Model.Session.Id", function (response) { location.reload(); });
+            $.get("/Session/StartGame?sessionId=@Model.Session.Id", function(response) { location.reload(); });
         });
 
-        $(".btnJoinBot").click(function () {
+        $(".btnJoinBot").click(function() {
             var folderName = $(this).data("foldername");
             console.log(folderName);
-            $.get("/Session/JoinBot?folderName=" + folderName + "&sessionId=@Model.Session.Id", function (response) { location.reload(); });
+            $.get("/Session/JoinBot?folderName=" + folderName + "&sessionId=@Model.Session.Id");
         });
 
-        setInterval(function() {
-            $.ajax(
-            { url: "/Session?sessionId=@Model.Session.Id",
-              type: "GET",
-              success: function(response) {
-                  var soDirty = $(response).find("#sessionContainer");
-                  $("#sessionContainer").replaceWith(soDirty);
-              },
-              error: function(error) { location.redirect("/"); }
-            })
-        }, 100);
+        function refreshStuff() {
+                $.ajax(
+                    {
+                        url: "/Session?sessionId=@Model.Session.Id",
+                        type: "GET",
+                        success: function(response) {
+                            var soDirty = $(response).find("#sessionContainer");
+                            $("#sessionContainer").replaceWith(soDirty);
+                        },
+                        error: function(error) { location.redirect("/"); }
+                    })
+            };
+            
+
+        setInterval(refreshStuff, 1000);
     });
 
 </script>

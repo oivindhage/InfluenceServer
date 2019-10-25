@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Web;
 
 namespace Influence.Services.Bot
 {
@@ -8,8 +9,17 @@ namespace Influence.Services.Bot
     {
         public static void HaveBotJoinGame(string folderName, string botName, Guid sessionId, string serviceUrl)
         {
-            // todo oivindhage
-            Process.Start(Path.Combine(folderName, "Influence.GameClient.exe"), $"-name {botName} -serverurl {serviceUrl} -session {sessionId}");
+            var processInfo = new ProcessStartInfo
+            {
+                //UserName = "normaluser", 
+                //PasswordInClearText = "hilfe",
+
+                FileName = Path.Combine(folderName, "Influence.GameClient.exe"), 
+                Arguments = $"-name {botName} -serverurl {serviceUrl} -session {sessionId}",
+                UseShellExecute = false
+            };
+
+            Process.Start(processInfo);
         }
     }
 }
