@@ -18,13 +18,14 @@ namespace Influence.Services.Bot
         }
 
         public Tile GetTileToReinforce(Session session)
-            => session
-                .CurrentBoard
-                .AllTiles
-                .Where(CurrentBotOwnsTile)
-                .Where(TileIsNotFull)
-                .ToList()
-                .Random();
+            => session.GameState.CurrentPlayer.NumAvailableReinforcements < 1 ? null
+                : session
+                    .CurrentBoard
+                    .AllTiles
+                    .Where(CurrentBotOwnsTile)
+                    .Where(TileIsNotFull)
+                    .ToList()
+                    .Random();
 
         public MoveInstruction GetMoveOrAttackInstruction(Session session)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
+using Influence.Common.Extensions;
 using Influence.Domain;
 using Newtonsoft.Json;
 using RestSharp;
@@ -9,28 +11,29 @@ namespace Influence.Services
     public class Gateway
     {
         public string SessionBaseUrl;
-        public string EndReinforce(string sessionId, string playerId)
+
+        public BasicResult EndReinforce(string sessionId, string playerId)
             => GetResponseOrErrorMessage($"?endreinforce&session={sessionId}&playerid={playerId}");
 
-        public string EndAttack(string sessionId, string playerId)
+        public BasicResult EndAttack(string sessionId, string playerId)
            => GetResponseOrErrorMessage($"?endmove&session={sessionId}&playerid={playerId}");
 
-        public string StartSession(string sessionId)
+        public BasicResult StartSession(string sessionId)
            => GetResponseOrErrorMessage($"?start&session={sessionId}");
 
-        public string NewGameInSession(string sessionId)
+        public BasicResult NewGameInSession(string sessionId)
             => GetResponseOrErrorMessage($"?newgame&session={sessionId}");
 
-        public string Create(string guid = "")
+        public BasicResult Create(string guid = "")
            => GetResponseOrErrorMessage($"?create={guid ?? Guid.NewGuid().ToString()}");
 
-        public string Move(string sessionId, string playerId, int attackFromTileId, int attackToTileId)
+        public BasicResult Move(string sessionId, string playerId, int attackFromTileId, int attackToTileId)
            => GetResponseOrErrorMessage($"?move&session={sessionId}&playerid={playerId}&from={attackFromTileId}&to={attackToTileId}");
 
-        public string Reinforce(string sessionId, string playerId, int reinforceTileId)
+        public BasicResult Reinforce(string sessionId, string playerId, int reinforceTileId)
            => GetResponseOrErrorMessage($"?reinforce&session={sessionId}&playerid={playerId}&tileid={reinforceTileId}");
 
-        public string Join(string sessionId, string playerId, string name)
+        public BasicResult Join(string sessionId, string playerId, string name)
            => GetResponseOrErrorMessage($"?join&session={sessionId}&playerid={playerId}&name={name}");
 
         public Session[] GetSessions()
@@ -59,12 +62,13 @@ namespace Influence.Services
             return JsonConvert.DeserializeObject<Session>(sessionJson);
         }
 
-        private string GetResponseOrErrorMessage(string url)
+        private BasicResult GetResponseOrErrorMessage(string url)
         {
             var response = Get(url);
-            if (response.StatusCode != HttpStatusCode.OK)
-                return response.StatusDescription;
-            return response.Content;
+
+            return response.StatusCode == HttpStatusCode.OK 
+                ? new BasicResult { IsSuccess = true, Message = response.Content }
+                : new BasicResult { IsSuccess = false, Message = response.StatusDescription + Environment.NewLine + response.Content };
         }
 
         private IRestResponse Get(string url)

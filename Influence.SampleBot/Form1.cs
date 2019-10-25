@@ -36,6 +36,9 @@ namespace Influence.SampleBot
 
         private void Log(string message) 
             => txtLog.AppendText($"{(txtLog.Text.IsEmpty() ? string.Empty : Environment.NewLine)}{DateTime.Now.ToLongTimeString()} > {message}");
+        
+        private void Log(BasicResult result) 
+            => txtLog.AppendText($"{(txtLog.Text.IsEmpty() ? string.Empty : Environment.NewLine)}{DateTime.Now.ToLongTimeString()} > {(result.IsSuccess ? "SUCCESS" : "FAILURE")} > {result.Message}");
 
         private void btnCreateGame_Click(object sender, EventArgs e)
         {

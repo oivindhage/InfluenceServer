@@ -214,7 +214,14 @@ namespace Influence.GameClient
                 if (moveInstruction is null)
                     EndAttack();
                 else
-                    Attack(Tile.ConstructTileId(moveInstruction.SourceTile, clientState.Session.RuleSet.BoardSize), Tile.ConstructTileId(moveInstruction.DestinationTile, clientState.Session.RuleSet.BoardSize));
+                {
+                    var fromTile = Tile.ConstructTileId(moveInstruction.SourceTile, clientState.Session.RuleSet.BoardSize);
+                    var toTile = Tile.ConstructTileId(moveInstruction.DestinationTile, clientState.Session.RuleSet.BoardSize);
+                    var result = Attack(fromTile, toTile);
+
+                    if (!result.IsSuccess)
+                        EndAttack();
+                }
             }
             else if (clientState.Session.GameState.PlayerPhase == Consts.PlayerPhase.Reinforce)
             {
@@ -222,7 +229,11 @@ namespace Influence.GameClient
                 if (tileToReinforce is null)
                     EndReinforce();
                 else
-                    Reinforce(Tile.ConstructTileId(tileToReinforce, clientState.Session.RuleSet.BoardSize));
+                {
+                    var result = Reinforce(Tile.ConstructTileId(tileToReinforce, clientState.Session.RuleSet.BoardSize));
+                    if (!result.IsSuccess)
+                        EndReinforce();
+                }
             }
         }
 
@@ -261,7 +272,7 @@ namespace Influence.GameClient
 
         private void btnStartSession_Click(object sender, EventArgs e) 
             => txtStatus.Text = cmbCurrentGames.Enabled 
-                ? influenceGateway.StartSession(cmbCurrentGames.Text) 
+                ? influenceGateway.StartSession(cmbCurrentGames.Text).Message
                 : "List sessions first";
 
         private void tmrPoll_Tick(object sender, EventArgs e)
@@ -279,22 +290,26 @@ namespace Influence.GameClient
         private void txtPlayerId_TextChanged(object sender, EventArgs e)
             => clientState.PlayerId = txtPlayerId.Text;
 
-        private string EndReinforce()
+        private BasicResult EndReinforce()
             => influenceGateway.EndReinforce(clientState.SessionId, txtPlayerId.Text);
 
-        private string EndAttack()
+        private BasicResult EndAttack()
             => influenceGateway.EndAttack(clientState.SessionId, txtPlayerId.Text);
 
-        private void Reinforce(int reinforceTileId)
+        private BasicResult Reinforce(int reinforceTileId)
         {
-            influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, reinforceTileId);
+            var result = influenceGateway.Reinforce(clientState.SessionId, txtPlayerId.Text, reinforceTileId);
             clientState.ResetCoordinates();
+
+            return result;
         }
 
-        private void Attack(int fromTileId, int toTileId)
+        private BasicResult Attack(int fromTileId, int toTileId)
         {
-            influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, fromTileId, toTileId);
+            var result = influenceGateway.Move(clientState.SessionId, txtPlayerId.Text, fromTileId, toTileId);
             clientState.ResetCoordinates();
+
+            return result;
         }
     }
 }
