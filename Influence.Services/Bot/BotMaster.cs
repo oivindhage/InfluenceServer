@@ -48,7 +48,7 @@ namespace Influence.Services.Bot
 
         private void Reinforce(Session session)
         {
-            var reinforce = _bot.Reinforce(session);
+            var reinforce = _bot.GetTileToReinforce(session);
             if (reinforce is null)
                 _gateway.EndReinforce(_sessionId, _playerGuid.ToString());
             else
@@ -57,7 +57,7 @@ namespace Influence.Services.Bot
 
         private void Move(Session session)
         {
-            var move = _bot.MoveAndAttack(session);
+            var move = _bot.GetMoveOrAttackInstruction(session);
             if (move is null)
                 _gateway.EndAttack(_sessionId, _playerGuid.ToString());
             else

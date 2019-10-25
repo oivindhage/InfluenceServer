@@ -210,19 +210,19 @@ namespace Influence.GameClient
                 return;
             if (clientState.Session.GameState.PlayerPhase == Consts.PlayerPhase.MoveAndAttack)
             {
-                var move = Bot1.MoveAndAttack(clientState.Session);
-                if (move is null)
+                var moveInstruction = Bot1.GetMoveOrAttackInstruction(clientState.Session);
+                if (moveInstruction is null)
                     EndAttack();
                 else
-                    Attack(Tile.ConstructTileId(move.SourceTile, clientState.Session.RuleSet.BoardSize), Tile.ConstructTileId(move.DestinationTile, clientState.Session.RuleSet.BoardSize));
+                    Attack(Tile.ConstructTileId(moveInstruction.SourceTile, clientState.Session.RuleSet.BoardSize), Tile.ConstructTileId(moveInstruction.DestinationTile, clientState.Session.RuleSet.BoardSize));
             }
             else if (clientState.Session.GameState.PlayerPhase == Consts.PlayerPhase.Reinforce)
             {
-                var reinforce = Bot1.Reinforce(clientState.Session);
-                if (reinforce is null)
+                var tileToReinforce = Bot1.GetTileToReinforce(clientState.Session);
+                if (tileToReinforce is null)
                     EndReinforce();
                 else
-                    Reinforce(Tile.ConstructTileId(reinforce, clientState.Session.RuleSet.BoardSize));
+                    Reinforce(Tile.ConstructTileId(tileToReinforce, clientState.Session.RuleSet.BoardSize));
             }
         }
 

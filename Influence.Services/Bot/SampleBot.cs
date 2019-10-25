@@ -17,7 +17,7 @@ namespace Influence.Services.Bot
             Id = id;
         }
 
-        public Tile Reinforce(Session session)
+        public Tile GetTileToReinforce(Session session)
             => session
                 .CurrentBoard
                 .AllTiles
@@ -26,11 +26,12 @@ namespace Influence.Services.Bot
                 .ToList()
                 .Random();
 
-        public MoveInstruction MoveAndAttack(Session session)
+        public MoveInstruction GetMoveOrAttackInstruction(Session session)
         {
             var attackers = GetPotentialAttackers(session);
             if (!attackers.Any())
                 return null;
+
             var attacker = attackers.Random();
             var destination = AttackableDestinations(attacker).Random();
             return new MoveInstruction(attacker.from, destination);

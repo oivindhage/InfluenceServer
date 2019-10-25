@@ -4,7 +4,7 @@ namespace Influence.Services.Bot
 {
     public interface IBot
     {
-        Tile Reinforce(Session session);
-        MoveInstruction MoveAndAttack(Session session);
+        Tile GetTileToReinforce(Session session);
+        MoveInstruction GetMoveOrAttackInstruction(Session session);
     }
 }
