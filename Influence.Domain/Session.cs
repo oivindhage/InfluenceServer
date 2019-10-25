@@ -93,13 +93,10 @@ namespace Influence.Domain
                 if (GameState.Participants.Count(p => p.IsAlive) == 1)
                     return;
 
-                var idxCurrentPlayer = GameState.Participants.FindIndex(p => p.Player.Id == GameState.CurrentPlayer.Id);
-
-                int idxNextPlayer;
+                int idxNextPlayer = GameState.Participants.FindIndex(p => p.Player.Id == GameState.CurrentPlayer.Id);
                 do
                 {
-                    idxNextPlayer = ++idxCurrentPlayer;
-
+                    idxNextPlayer++;
                     if (idxNextPlayer >= GameState.Participants.Count)
                         idxNextPlayer = 0;
                 }
