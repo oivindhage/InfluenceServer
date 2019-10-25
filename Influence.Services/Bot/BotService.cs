@@ -16,10 +16,13 @@ namespace Influence.Services.Bot
 
                 FileName = Path.Combine(folderName, "Influence.GameClient.exe"), 
                 Arguments = $"-name {botName} -serverurl {serviceUrl} -session {sessionId}",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
-            Process.Start(processInfo);
+            var process = Process.Start(processInfo);
+
+            if (process != null)
+                process.PriorityClass = ProcessPriorityClass.Idle;
         }
     }
 }
