@@ -21,8 +21,8 @@ namespace Influence.Web.Controllers
             var file = model.File;
             if (string.IsNullOrEmpty(model.Name))
                 return UploadResult("Fill out a name for your bot");
-            if (!Regex.IsMatch(model.Name, @"^[a-zA-Z0-9 æøåÆØÅ]*$"))
-                return UploadResult("The name can only contain letters, numbers and spaces");
+            if (!Regex.IsMatch(model.Name, @"^[a-zA-Z0-9]*$"))
+                return UploadResult("The name can only contain a-Z and 0-9");
             if (file?.ContentLength > 0 && !string.IsNullOrEmpty(file.FileName))
             {
                 try
