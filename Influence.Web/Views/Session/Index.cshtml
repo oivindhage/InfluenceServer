@@ -25,7 +25,14 @@
 
         <tr>
             <td>Players</td>
-            <td>@(session.Players.Any() ? session.Players.Select(p => p.Name).Aggregate((x, y) => $"{x}, {y}") : "None")</td>
+            <td>
+                @foreach (var player in session.Players)
+                {
+                    <span style="color: rgb(@player.ColorRgbCsv)">
+                        @player.Name
+                    </span>
+                }
+            </td>
         </tr>
 
         <tr>
@@ -51,7 +58,9 @@
             <td>
                 @if (session.GameState.CurrentPlayer != null)
                 {
-                    <strong>@session.GameState.CurrentPlayer.Name</strong>
+                    <span style="color: rgb(@session.GameState.CurrentPlayer.ColorRgbCsv)">
+                        @session.GameState.CurrentPlayer.Name
+                    </span>
                 }
                 else
                 {
@@ -61,7 +70,7 @@
         </tr>
 
         <tr>
-            <td>Player phase</td>
+            <td>Phase</td>
             <td>@session.GameState.PlayerPhase</td>
         </tr>
 
