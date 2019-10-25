@@ -110,9 +110,6 @@ namespace Influence.Web
                     Ok(context, attackLog);
                 else
                 {
-                    // Punish invalid actions and force the game to move on
-                    session.GiveTurnToNextPlayer();
-
                     BadRequest(context, error);
                 }
             }
@@ -146,9 +143,6 @@ namespace Influence.Web
                     Ok(context, "OK. " + reinforceLog);
                 else
                 {
-                    // Punish invalid actions and force the game to move on
-                    session.GiveTurnToNextPlayer();
-
                     BadRequest(context, error);
                 }
             }
