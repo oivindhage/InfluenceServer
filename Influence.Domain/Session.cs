@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Influence.Common.Extensions;
 using Influence.Common.Utils;
 
 namespace Influence.Domain
@@ -87,7 +88,7 @@ namespace Influence.Domain
             GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
             if (GameState.CurrentPlayer == null)
-                GameState.CurrentPlayer = GameState.Participants.First().Player;
+                GameState.CurrentPlayer = GameState.Participants.Random().Player;
             else
             {
                 if (GameState.Participants.Count(p => p.IsAlive) == 1)
