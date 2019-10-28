@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>Bot runner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class=inputs>
+        <span>Session url</span><input type=text id=sessionUrl><br>
+        <span>Client id</span><input type=text id=clientId><br>
+        <span>Player name</span><input type=text id=playerName><br>
+        <span>Session guid</span><input type=text id=sessionGuid><br>
+    </div>
+    <br>
+    <div class=buttons>
+        <button id=createSession>Create session</button>
+        <button id=listSessions>List all sessions</button>
+        <button id=joinSession>Join session</button>
+        <button id=startSession>Start session</button><br>
+        <button id=showSessionDetails>Show session details</button>
+        <button id=uploadBot>Upload bot</button>
+        <button id=endAttack>End attack</button>
+        <button id=endReinforce>End reinforce</button><br><br>
+    </div>
+    <textarea id=statustext></textarea>
+    <script src=bot.js></script>
+</body>
+
+</html>

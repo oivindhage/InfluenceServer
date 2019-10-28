@@ -1,0 +1,17 @@
+.inputs span{
+   width: 150px;
+   display: inline-block;
+}
+
+.inputs input{
+    width: 280px;
+}
+
+#statustext{
+    height: 400px;
+    width: 800px;
+}
+
+.buttons button{
+    width: 160px;
+}
