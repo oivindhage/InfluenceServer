@@ -6,11 +6,12 @@ namespace Influence.Domain
     {
         public Player() { }
 
-        public Player(Guid id, string name, string colorRgbCsv)
+        public Player(Guid id, string name, string colorRgbCsv, bool isStandInOnly = false)
         {
             Id = id;
             Name = name;
             ColorRgbCsv = colorRgbCsv;
+            IsStandInOnly = isStandInOnly;
         }
 
         public Guid Id { get; set; }
@@ -24,5 +25,8 @@ namespace Influence.Domain
         public int NumPos4 { get; set; }
 
         public int NumAvailableReinforcements { get; set; }
+
+        // Helping out in a game / not his primary game
+        public bool IsStandInOnly { get; set; }
     }
 }

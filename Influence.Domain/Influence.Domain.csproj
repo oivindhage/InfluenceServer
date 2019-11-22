@@ -47,6 +47,10 @@
   <ItemGroup>
     <Compile Include="BasicResult.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="Tournament\Tournament.cs" />
+    <Compile Include="Tournament\TournamentBotModel.cs" />
+    <Compile Include="Tournament\TournamentSettings.cs" />
+    <Compile Include="Tournament\TournamentRound.cs" />
     <Compile Include="UploadedBot.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Coordinate.cs" />
@@ -68,6 +72,7 @@
       <Name>Influence.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

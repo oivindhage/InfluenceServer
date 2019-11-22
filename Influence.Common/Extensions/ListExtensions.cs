@@ -6,10 +6,10 @@ namespace Influence.Common.Extensions
 {
     public static class ListExtensions
     {
-        static Random _random = new Random();
+        static readonly Random Rand = new Random();
         public static T Random<T>(this List<T> list)
             => list.Any()
-                ? list[_random.Next(list.Count)]
+                ? list[Rand.Next(list.Count)]
                 : default;
     }
 }

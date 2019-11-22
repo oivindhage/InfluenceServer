@@ -44,7 +44,7 @@ namespace Influence.Domain
         }
 
 
-        public bool AddPlayer(Guid playerId, string playerName)
+        public bool AddPlayer(Guid playerId, string playerName, bool isStandInOnly = false)
         {
             if (
                 GameState.GamePhase == Consts.GamePhase.NotStarted &&
@@ -52,7 +52,7 @@ namespace Influence.Domain
                 Players.All(p => !p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) &&
                 Players.Count < RuleSet.MaxNumPlayersInGame)
             {
-                Players.Add(new Player(playerId, playerName, PlayerColors[Players.Count]));
+                Players.Add(new Player(playerId, playerName, PlayerColors[Players.Count], isStandInOnly: isStandInOnly));
                 return true;
             }
 

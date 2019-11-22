@@ -1,0 +1,83 @@
+﻿@model Influence.Web.Models.TournamentModel
+
+<style>
+    td {
+        padding: 5px 10px 5px 5px;
+    }
+</style>
+
+
+@using (Html.BeginForm("Config", "Tournament", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <h1>@Model.TournamentName</h1>
+    <br />
+
+    <h3>Settings</h3>
+    @Html.EditorFor(m => m.Settings)
+    <br />
+
+
+    <h3>Participating bots</h3>
+    <table>
+        @for (int i = 0; i < Model.InvitedParticipants.Count; i++)
+        {
+            var bot = Model.InvitedParticipants[i];
+
+            @Html.HiddenFor(m => m.InvitedParticipants[i].Guid)
+            @Html.HiddenFor(m => m.InvitedParticipants[i].Bot.FolderName)
+            @Html.HiddenFor(m => m.InvitedParticipants[i].Bot.Name)
+
+            <tr>
+                <td>@Html.EditorFor(m => m.InvitedParticipants[i].HasJoined)</td>
+                <td>@Html.DisplayFor(m => m.InvitedParticipants[i].Bot.Name)</td>
+                <td>@Html.DisplayFor(m => m.InvitedParticipants[i].Guid)</td>
+            </tr>
+        }
+    </table>
+
+    <br />
+    <br />
+    <button type="submit">Save config and generate round 1</button>
+}
+
+<br />
+<br />
+
+@foreach (var round in Model.Rounds)
+{
+    <h4>Round #@round.RoundNumber</h4>
+
+    foreach (var game in round.Sessions)
+    {
+        <table style="border: 1px solid #777; display: inline-block; margin-right:20px">
+            @foreach (var player in game.Players)
+            {
+                var gameParticipant = game.GameState.Participants.FirstOrDefault(p => p.Player.Id == player.Id);
+                <tr>
+                    <td># @(gameParticipant?.Rank)</td>
+                    <td>@player.Name</td>
+                    <td>@(player.IsStandInOnly ? "(Stand-in)" : string.Empty)</td>
+                </tr>
+            }
+        </table>
+    }
+    <br/>
+    <br/>
+}
+
+@using (Html.BeginForm("PlayRound", "Tournament", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    if (Model.CanPlayRound)
+    {
+        <button type="submit">Play round</button>
+    }
+}
+
+
+@using (Html.BeginForm("SetupNextRound", "Tournament", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    if (Model.CanSetupNextRound)
+    {
+        <button type="submit">Setup next round</button>
+    }
+}
