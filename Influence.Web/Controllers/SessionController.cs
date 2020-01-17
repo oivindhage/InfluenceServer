@@ -22,7 +22,8 @@ namespace Influence.Web.Controllers
 
         public ActionResult StartGame(Guid sessionId)
         {
-            GameMaster.GetSessions().FirstOrDefault(s => s.Id == sessionId)?.Start();
+            var session = GameMaster.GetSessions().FirstOrDefault(s => !s.IsTournamentSession && s.Id == sessionId);
+            session?.Start();
             return null;
         }
 
@@ -30,7 +31,7 @@ namespace Influence.Web.Controllers
         {
             var bot = GetUploadedBots().FirstOrDefault(b => b.FolderName == folderName);
             if (bot != null)
-                BotService.HaveBotJoinGame(bot.FolderName, bot.Name, sessionId, $"{Request.Url.Scheme}://{Request.Url.Authority}/{nameof(ws)}.ashx");
+                BotService.HaveBotJoinGame(bot.FolderName, bot.Name, sessionId, $"{Request.Url.Scheme}://{Request.Url.Authority}/{nameof(ws)}.ashx", Guid.NewGuid());
 
             return null;
         }

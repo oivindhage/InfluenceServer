@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Influence.Common.Extensions;
 using Influence.Common.Utils;
 using Influence.Domain;
 using Influence.Domain.Tournament;
+using Influence.Services.Bot;
 
 namespace Influence.Services
 {
@@ -11,8 +12,8 @@ namespace Influence.Services
     {
         public static Tournament CurrentTournament { get; private set; }
 
-        public static Tournament GetOrCreateTournament(string name)
-            => CurrentTournament ?? (CurrentTournament = new Tournament(name));
+        public static Tournament GetOrCreateTournament(string name, string webServiceUrl)
+            => CurrentTournament ?? (CurrentTournament = new Tournament(name, webServiceUrl));
 
         public static void SetupNextRound()
         {
@@ -52,9 +53,10 @@ namespace Influence.Services
             foreach (var session in round.Sessions)
                 PlaySession(session);
 
-            DetermineWinnersOfRound(round);
-
-            round.IsComplete = true;
+            // todo ejay - wait until game is finished
+            // DetermineWinnersOfRound(round);
+            //
+            // round.IsComplete = true;
         }
 
 
@@ -71,19 +73,33 @@ namespace Influence.Services
 
         private static void PlaySession(Session session)
         {
-            session.Start();
-
             if (session.Players.Count > 1)
             {
-                // todo ejay play match for real. when using the result, remember that the stand-in's result in this game is to be disregarded   
-            }
+                var participants = GetParticipants(session);
 
-            for (int i = 0; i < session.GameState.Participants.Count; i++)
-            {
-                var participant = session.GameState.Participants[i];
-                participant.Rank = i+1;
+                foreach (var participant in participants)
+                {
+                    var bot = participant.Bot;
+                    BotService.HaveBotJoinGame(bot.FolderName, bot.Name, session.Id, CurrentTournament.WebServiceUrl, participant.Guid);
+                }
             }
+            
+            session.Start();
+
+            // todo ejay - wait until game is finished
+            // for (int i = 0; i < session.GameState.Participants.Count; i++)
+            // {
+            //     var participant = session.GameState.Participants[i];
+            //     participant.Rank = i+1;
+            // }
         }
+
+
+        private static List<TournamentParticipant> GetParticipants(Session session)
+            => session.Players.Select(p => GetParticipant(session, p.Id)).ToList();
+        
+        private static TournamentParticipant GetParticipant(Session session, Guid playerId)
+            => CurrentTournament.Participants.Single(p => p.Guid == playerId);
 
 
         private static List<Session> CreateSessions(List<TournamentParticipant> participants, TournamentSettings settings)
@@ -96,7 +112,7 @@ namespace Influence.Services
 
             while (participantsWithoutGroup.Any())
             {
-                var session = new Session(RuleSet.Default, $"Game {sessionNum++}");
+                var session = GameMaster.CreateSession(name: $"Game {sessionNum++}", isTournamentSession: true);
 
                 while (participantsWithoutGroup.Any() && session.Players.Count < settings.MaxNumPlayersInEachGame)
                 {

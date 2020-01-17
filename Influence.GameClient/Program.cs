@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Influence.Common.Extensions;
 
 namespace Influence.GameClient
 {
@@ -36,6 +37,7 @@ namespace Influence.GameClient
             string botname = null;
             string sessionId = null;
             string serverUrl = null;
+            Guid botGuid = Guid.Empty;
             for (int i = 0; i < args.Length; ++i)
             {
                 if (args.Length - 1 == i)
@@ -46,12 +48,14 @@ namespace Influence.GameClient
                     sessionId = args[++i];
                 else if (args[i].Equals("-serverurl", StringComparison.CurrentCultureIgnoreCase))
                     serverUrl = args[++i];
+                else if (args[i].Equals("-botguid", StringComparison.CurrentCultureIgnoreCase))
+                    botGuid = new Guid(args[++i]);
             }
-            if (botname is null || sessionId is null || serverUrl is null)
+            if (botname is null || sessionId is null || serverUrl is null || botGuid.NotValid())
                 PrintHelp();
             else
             {
-                var master = new BotMaster(botname, serverUrl, sessionId);
+                var master = new BotMaster(botname, serverUrl, sessionId, botGuid);
                 master.Run();
             }
         }

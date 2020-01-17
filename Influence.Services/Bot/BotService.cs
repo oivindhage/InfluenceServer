@@ -7,7 +7,7 @@ namespace Influence.Services.Bot
 {
     public class BotService
     {
-        public static void HaveBotJoinGame(string folderName, string botName, Guid sessionId, string serviceUrl)
+        public static void HaveBotJoinGame(string folderName, string botName, Guid sessionId, string serviceUrl, Guid botGuid)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -15,7 +15,7 @@ namespace Influence.Services.Bot
                 //PasswordInClearText = "hilfe",
 
                 FileName = Path.Combine(folderName, "Influence.GameClient.exe"), 
-                Arguments = $"-name {botName} -serverurl {serviceUrl} -session {sessionId}",
+                Arguments = $"-name {botName} -serverurl {serviceUrl} -session {sessionId} -botguid {botGuid}",
                 UseShellExecute = false,
             };
 

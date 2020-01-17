@@ -12,11 +12,11 @@ namespace Influence.Services.Bot
         private readonly string _sessionId;
         private readonly SampleBot _bot;
         private bool _isRunning;
-
-        public BotMaster(string botName, string serverUrl, string sessionId)
+        
+        public BotMaster(string botName, string serverUrl, string sessionId, Guid botGuid)
         {
             _gateway = new Gateway { SessionBaseUrl = serverUrl };
-            _playerGuid = Guid.NewGuid();
+            _playerGuid = botGuid;
             _botName = botName;
             _sessionId = sessionId;
             _bot = new SampleBot(_botName, _playerGuid);
@@ -33,6 +33,7 @@ namespace Influence.Services.Bot
         private void Poll()
         {
             var session = _gateway.GetSession(_sessionId);
+            
             if (session.GameState.GamePhase == Consts.GamePhase.Finished)
                 _isRunning = false;
             if (session.GameState.GamePhase != Consts.GamePhase.Ongoing)
