@@ -45,7 +45,7 @@
 
 @foreach (var round in Model.Rounds)
 {
-    <h4>Round #@round.RoundNumber</h4>
+    <h4>Round @round.RoundNumber</h4>
 
     foreach (var game in round.Sessions)
     {
@@ -54,7 +54,9 @@
             {
                 var gameParticipant = game.GameState.Participants.FirstOrDefault(p => p.Player.Id == player.Id);
                 <tr>
-                    <td># @(gameParticipant?.Rank)</td>
+                    @if (gameParticipant?.Rank > 0) {
+                        <td># @(gameParticipant.Rank)</td>    
+                    }
                     <td>@player.Name</td>
                     <td>@(player.IsStandInOnly ? "(Stand-in)" : string.Empty)</td>
                 </tr>

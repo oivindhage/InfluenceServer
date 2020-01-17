@@ -30,6 +30,11 @@ namespace Influence.Services
                     Sessions = sessions
                 });
             }
+
+            // Only one participant left (a standin won in the other group(s))
+            // Play the game immediately as there is no reason to wait
+            if (sessions.Count == 1 && sessions[0].Players.Count == 1)
+                PlayRound();
         }
 
 
@@ -66,9 +71,12 @@ namespace Influence.Services
 
         private static void PlaySession(Session session)
         {
-            // todo ejay play match for real. when using the result, remember that the stand-in's result in this game is to be disregarded
-
             session.Start();
+
+            if (session.Players.Count > 1)
+            {
+                // todo ejay play match for real. when using the result, remember that the stand-in's result in this game is to be disregarded   
+            }
 
             for (int i = 0; i < session.GameState.Participants.Count; i++)
             {

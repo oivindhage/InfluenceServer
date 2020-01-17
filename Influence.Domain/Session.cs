@@ -63,7 +63,7 @@ namespace Influence.Domain
         {
             Log("Start()");
 
-            if (Players == null || Players.Count < 2 || Players.Count > RuleSet.MaxNumPlayersInGame)
+            if (Players == null || Players.Count == 0  || Players.Count > RuleSet.MaxNumPlayersInGame)
                 return false;
 
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)
