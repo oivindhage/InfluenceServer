@@ -10,9 +10,19 @@
         <span>Session url</span><input type=text id=sessionUrl><br>
         <span>Client id</span><input type=text id=clientId><br>
         <span>Player name</span><input type=text id=playerName><br>
-        <span>Session guid</span><input type=text id=sessionGuid><br>
+        <span>Session guid</span><input type=text id=sessionGuid value="019c9d7d-d642-42b4-bd24-f2d10cf25fbf"><br>
     </div>
     <br>
+    <div class="game">
+        <div class="gameboardcontainer">
+            <canvas class="gameboard" id="gameboard1">
+
+            </canvas>
+        </div>
+        <div class="gamestats" id="gamestats1">
+
+        </div>
+    </div>
     <div class=buttons>
         <button id=createSession>Create session</button>
         <button id=listSessions>List all sessions</button>
@@ -25,6 +35,7 @@
     </div>
     <textarea id=statustext></textarea>
     <script src=bot.js></script>
+    <script>initialize();</script>
 </body>
 
 </html>
