@@ -1,0 +1,53 @@
+﻿@model Influence.Web.Models.BotManagementModel
+
+@using (Html.BeginForm("UploadBot", "BotManagement", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <h2>Upload a new bot</h2>
+    
+    <strong style="color:#00b">@Model.UploadResultMessage</strong>
+    <br>
+    
+    <table>
+        <tr>
+            <th>Bot name (a-Z and 0-9 allowed)</th>
+            <th>Select .zip file of your bot</th>
+        </tr>
+        
+        <tr>
+            <td>@Html.TextBoxFor(x => x.Name)</td>
+            <td>@Html.TextBoxFor(x => x.File, new { type = "file" })</td>
+            <td><button type="submit">Upload this bot</button></td>
+        </tr>
+    </table>
+    
+    <br/>
+    <br/>
+}
+
+
+<h2>Existing bots</h2>
+<table>
+    @foreach (var bot in Model.UploadedBots)
+    {
+        <tr>
+            <td><button class="deleteBotButton" data-botid="@bot.FolderName">Delete</button></td>
+            <td>@bot.Name</td>
+            <td>@bot.FolderName</td>
+        </tr>
+    }
+</table>
+
+
+<script src="/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    $(document).ready(
+        function(){
+            $(".deleteBotButton").click(function() {
+                var botId = $(this).data('botid');
+                $.post("/BotManagement/DeleteBot?guid=" + botId, function(response){
+                    location.reload()
+                });
+            })
+        }
+    )
+</script>

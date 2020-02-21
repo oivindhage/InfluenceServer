@@ -13,7 +13,7 @@
 @session.Id
 <br />
 
-@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
+@if (!session.IsTournamentSession && session.GameState.GamePhase == Consts.GamePhase.NotStarted)
 {
     <br />
     <button class="btnStartGame">Start game</button>
@@ -22,6 +22,15 @@
 <div id="sessionContainer">
 
     <table>
+        
+        <tr>
+            <td>Type</td>
+            <td>@(session.IsTournamentSession ? "Tournament" : "Regular")</td>
+        </tr>        
+        
+          <tr>
+            <td colspan="2" style="height: 15px"></td>
+        </tr>
 
         <tr>
             <td>Players</td>
@@ -83,7 +92,7 @@
     }
 </div>
 
-@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted)
+@if (session.GameState.GamePhase == Consts.GamePhase.NotStarted && !session.IsTournamentSession)
 {
     <br />
     <br />
@@ -129,7 +138,7 @@
             };
             
 
-        setInterval(refreshStuff, 1000);
+        setInterval(refreshStuff, 50);
     });
 
 </script>

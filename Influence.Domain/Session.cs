@@ -14,6 +14,7 @@ namespace Influence.Domain
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime CreationTime { get; }
+        public bool IsTournamentSession { get; }
 
         public List<Player> Players { get; set; }
         public int RoundNumber { get; set; }
@@ -23,10 +24,12 @@ namespace Influence.Domain
 
         public Session() { }
 
-        public Session(RuleSet ruleSet, string name, Guid id = default)
+        public Session(RuleSet ruleSet, string name, Guid id = default, bool isTournamentSession = false)
         {
             Id = id == Guid.Empty ? Guid.NewGuid() : id;
             Name = name;
+            IsTournamentSession = isTournamentSession;
+
             CreationTime = DateTime.Now;
 
             Players = new List<Player>();
@@ -38,9 +41,8 @@ namespace Influence.Domain
 
         private void Log(string message)
         {
-            return;
-            try { System.IO.File.AppendAllText("C:\\InfluenceLogs\\Session log.txt", message + Environment.NewLine); }
-            catch { }
+            // try { System.IO.File.AppendAllText("C:\\InfluenceLogs\\Session log.txt", message + Environment.NewLine); }
+            // catch { }
         }
 
 
@@ -63,7 +65,7 @@ namespace Influence.Domain
         {
             Log("Start()");
 
-            if (Players == null || Players.Count < 2 || Players.Count > RuleSet.MaxNumPlayersInGame)
+            if (Players == null || Players.Count == 0  || Players.Count > RuleSet.MaxNumPlayersInGame)
                 return false;
 
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)

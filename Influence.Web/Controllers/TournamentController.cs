@@ -12,8 +12,8 @@ namespace Influence.Web.Controllers
     {
         public ActionResult Index()
         {
-            var tournament = TournamentService.GetOrCreateTournament("The Legendary Tournament of Hilfe");
-            
+            var tournament = TournamentService.GetOrCreateTournament("The Legendary Tournament of Hilfe", GetWebServiceUrl());
+
             var model = new TournamentModel();
 
             var bots = GetUploadedBots();
@@ -25,7 +25,7 @@ namespace Influence.Web.Controllers
             }).ToList();
 
             model.TournamentName = tournament.Name;
-            model.Settings = tournament.Settings.Proper();
+            model.Settings = tournament.Settings;
             model.CanSetupNextRound = (tournament.Rounds.LastOrDefault()?.IsComplete ?? false) && tournament.Rounds.Last().Sessions.Count > 1;
             model.CanPlayRound = tournament.Rounds.Any() && !tournament.Rounds.Last().IsStarted;
             model.Rounds = tournament.Rounds;
@@ -34,14 +34,18 @@ namespace Influence.Web.Controllers
         }
 
 
+        private string GetWebServiceUrl()
+            => $"{Request.Url.Scheme}://{Request.Url.Authority}/ws.ashx";
+
+
         private Guid GetBotGuid(UploadedBot uploadedBot)
-            => new Guid(uploadedBot.FolderName.Substring( 1 + uploadedBot.FolderName.LastIndexOf("\\")));
+            => new Guid(uploadedBot.FolderName.Substring(1 + uploadedBot.FolderName.LastIndexOf("\\")));
 
 
         [HttpPost]
-        public ActionResult Config(TournamentModel model)
+        public ActionResult SaveConfig(TournamentModel model)
         {
-            model.Settings = model.Settings.Proper();
+            AssertValidConfigOrThrow(model);
 
             var tournament = TournamentService.CurrentTournament;
             tournament.Participants = model.InvitedParticipants.Where(b => b.HasJoined).ToList();
@@ -52,19 +56,34 @@ namespace Influence.Web.Controllers
 
             return RedirectToAction("Index");
         }
-        
+
+
         [HttpPost]
         public ActionResult SetupNextRound(TournamentModel model)
         {
             TournamentService.SetupNextRound();
             return RedirectToAction("Index");
         }
-        
+
+
         [HttpPost]
         public ActionResult PlayRound(TournamentModel model)
         {
             TournamentService.PlayRound();
             return RedirectToAction("Index");
+        }
+
+
+        private void AssertValidConfigOrThrow(in TournamentModel model)
+        {
+            if (model.Settings.MaxNumPlayersInEachGame < model.Settings.MinNumPlayersInEachGame)
+                throw new Exception("Invalid: MaxNumPlayersInEachGame < MinNumPlayersInEachGame");
+
+            if (model.Settings.MinNumPlayersInEachGame < 2 || model.Settings.MaxNumPlayersInEachGame < 2)
+                throw new Exception("Min 2 players in each game");
+
+            if (model.Settings.MaxNumPlayersInEachGame > RuleSet.Default.MaxNumPlayersInGame)
+                throw new Exception($"Max {RuleSet.Default.MaxNumPlayersInGame} players in each game");
         }
     }
 }

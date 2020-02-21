@@ -9,10 +9,12 @@ namespace Influence.Web.Controllers
 {
     public class ControllerBase : Controller
     {
+        protected const string UploadedBotsFolderName = "UploadedBots";
+        
         protected List<UploadedBot> GetUploadedBots()
         {
             var bots = new List<UploadedBot>();
-            var uploadedPath = Server.MapPath($"~/{UploadController.UploadedBotsFolderName}");
+            var uploadedPath = Server.MapPath($"~/{UploadedBotsFolderName}");
             if (!Directory.Exists(uploadedPath))
                 Directory.CreateDirectory(uploadedPath);
             var botFolders = Directory.GetDirectories(uploadedPath);
