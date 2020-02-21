@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BasicResult.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="GameEventHistory.cs" />
     <Compile Include="Tournament\Tournament.cs" />
     <Compile Include="Tournament\TournamentBotModel.cs" />
     <Compile Include="Tournament\TournamentSettings.cs" />

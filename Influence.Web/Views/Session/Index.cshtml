@@ -1,4 +1,5 @@
 ﻿@using Influence.Domain
+@using Newtonsoft.Json
 @model Influence.Web.Models.SessionModel
 @{
     var session = Model.Session;
@@ -28,7 +29,7 @@
             <td>@(session.IsTournamentSession ? "Tournament" : "Regular")</td>
         </tr>        
         
-          <tr>
+        <tr>
             <td colspan="2" style="height: 15px"></td>
         </tr>
 
@@ -62,33 +63,31 @@
             <td colspan="2" style="height: 15px"></td>
         </tr>
 
-        <tr>
-            <td>Current player</td>
-            <td>
-                @if (session.GameState.CurrentPlayer != null)
-                {
-                    <span style="color: rgb(@session.GameState.CurrentPlayer.ColorRgbCsv)">
-                        @session.GameState.CurrentPlayer.Name
-                    </span>
-                }
-                else
-                {
-                    <text>N/A</text>
-                }
-            </td>
-        </tr>
-
-        <tr>
-            <td>Phase</td>
-            <td>@session.GameState.PlayerPhase</td>
-        </tr>
-
     </table>
+    
+    
+    @if (session.GameState.GamePhase == Consts.GamePhase.Finished)
+    {
+        <br>
+        <strong>Delay between actions:</strong><br>
+        <input id="txtDelay" type="number" value="250" min="10" max="10000" step="10" /> @:ms
+        <br /><br>
+        <button class="btnViewGame" data-boardsize="@session.CurrentBoard.Size" data-eventbatches="@JsonConvert.SerializeObject(session.GameEventHistory.EventBatches)">View game!</button>
+    }
 
 
     @if (session.CurrentBoard != null)
     {
-        @Html.Partial("Board", session.CurrentBoard)
+        <table id="tableBoard">
+            @for (int y = 0; y < session.CurrentBoard.Size; y++)
+            {
+                <tr>
+                    @for (int x = 0; x < session.CurrentBoard.Size; x++) {
+                        <td class="tile"></td>
+                    }
+                </tr>
+            }
+        </table>
     }
 </div>
 
@@ -117,28 +116,57 @@
         $(".btnStartGame").click(function () {
             $.get("/Session/StartGame?sessionId=@Model.Session.Id", function(response) { location.reload(); });
         });
+        
+        
+        function getTileIdx(boardsize, x, y)
+        {
+            return x + (y * boardsize);
+        }
+        
+        
+        function updateTile(tile, evt){
+            console.log("(" + evt.X + ", " + evt.Y + ") needs an update: ");
+            console.log(tile);
+            console.log(" ");
+            
+            var rgb = "rgb(" + evt.OwnerColorRgbCsv + ")";
+            $(tile).css("background", rgb);
+            
+            $(tile).text(evt.NumTroops);
+        }
+        
+        function getDelay() 
+        {
+            return parseInt($("#txtDelay").val());
+        }
+        
+        function drawState(eventbatches, tiles, boardsize, index) 
+        {
+            $(eventbatches[index].Events).each(function(idx, evt)
+            {
+                var tile = tiles[getTileIdx(boardsize, evt.X, evt.Y)];
+                updateTile(tile, evt)
+            });
+            
+            if (index < eventbatches.length)
+                setTimeout( () => drawState(eventbatches, tiles, boardsize, index+1), getDelay());
+        }
+        
+        $(".btnViewGame").click(function () {
+            
+            var eventbatches = $($(this).data('eventbatches'));
+            var boardsize = $(this).data("boardsize");
+            var tiles = $("#tableBoard .tile");
+            drawState(eventbatches, tiles, boardsize, 0)
+        });
+        
+        
 
         $(".btnJoinBot").click(function() {
             var folderName = $(this).data("foldername");
             console.log(folderName);
             $.get("/Session/JoinBot?folderName=" + folderName + "&sessionId=@Model.Session.Id");
         });
-
-        function refreshStuff() {
-                $.ajax(
-                    {
-                        url: "/Session?sessionId=@Model.Session.Id",
-                        type: "GET",
-                        success: function(response) {
-                            var soDirty = $(response).find("#sessionContainer");
-                            $("#sessionContainer").replaceWith(soDirty);
-                        },
-                        error: function(error) { location.redirect("/"); }
-                    })
-            };
-            
-
-        setInterval(refreshStuff, 50);
     });
 
 </script>

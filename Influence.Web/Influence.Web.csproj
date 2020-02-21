@@ -178,7 +178,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="ws.ashx" />
     <Content Include="Views\Session\Index.cshtml" />
-    <Content Include="Views\Session\Board.cshtml" />
     <Content Include="Views\BotManagement\Index.cshtml" />
     <Content Include="Views\Tournament\Index.cshtml" />
   </ItemGroup>

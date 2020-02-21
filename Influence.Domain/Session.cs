@@ -22,7 +22,13 @@ namespace Influence.Domain
         public RuleSet RuleSet { get; set; }
         public Board CurrentBoard { get; set; }
 
-        public Session() { }
+        public GameEventHistory GameEventHistory = new GameEventHistory();
+
+
+        public Session()
+        {
+        }
+
 
         public Session(RuleSet ruleSet, string name, Guid id = default, bool isTournamentSession = false)
         {
@@ -36,13 +42,6 @@ namespace Influence.Domain
             GameState = new GameState();
             RoundNumber = 0;
             RuleSet = ruleSet;
-        }
-
-
-        private void Log(string message)
-        {
-            // try { System.IO.File.AppendAllText("C:\\InfluenceLogs\\Session log.txt", message + Environment.NewLine); }
-            // catch { }
         }
 
 
@@ -61,18 +60,17 @@ namespace Influence.Domain
             return false;
         }
 
+
         public bool Start()
         {
-            Log("Start()");
-
-            if (Players == null || Players.Count == 0  || Players.Count > RuleSet.MaxNumPlayersInGame)
+            if (Players == null || Players.Count == 0 || Players.Count > RuleSet.MaxNumPlayersInGame)
                 return false;
 
             if (GameState.GamePhase != Consts.GamePhase.NotStarted)
                 return false;
 
             RoundNumber++;
-            
+
             CurrentBoard = new Board(RuleSet);
             CurrentBoard.PlacePlayers(Players);
 
@@ -83,13 +81,26 @@ namespace Influence.Domain
 
             GameState.GamePhase = Consts.GamePhase.Ongoing;
 
+            AddInitialGameEvents();
+
             return true;
         }
 
+
+        private void AddInitialGameEvents()
+        {
+            var batch = new GameEventHistory.EventBatch();
+            
+            foreach (var tile in CurrentBoard.AllTiles)
+                if (tile.OwnerId != Guid.Empty)
+                    batch.Events.Add(new GameEventHistory.CellChangedEvent(tile.X, tile.Y, tile.NumTroops, tile.OwnerColorRgbCsv));
+
+            GameEventHistory.EventBatches.Add(batch);
+        }
+
+
         public bool NewGame()
         {
-            Log("NewGame()");
-
             if (GameState.GamePhase != Consts.GamePhase.Finished)
                 return false;
 
@@ -98,10 +109,9 @@ namespace Influence.Domain
             return Start();
         }
 
+
         public void GiveTurnToNextPlayer()
         {
-            Log("GiveTurnToNextPlayer()");
-
             GameState.PlayerPhase = Consts.PlayerPhase.MoveAndAttack;
 
             if (GameState.CurrentPlayer == null)
@@ -124,10 +134,9 @@ namespace Influence.Domain
             }
         }
 
+
         private void AwardScoreToParticipants(IEnumerable<Participant> participants)
         {
-            Log("AwardScoreToParticipants()");
-
             foreach (var participant in participants)
             {
                 if (participant.Rank == 1)
@@ -153,10 +162,9 @@ namespace Influence.Domain
             }
         }
 
+
         public string Move(Guid playerId, int fromTileId, int toTileId, out string attackLog)
         {
-            Log($"Move() - playerId {playerId} - fromTileId {fromTileId} - toTileId {toTileId}");
-
             attackLog = string.Empty;
 
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
@@ -180,6 +188,8 @@ namespace Influence.Domain
             Participant deadDefender;
             string moveResult = CurrentBoard.Move(player, fromTileId, toTileId, GameState.Participants, out attackLog, out deadDefender);
 
+            AddGameEventForPossibleTileChange(fromTileId, toTileId);
+
             if (deadDefender != null)
             {
                 deadDefender.Rank = GameState.Participants.Count(p => p.IsAlive);
@@ -199,10 +209,24 @@ namespace Influence.Domain
             return moveResult;
         }
 
+
+        // todo - if get the time: only generate changeevents for tiles that actually changed
+        private void AddGameEventForPossibleTileChange(params int[] tiles)
+        {
+            var batch = new GameEventHistory.EventBatch();
+            
+            foreach (var tileId in tiles)
+            {
+                var tile = CurrentBoard.TilesById[tileId];
+                batch.Events.Add(new GameEventHistory.CellChangedEvent(tile.X, tile.Y, tile.NumTroops, tile.OwnerColorRgbCsv));
+            }
+            
+            GameEventHistory.EventBatches.Add(batch);
+        }
+
+
         public string EndMove(Guid playerId)
         {
-            Log($"EndMove() - playerId {playerId}");
-
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return $"Avslutting av flyttefase ikke mulig i spillfasen {GameState.GamePhase}";
 
@@ -228,10 +252,9 @@ namespace Influence.Domain
             return string.Empty;
         }
 
+
         public string Reinforce(Guid playerId, int tileId, out string reinforceLog)
         {
-            Log($"Reinforce() - playerId {playerId} - tileId {tileId}");
-
             reinforceLog = string.Empty;
 
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
@@ -252,13 +275,14 @@ namespace Influence.Domain
             if (GameState.PlayerPhase != Consts.PlayerPhase.Reinforce)
                 return $"Nåværende fase er {GameState.PlayerPhase}, ikke {Consts.PlayerPhase.Reinforce}";
 
+            AddGameEventForPossibleTileChange(tileId);
+
             return CurrentBoard.Reinforce(player, tileId, out reinforceLog);
         }
 
+
         public string EndReinforce(Guid playerId)
         {
-            Log($"EndReinforce() - playerId {playerId}");
-
             if (GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return $"Avslutting av forsterkningsfase ikke mulig i spillfasen {GameState.GamePhase}";
 
