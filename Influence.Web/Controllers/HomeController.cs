@@ -13,6 +13,7 @@ namespace Influence.Web.Controllers
                 GameMaster.CreateSession();
 
             var model = new HomeModel { Sessions = GameMaster.GetSessions().OrderByDescending(g => g.CreationTime).ToList() };
+            model.SessionUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/ws.ashx";
 
             return View(model);
         }
