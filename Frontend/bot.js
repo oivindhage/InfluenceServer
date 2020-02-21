@@ -67,13 +67,8 @@ function drawRect(x, y, canvas, spritenumber, color) {
     ctx.rect(x * width, y * height, width, height);
     ctx.stroke();
     ctx.fill();
-
-    if (spritenumber > -1) {
-        var imageData = images[spritenumber];
-
+    if (spritenumber > -1)
         ctx.drawImage(images[spritenumber], x * width, y * height, width, height);
-
-    }
 }
 
 function drawBoard(board, canvasId) {
@@ -136,7 +131,6 @@ function update(response) {
         setState(response.Session.GameState);
         boardSize = getBoardSize(response);
     }
-
 }
 
 function showSessionDetailsHandler() {
@@ -197,7 +191,6 @@ function doBotAction() {
     getSessionState()
         .then(response => {
             if (isOngoing(response) && isOurTurn(response)) {
-                console.log("It's our turn");
                 if (isAttack(response)) {
                     doBotAttackAction(response);
                 }
@@ -212,12 +205,19 @@ function doBotAction() {
 
 intervalHandle = -1;
 function playAsBotHandler() {
-    console.log(playAsBot.checked);
     if (playAsBot.checked) {
         count = 0;
         intervalHandle = setInterval(doBotAction, 100);
     } else {
         clearInterval(intervalHandle);
+    }
+}
+
+function viewStatusMessagesHandler() {
+    if (viewStatusMessages.checked) {
+        statustext.style = "";
+    } else {
+        statustext.style = "display:none";
     }
 }
 
@@ -266,6 +266,7 @@ function bindClickHandlers() {
     endReinforce.addEventListener("click", endReinforceHandler);
     gameboard1.addEventListener("click", canvasClickHandler);
     playAsBot.addEventListener("click", playAsBotHandler);
+    viewStatusMessages.addEventListener("click", viewStatusMessagesHandler);
 }
 
 function setupCanvas() {
