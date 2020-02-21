@@ -3,7 +3,8 @@
 @using (Html.BeginForm("UploadBot", "BotManagement", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <h2>Upload a new bot</h2>
-    <strong>@Model.UploadResultMessage</strong><br>
+    
+    <strong style="color:#00b">@Model.UploadResultMessage</strong>
     <br>
     
     <table>
