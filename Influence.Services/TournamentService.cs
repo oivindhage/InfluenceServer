@@ -82,13 +82,20 @@ namespace Influence.Services
                     var bot = participant.Bot;
                     BotService.HaveBotJoinGame(bot.FolderName, bot.Name, session.Id, CurrentTournament.WebServiceUrl, participant.Guid);
                 }
+                
+                session.Start();
+                
+                // Allow game to finish
+                while (session.GameState.GamePhase != Consts.GamePhase.Finished)
+                    Thread.Sleep(100);
             }
             
-            session.Start();
-            
-            // Allow game to finish
-            while (session.GameState.GamePhase != Consts.GamePhase.Finished)
-                Thread.Sleep(100);
+            else if (session.Players.Count == 1)
+            {
+                session.Start();
+                session.GameState.Participants[0].Rank = 1;
+                session.GameState.GamePhase = Consts.GamePhase.Finished;
+            }
         }
 
 
