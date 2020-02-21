@@ -18,11 +18,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Hilfe", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Sessions", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Upload a bot", "Index", new { controller = "Upload" })</li>
+                    <li>@Html.ActionLink("Bots", "Index", new { controller = "BotManagement" })</li>
                     <li>@Html.ActionLink("Tournament", "Index", new { controller = "Tournament" })</li>
                 </ul>
             </div>
