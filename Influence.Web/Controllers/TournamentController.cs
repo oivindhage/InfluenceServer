@@ -43,7 +43,7 @@ namespace Influence.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Config(TournamentModel model)
+        public ActionResult SaveConfig(TournamentModel model)
         {
             AssertValidConfigOrThrow(model);
 

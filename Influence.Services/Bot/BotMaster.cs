@@ -36,15 +36,20 @@ namespace Influence.Services.Bot
             
             if (session.GameState.GamePhase == Consts.GamePhase.Finished)
                 _isRunning = false;
+            
             if (session.GameState.GamePhase != Consts.GamePhase.Ongoing)
                 return;
+            
             if (!_playerGuid.Equals(session.GameState.CurrentPlayer.Id))
                 return;
+            
             if (session.GameState.PlayerPhase == Consts.PlayerPhase.MoveAndAttack)
                 Move(session);
+            
             else if (session.GameState.PlayerPhase == Consts.PlayerPhase.Reinforce)
                 Reinforce(session);
-            Thread.Sleep(100);
+            
+            Thread.Sleep(10);
         }
 
         private void Reinforce(Session session)

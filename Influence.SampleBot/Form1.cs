@@ -12,7 +12,7 @@ namespace Influence.SampleBot
 {
     public partial class Form1 : Form
     {
-        private int _stepIntervalMs = 500;
+        private int _stepIntervalMs = 50;
 
         // API documentation: /ws.ashx
         private readonly Gateway _gateway = new Gateway { SessionBaseUrl = "http://localhost:82/ws.ashx" };

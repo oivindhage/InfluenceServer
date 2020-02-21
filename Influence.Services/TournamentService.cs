@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Influence.Common.Utils;
 using Influence.Domain;
 using Influence.Domain.Tournament;
@@ -53,10 +54,9 @@ namespace Influence.Services
             foreach (var session in round.Sessions)
                 PlaySession(session);
 
-            // todo ejay - wait until game is finished
-            // DetermineWinnersOfRound(round);
-            //
-            // round.IsComplete = true;
+            DetermineWinnersOfRound(round);
+            
+            round.IsComplete = true;
         }
 
 
@@ -85,13 +85,10 @@ namespace Influence.Services
             }
             
             session.Start();
-
-            // todo ejay - wait until game is finished
-            // for (int i = 0; i < session.GameState.Participants.Count; i++)
-            // {
-            //     var participant = session.GameState.Participants[i];
-            //     participant.Rank = i+1;
-            // }
+            
+            // Allow game to finish
+            while (session.GameState.GamePhase != Consts.GamePhase.Finished)
+                Thread.Sleep(100);
         }
 
 
